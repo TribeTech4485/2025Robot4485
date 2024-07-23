@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveModule {
   private final CANSparkMax m_driveMotor;
@@ -52,15 +53,15 @@ public class SwerveModule {
     m_turningPIDController.setPositionPIDWrappingMinInput(-Math.PI);
     m_turningPIDController.setPositionPIDWrappingMaxInput(Math.PI);
 
-    m_drivePIDController.setP(1);
+    m_drivePIDController.setP(0);
     m_drivePIDController.setI(0);
-    m_drivePIDController.setD(1);
-    m_drivePIDController.setFF(1);
+    m_drivePIDController.setD(0);
+    m_drivePIDController.setFF(0);
 
-    m_turningPIDController.setP(1);
+    m_turningPIDController.setP(0.01);
     m_turningPIDController.setI(0);
-    m_turningPIDController.setD(1);
-    m_turningPIDController.setFF(1);
+    m_turningPIDController.setD(0);
+    m_turningPIDController.setFF(0);
 
   }
 
@@ -84,6 +85,10 @@ public class SwerveModule {
         m_driveEncoder.getPosition(), new Rotation2d(m_turningEncoder.getPosition()));
   }
 
+  public CANSparkMax getTurnMotor() {
+    return m_turningMotor;
+  }
+
   /**
    * Sets the desired state for the module.
    *
@@ -104,6 +109,7 @@ public class SwerveModule {
 
     // Calculate the drive output from the drive PID controller.
 
+    SmartDashboard.putNumber("WantedAngel", state.angle.getDegrees());
     m_drivePIDController.setReference(state.speedMetersPerSecond, ControlType.kVelocity);
     m_turningPIDController.setReference(state.angle.getRadians(), ControlType.kPosition);
   }
