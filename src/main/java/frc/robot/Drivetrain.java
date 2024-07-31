@@ -89,16 +89,16 @@ public class Drivetrain extends SubsystemBase {
    *
    * @param xSpeed              Speed of the robot in the x direction (forward).
    * @param ySpeed              Speed of the robot in the y direction (right).
-   * @param rot                 Angular rate of the robot.
+   * @param rotationSpeed       Angular rate of the robot.
    * @param fieldRelative       Whether the provided x and y speeds are relative
    *                            to the field.
    * @param centerOfRotationPOV Input pov value where -1 is center, and 0 is front
    */
   public void drive(
-      double xSpeed, double ySpeed, double rot, boolean fieldRelative, int centerOfRotationPOV) {
+      double xSpeed, double ySpeed, double rotationSpeed, boolean fieldRelative, int centerOfRotationPOV) {
     xSpeed *= kMaxSpeed;
     ySpeed *= kMaxSpeed;
-    rot *= kMaxAngularSpeed;
+    rotationSpeed *= kMaxAngularSpeed;
     Translation2d centerOfRotation = POVToTranslate2d(centerOfRotationPOV);
 
     SwerveModuleState[] swerveModuleStates = m_kinematics.toSwerveModuleStates(
@@ -107,10 +107,10 @@ public class Drivetrain extends SubsystemBase {
             fieldRelative
                 // if field relative
                 ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                    xSpeed, -ySpeed, rot,
+                    xSpeed, -ySpeed, rotationSpeed,
                     m_gyro.getRotation2d())
                 // if robot relative
-                : new ChassisSpeeds(xSpeed, -ySpeed, rot),
+                : new ChassisSpeeds(xSpeed, -ySpeed, rotationSpeed),
             0.02),
         centerOfRotation);
 
@@ -134,9 +134,12 @@ public class Drivetrain extends SubsystemBase {
     m_backLeft.setDesiredState(swerveModuleStates[2]);
     m_backRight.setDesiredState(swerveModuleStates[3]);
 
-    // SmartDashboard.putNumber("Speed1", m_frontLeft.getState().speedMetersPerSecond);
-    // SmartDashboard.putNumber("TargAngle1", m_frontLeft.getState().angle.getDegrees());
-    // SmartDashboard.putNumber("CurrAngle1", m_frontLeft.getPosition().angle.getDegrees());
+    // SmartDashboard.putNumber("Speed1",
+    // m_frontLeft.getState().speedMetersPerSecond);
+    // SmartDashboard.putNumber("TargAngle1",
+    // m_frontLeft.getState().angle.getDegrees());
+    // SmartDashboard.putNumber("CurrAngle1",
+    // m_frontLeft.getPosition().angle.getDegrees());
     // SmartDashboard.putNumber("Power1", m_frontLeft.getTurnMotor().get());
     SmartDashboard.putNumber("DriveSpeed", m_frontLeft.getDriveMotor().get());
 
@@ -205,7 +208,7 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Gyro", m_gyro.getAngle());
     SmartDashboard.putNumber("Gyro Rad", m_gyro.getAngle() / 180 * Math.PI);
-    
+
     SmartDashboard.putBoolean("TestSwitch", !testSwitch.get());
   }
 }

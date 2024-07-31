@@ -127,6 +127,7 @@ public class SwerveModule extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // disabled
     if (counter++ % 10 == -1) {
       double p = SmartDashboard.getNumber("TurnP", 0);
       double i = SmartDashboard.getNumber("TurnI", 0);
