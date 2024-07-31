@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkBase.ControlType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -23,10 +24,14 @@ public class SwerveModule extends SubsystemBase {
 
   private final SparkPIDController m_drivePIDController;
   private final SparkPIDController m_turningPIDController;
+
+  private HomingState homingState = HomingState.NEEDED;
+  private DigitalInput m_homingSwitch;
+
   int counter = 0;
 
   public SwerveModule(
-      CANSparkMax driveMotor, CANSparkMax turningMotor) {
+      CANSparkMax driveMotor, CANSparkMax turningMotor, DigitalInput homingSwitch) {
 
     // DRIVE MOTOR SETUP
     m_driveMotor = driveMotor;
@@ -67,6 +72,8 @@ public class SwerveModule extends SubsystemBase {
 
     m_turningMotor.burnFlash();
     m_driveMotor.burnFlash();
+
+    m_homingSwitch = homingSwitch;
   }
 
   /**
@@ -106,23 +113,27 @@ public class SwerveModule extends SubsystemBase {
    * @param desiredState Desired state with speed and angle.
    */
   public void setDesiredState(SwerveModuleState desiredState) {
-    Rotation2d encoderRotation = new Rotation2d(m_turningEncoder.getPosition());
+    if (homingState == HomingState.FINISHED) {
+      Rotation2d encoderRotation = new Rotation2d(m_turningEncoder.getPosition());
 
-    // Optimize the reference state to avoid spinning further than 90 degrees
-    SwerveModuleState state = SwerveModuleState.optimize(desiredState, encoderRotation);
-    // SwerveModuleState state = desiredState;
+      // Optimize the reference state to avoid spinning further than 90 degrees
+      SwerveModuleState state = SwerveModuleState.optimize(desiredState, encoderRotation);
+      // SwerveModuleState state = desiredState;
 
-    // Scale speed by cosine of angle error. This scales down movement perpendicular
-    // to the desired direction of travel that can occur when modules change
-    // directions. This results in smoother driving.
-    state.speedMetersPerSecond *= state.angle.minus(encoderRotation).getCos();
+      // Scale speed by cosine of angle error. This scales down movement perpendicular
+      // to the desired direction of travel that can occur when modules change
+      // directions. This results in smoother driving.
+      state.speedMetersPerSecond *= state.angle.minus(encoderRotation).getCos();
 
-    // Calculate the drive output from the drive PID controller.
-    // m_drivePIDController.setReference(state.speedMetersPerSecond,
-    // ControlType.kVelocity);
-    m_driveMotor.set(state.speedMetersPerSecond);
+      // Calculate the drive output from the drive PID controller.
+      // m_drivePIDController.setReference(state.speedMetersPerSecond,
+      // ControlType.kVelocity);
+      m_driveMotor.set(state.speedMetersPerSecond);
 
-    m_turningPIDController.setReference(state.angle.getRadians(), ControlType.kPosition);
+      m_turningPIDController.setReference(state.angle.getRadians(), ControlType.kPosition);
+    } else {
+      // Being homed hopefully??
+    }
   }
 
   @Override
@@ -143,5 +154,47 @@ public class SwerveModule extends SubsystemBase {
         m_turningPIDController.setD(d);
       }
     }
+
+    if (!homingState.equals(HomingState.FINISHED)) {
+      home();
+    }
   }
+
+  /** Needs to be called continously until finished homing */
+  public void home() {
+    // Rotate by 1/speedDivisor degrees per loop iteration
+    int speedDivisor = 10;
+    int secondStageSpeedDivisor = 3;
+
+    switch (homingState) {
+      case NEEDED:
+        homingState = HomingState.HOMING;
+      case HOMING:
+        m_turningPIDController.setReference(
+            (m_turningEncoder.getPosition() + (Math.PI / 180 / speedDivisor) + Math.PI) % (2 * Math.PI) - Math.PI,
+            ControlType.kPosition);
+
+        if (m_homingSwitch.get()) {
+          homingState = HomingState.FIRST_CONTACT;
+        }
+      case FIRST_CONTACT:
+        m_turningPIDController.setReference(
+            (m_turningEncoder.getPosition() - (Math.PI / 180 / speedDivisor / secondStageSpeedDivisor) + Math.PI)
+                % (2 * Math.PI) - Math.PI,
+            ControlType.kPosition);
+
+        if (!m_homingSwitch.get()) {
+          homingState = HomingState.FINISHED;
+        }
+      case FINISHED:
+        break;
+    }
+  }
+}
+
+enum HomingState {
+  NEEDED,
+  HOMING,
+  FIRST_CONTACT,
+  FINISHED
 }
