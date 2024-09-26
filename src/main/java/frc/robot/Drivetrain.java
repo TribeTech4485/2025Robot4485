@@ -5,9 +5,6 @@
 package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -17,7 +14,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -28,62 +24,81 @@ public class Drivetrain extends SubsystemBase {
 
   // For a square 3ft x 3ft robot, the wheelbase is 0.381 meters from center to
   // module.
-  private final double _robotWidth = Units.feetToMeters(3);
-  private final double _robotLength = Units.feetToMeters(3);
-  private final double _robotWidthOffset = _robotWidth / 2;
-  private final double _robotLengthOffset = _robotLength / 2;
+  private final double _robotWidth;
+  private final double _robotLength;
+  private final double _robotWidthOffset;
+  private final double _robotLengthOffset;
 
-  private final Translation2d m_frontLeftLocation = new Translation2d(_robotLengthOffset, _robotWidthOffset);
-  private final Translation2d m_frontRightLocation = new Translation2d(_robotLengthOffset, -_robotWidthOffset);
-  private final Translation2d m_backLeftLocation = new Translation2d(-_robotLengthOffset, _robotWidthOffset);
-  private final Translation2d m_backRightLocation = new Translation2d(-_robotLengthOffset, -_robotWidthOffset);
-  private final Translation2d m_frontLocation = new Translation2d(_robotLengthOffset, 0);
-  private final Translation2d m_rightLocation = new Translation2d(0, -_robotWidthOffset);
-  private final Translation2d m_backLocation = new Translation2d(-_robotLengthOffset, 0);
-  private final Translation2d m_leftLocation = new Translation2d(0, _robotWidthOffset);
+  private final Translation2d m_frontLeftLocation;
+  private final Translation2d m_frontRightLocation;
+  private final Translation2d m_backLeftLocation;
+  private final Translation2d m_backRightLocation;
+  private final Translation2d m_frontLocation;
+  private final Translation2d m_rightLocation;
+  private final Translation2d m_backLocation;
+  private final Translation2d m_leftLocation;
 
-  private final SwerveModule m_frontLeft = new SwerveModule(
-      new CANSparkMax(3, MotorType.kBrushless),
-      new CANSparkMax(4, MotorType.kBrushless),
-      new DigitalInput(0));
-  private final SwerveModule m_frontRight = new SwerveModule(
-      new CANSparkMax(1, MotorType.kBrushless),
-      new CANSparkMax(2, MotorType.kBrushless),
-      new DigitalInput(1));
-  private final SwerveModule m_backLeft = new SwerveModule(
-      new CANSparkMax(5, MotorType.kBrushless),
-      new CANSparkMax(6, MotorType.kBrushless),
-      new DigitalInput(2));
-  private final SwerveModule m_backRight = new SwerveModule(
-      new CANSparkMax(7, MotorType.kBrushless),
-      new CANSparkMax(8, MotorType.kBrushless),
-      new DigitalInput(3));
+  private final SwerveModule m_frontLeft;
+  private final SwerveModule m_frontRight;
+  private final SwerveModule m_backLeft;
+  private final SwerveModule m_backRight;
 
   int counter = 0;
 
-  private final AHRS m_gyro = new AHRS();
+  private final AHRS m_gyro;
 
-  private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
-      m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
+  private final SwerveDriveKinematics m_kinematics;
 
-  private final SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
-      m_kinematics,
-      m_gyro.getRotation2d(),
-      new SwerveModulePosition[] {
-          m_frontLeft.getPosition(),
-          m_frontRight.getPosition(),
-          m_backLeft.getPosition(),
-          m_backRight.getPosition()
-      });
+  private final SwerveDriveOdometry m_odometry;
   private StructArrayPublisher<SwerveModuleState> NetworkTablesSwervePublisherDesired;
   private StructArrayPublisher<SwerveModuleState> NetworkTablesSwervePublisherCurrent;
 
-  public Drivetrain() {
-    m_gyro.reset();
+  /**
+   * An instance for controlling a swerve drivetrain
+   * @param width The width of the robot in feet
+   * @param length The length of the robot in feet
+   * @param modules An array of SwerveModules in the order of front left, front right, back left, back right
+   */
+  public Drivetrain(double width, double length, SwerveModule[] modules) {
     NetworkTablesSwervePublisherDesired = NetworkTableInstance.getDefault()
         .getStructArrayTopic("/DesiredSwerveStates", SwerveModuleState.struct).publish();
     NetworkTablesSwervePublisherCurrent = NetworkTableInstance.getDefault()
         .getStructArrayTopic("/CurrentSwerveStates", SwerveModuleState.struct).publish();
+
+    _robotWidth = Units.feetToMeters(width);
+    _robotLength = Units.feetToMeters(length);
+    _robotWidthOffset = _robotWidth / 2;
+    _robotLengthOffset = _robotLength / 2;
+
+    m_frontLeftLocation = new Translation2d(_robotLengthOffset, _robotWidthOffset);
+    m_frontRightLocation = new Translation2d(_robotLengthOffset, -_robotWidthOffset);
+    m_backLeftLocation = new Translation2d(-_robotLengthOffset, _robotWidthOffset);
+    m_backRightLocation = new Translation2d(-_robotLengthOffset, -_robotWidthOffset);
+    m_frontLocation = new Translation2d(_robotLengthOffset, 0);
+    m_rightLocation = new Translation2d(0, -_robotWidthOffset);
+    m_backLocation = new Translation2d(-_robotLengthOffset, 0);
+    m_leftLocation = new Translation2d(0, _robotWidthOffset);
+
+    m_frontLeft = modules[0];
+    m_frontRight = modules[1];
+    m_backLeft = modules[2];
+    m_backRight = modules[3];
+
+    m_gyro = new AHRS();
+    m_gyro.reset();
+
+    m_kinematics = new SwerveDriveKinematics(
+        m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
+
+    m_odometry = new SwerveDriveOdometry(
+        m_kinematics,
+        m_gyro.getRotation2d(),
+        new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_backLeft.getPosition(),
+            m_backRight.getPosition()
+        });
   }
 
   /**
