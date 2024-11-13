@@ -2,9 +2,11 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot;
+package frc.robot.Subsystems.Swerve;
 
 import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -14,6 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.units.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -46,18 +49,25 @@ public class Drivetrain extends SubsystemBase {
   int counter = 0;
 
   private final AHRS m_gyro;
-
   private final SwerveDriveKinematics m_kinematics;
-
   private final SwerveDriveOdometry m_odometry;
   private StructArrayPublisher<SwerveModuleState> NetworkTablesSwervePublisherDesired;
   private StructArrayPublisher<SwerveModuleState> NetworkTablesSwervePublisherCurrent;
 
+  private SwerveModuleState[] swerveModuleStates;
+  private final SwerveModuleState[] lockPositions = generateLockPositions();
+
+  private DrivetrainMode drivetrainMode = DrivetrainMode.X_Y;
+  private boolean fieldRelative = false;
+  private boolean brakeMode = false;
+
   /**
    * An instance for controlling a swerve drivetrain
-   * @param width The width of the robot in feet
-   * @param length The length of the robot in feet
-   * @param modules An array of SwerveModules in the order of front left, front right, back left, back right
+   * 
+   * @param width   The width of the robot in feet
+   * @param length  The length of the robot in feet
+   * @param modules An array of SwerveModules in the order of front left, front
+   *                right, back left, back right
    */
   public Drivetrain(double width, double length, SwerveModule[] modules) {
     NetworkTablesSwervePublisherDesired = NetworkTableInstance.getDefault()
@@ -101,6 +111,24 @@ public class Drivetrain extends SubsystemBase {
         });
   }
 
+  public void enableXLock() {
+    drivetrainMode = DrivetrainMode.LOCKED;
+    setDriveBrakeMode(true);
+  }
+
+  public void disableXLock() {
+    drivetrainMode = DrivetrainMode.X_Y;
+    setDriveBrakeMode(brakeMode);
+  }
+
+  private void setDriveBrakeMode(boolean brakeMode) {
+    this.brakeMode = brakeMode; // Save the brake mode for when we disable X Lock
+    m_frontLeft.setDriveBrakeMode(brakeMode);
+    m_frontRight.setDriveBrakeMode(brakeMode);
+    m_backLeft.setDriveBrakeMode(brakeMode);
+    m_backRight.setDriveBrakeMode(brakeMode);
+  }
+
   /**
    * Method to drive the robot using joystick info.
    *
@@ -111,64 +139,41 @@ public class Drivetrain extends SubsystemBase {
    *                            to the field.
    * @param centerOfRotationPOV Input pov value where -1 is center, and 0 is front
    */
-  public void drive(
-      double xSpeed, double ySpeed, double rotationSpeed, boolean fieldRelative,
-      int centerOfRotationPOV) {
-    xSpeed *= kMaxSpeed;
-    ySpeed *= kMaxSpeed;
-    rotationSpeed *= kMaxAngularSpeed;
-    Translation2d centerOfRotation = POVToTranslate2d(centerOfRotationPOV);
+  public void inputDrivingX_Y(double xSpeed, double ySpeed,
+      double rotationSpeed, int centerOfRotationPOV) {
 
-    SwerveModuleState[] swerveModuleStates = m_kinematics.toSwerveModuleStates(
-        // Account for time between updates
-        ChassisSpeeds.discretize(
-            fieldRelative
-                // if field relative
-                ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                    xSpeed, -ySpeed, rotationSpeed,
-                    m_gyro.getRotation2d())
-                // if robot relative
-                : new ChassisSpeeds(xSpeed, -ySpeed, rotationSpeed),
-            0.02),
-        centerOfRotation);
+    if (drivetrainMode != DrivetrainMode.LOCKED) {
+      xSpeed *= kMaxSpeed;
+      ySpeed *= kMaxSpeed;
+      rotationSpeed *= kMaxAngularSpeed;
+      Translation2d centerOfRotation = POVToTranslate2d(centerOfRotationPOV);
 
-    // Constrain wheel speeds to kMaxSpeed
-    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed);
-    counter++;
-    if (counter % 10 == -1) {
-      System.out.println("Speeds: " + swerveModuleStates[0].speedMetersPerSecond +
-          " " + swerveModuleStates[1].speedMetersPerSecond + " " +
-          swerveModuleStates[2].speedMetersPerSecond
-          + " " + swerveModuleStates[3].speedMetersPerSecond);
-      System.out.println("Angles: " + swerveModuleStates[0].angle.getDegrees() + " "
-          + swerveModuleStates[1].angle.getDegrees() + " "
-          + swerveModuleStates[2].angle.getDegrees() + " "
-          + swerveModuleStates[3].angle.getDegrees());
+      swerveModuleStates = m_kinematics.toSwerveModuleStates(
+          // Account for time between updates
+          ChassisSpeeds.discretize(
+              fieldRelative
+                  // if field relative
+                  ? ChassisSpeeds.fromFieldRelativeSpeeds(
+                      xSpeed, -ySpeed, rotationSpeed,
+                      m_gyro.getRotation2d())
+                  // if robot relative
+                  : new ChassisSpeeds(xSpeed, -ySpeed, rotationSpeed),
+              0.02),
+          centerOfRotation);
+
+      // Constrain wheel speeds to kMaxSpeed
+      counter++;
+      if (counter % 10 == -1) {
+        System.out.println("Speeds: " + swerveModuleStates[0].speedMetersPerSecond +
+            " " + swerveModuleStates[1].speedMetersPerSecond + " " +
+            swerveModuleStates[2].speedMetersPerSecond
+            + " " + swerveModuleStates[3].speedMetersPerSecond);
+        System.out.println("Angles: " + swerveModuleStates[0].angle.getDegrees() + " "
+            + swerveModuleStates[1].angle.getDegrees() + " "
+            + swerveModuleStates[2].angle.getDegrees() + " "
+            + swerveModuleStates[3].angle.getDegrees());
+      }
     }
-    m_frontLeft.setDesiredState(swerveModuleStates[0]);
-    m_frontRight.setDesiredState(swerveModuleStates[1]);
-    m_backLeft.setDesiredState(swerveModuleStates[2]);
-    m_backRight.setDesiredState(swerveModuleStates[3]);
-
-    // SmartDashboard.putNumber("Speed1",
-    // m_frontLeft.getState().speedMetersPerSecond);
-    // SmartDashboard.putNumber("TargAngle1",
-    // m_frontLeft.getState().angle.getDegrees());
-    // SmartDashboard.putNumber("CurrAngle1",
-    // m_frontLeft.getPosition().angle.getDegrees());
-    // SmartDashboard.putNumber("Power1", m_frontLeft.getTurnMotor().get());
-    SmartDashboard.putNumber("DriveSpeed", m_frontLeft.getDriveMotor().get());
-
-    NetworkTablesSwervePublisherDesired.set(swerveModuleStates);
-    NetworkTablesSwervePublisherCurrent.set(
-        new SwerveModuleState[] {
-            m_frontLeft.getState(),
-            m_frontRight.getState(),
-            m_backLeft.getState(),
-            m_backRight.getState()
-        });
-
-    updateOdometry();
   }
 
   private Translation2d POVToTranslate2d(int centerOfRotation) {
@@ -222,7 +227,32 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed);
+    m_frontLeft.setDesiredState(swerveModuleStates[0]);
+    m_frontRight.setDesiredState(swerveModuleStates[1]);
+    m_backLeft.setDesiredState(swerveModuleStates[2]);
+    m_backRight.setDesiredState(swerveModuleStates[3]);
+
+    NetworkTablesSwervePublisherDesired.set(swerveModuleStates);
+    NetworkTablesSwervePublisherCurrent.set(
+        new SwerveModuleState[] {
+            m_frontLeft.getState(),
+            m_frontRight.getState(),
+            m_backLeft.getState(),
+            m_backRight.getState()
+        });
+
     SmartDashboard.putNumber("Gyro", m_gyro.getAngle());
     SmartDashboard.putNumber("Gyro Rad", m_gyro.getAngle() / 180 * Math.PI);
+    updateOdometry();
+  }
+
+  private SwerveModuleState[] generateLockPositions() {
+    SwerveModuleState[] lockPositions = new SwerveModuleState[4];
+    lockPositions[0] = new SwerveModuleState(0, new Rotation2d(Math.PI / 4));
+    lockPositions[1] = new SwerveModuleState(0, new Rotation2d(2 * Math.PI / 4));
+    lockPositions[2] = new SwerveModuleState(0, new Rotation2d(3 * Math.PI / 4));
+    lockPositions[3] = new SwerveModuleState(0, new Rotation2d(Math.PI));
+    return lockPositions;
   }
 }

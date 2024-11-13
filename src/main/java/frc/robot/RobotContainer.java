@@ -9,13 +9,15 @@ import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Subsystems.Swerve.*;
 
 public class RobotContainer {
   Drivetrain drivetrain = new Drivetrain(3, 3, new SwerveModule[] {
-      new SwerveModule(new CANSparkMax(3, MotorType.kBrushless), new CANSparkMax(4, MotorType.kBrushless)),
-      new SwerveModule(new CANSparkMax(1, MotorType.kBrushless), new CANSparkMax(2, MotorType.kBrushless)),
-      new SwerveModule(new CANSparkMax(5, MotorType.kBrushless), new CANSparkMax(6, MotorType.kBrushless)),
-      new SwerveModule(new CANSparkMax(7, MotorType.kBrushless), new CANSparkMax(8, MotorType.kBrushless))
+      new SwerveModule(new CANSparkMax(3, MotorType.kBrushless), new CANSparkMax(4, MotorType.kBrushless), 0.3880573, "Front left"), // front left, 3, 4
+      new SwerveModule(new CANSparkMax(1, MotorType.kBrushless), new CANSparkMax(2, MotorType.kBrushless), 0.9216877, "Front right"), // front right 1, 2
+      new SwerveModule(new CANSparkMax(5, MotorType.kBrushless), new CANSparkMax(6, MotorType.kBrushless), 0.1052175, "Back left"), // back left 5, 6
+      new SwerveModule(new CANSparkMax(7, MotorType.kBrushless), new CANSparkMax(8, MotorType.kBrushless), 0.3439636, "Back right") // back right 7, 8
+      // drive motors are odd, turning motors are even
   });
 
   public RobotContainer() {

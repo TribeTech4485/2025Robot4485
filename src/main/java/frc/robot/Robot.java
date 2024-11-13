@@ -69,7 +69,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // System.out.println("X: " + joystick.getX() + " Y: " + joystick.getY() + " Twist: " + joystick.getTwist());
-    m_robotContainer.drivetrain.drive(-joystick.getY(), joystick.getX(), -joystick.getTwist(), false, joystick.getPOV());
+    m_robotContainer.drivetrain.inputDrivingX_Y(-joystick.getY(), joystick.getX(), -joystick.getTwist(), joystick.getPOV());
   }
 
   @Override
