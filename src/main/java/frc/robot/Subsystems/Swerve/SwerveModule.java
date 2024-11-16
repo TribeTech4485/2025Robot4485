@@ -55,7 +55,7 @@ public class SwerveModule extends SubsystemBase {
     m_turningMotor = turningMotor;
 
     m_turningMotor.restoreFactoryDefaults();
-    m_turningMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    m_turningMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     m_turningMotor.setSmartCurrentLimit(10);
 
     m_turningEncoder = m_turningMotor.getAbsoluteEncoder();
@@ -133,17 +133,21 @@ public class SwerveModule extends SubsystemBase {
   @Override
   public void periodic() {
 
+    if (this.getName() == "Front right") {
     m_turningMotor.set(m_turnPIDController.calculate(
         getState().angle.getRadians()));
+    }
 
     // m_driveMotor.set(m_drivePIDController.calculate(
     //     m_driveEncoder.getVelocity()));\
     m_driveMotor.set(0); // TODO: Switch back after debugging
 
     SmartDashboard.putData(this.getName() + " swerve turning PID", m_turnPIDController);
+    SmartDashboard.putNumber(this.getName() + " swerve turning direction", m_turningEncoder.getPosition());
 
 
     SmartDashboard.putData(this.getName() + " swerve driving PID", m_drivePIDController);
+    SmartDashboard.putNumber(this.getName() + " swerve driving speed", m_driveEncoder.getVelocity());
   }
 
   public void setDriveBrakeMode(boolean brake) {

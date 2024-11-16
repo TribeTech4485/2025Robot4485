@@ -7,6 +7,7 @@ package frc.robot;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Subsystems.Swerve.*;
@@ -22,6 +23,7 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureBindings();
+    DriverStation.silenceJoystickConnectionWarning(true);
   }
 
   private void configureBindings() {

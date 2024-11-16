@@ -54,8 +54,8 @@ public class Drivetrain extends SubsystemBase {
   private StructArrayPublisher<SwerveModuleState> NetworkTablesSwervePublisherDesired;
   private StructArrayPublisher<SwerveModuleState> NetworkTablesSwervePublisherCurrent;
 
-  private SwerveModuleState[] swerveModuleStates;
   private final SwerveModuleState[] lockPositions = generateLockPositions();
+  private SwerveModuleState[] swerveModuleStates = lockPositions;
 
   private DrivetrainMode drivetrainMode = DrivetrainMode.X_Y;
   private boolean fieldRelative = false;
@@ -227,11 +227,11 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed);
-    m_frontLeft.setDesiredState(swerveModuleStates[0]);
-    m_frontRight.setDesiredState(swerveModuleStates[1]);
-    m_backLeft.setDesiredState(swerveModuleStates[2]);
-    m_backRight.setDesiredState(swerveModuleStates[3]);
+    // SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed);
+    // m_frontLeft.setDesiredState(swerveModuleStates[0]);
+    // m_frontRight.setDesiredState(swerveModuleStates[1]);
+    // m_backLeft.setDesiredState(swerveModuleStates[2]);
+    // m_backRight.setDesiredState(swerveModuleStates[3]);
 
     NetworkTablesSwervePublisherDesired.set(swerveModuleStates);
     NetworkTablesSwervePublisherCurrent.set(
