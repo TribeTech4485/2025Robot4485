@@ -143,7 +143,7 @@ public class SwerveModule extends SubsystemBase {
     m_driveMotor.set(0); // TODO: Switch back after debugging
 
     SmartDashboard.putData(this.getName() + " swerve turning PID", m_turnPIDController);
-    SmartDashboard.putNumber(this.getName() + " swerve turning direction", m_turningEncoder.getPosition());
+    SmartDashboard.putNumber(this.getName() + " swerve turning encoder", m_turningEncoder.getPosition());
 
 
     SmartDashboard.putData(this.getName() + " swerve driving PID", m_drivePIDController);

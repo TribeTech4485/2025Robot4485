@@ -16,7 +16,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
-import edu.wpi.first.units.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -57,7 +56,7 @@ public class Drivetrain extends SubsystemBase {
   private final SwerveModuleState[] lockPositions = generateLockPositions();
   private SwerveModuleState[] swerveModuleStates = lockPositions;
 
-  private DrivetrainMode drivetrainMode = DrivetrainMode.X_Y;
+  private DrivetrainMode drivetrainMode = DrivetrainMode.NORMAL;
   private boolean fieldRelative = false;
   private boolean brakeMode = false;
 
@@ -114,10 +113,11 @@ public class Drivetrain extends SubsystemBase {
   public void enableXLock() {
     drivetrainMode = DrivetrainMode.LOCKED;
     setDriveBrakeMode(true);
+    swerveModuleStates = lockPositions;
   }
 
   public void disableXLock() {
-    drivetrainMode = DrivetrainMode.X_Y;
+    drivetrainMode = DrivetrainMode.NORMAL;
     setDriveBrakeMode(brakeMode);
   }
 
@@ -142,7 +142,7 @@ public class Drivetrain extends SubsystemBase {
   public void inputDrivingX_Y(double xSpeed, double ySpeed,
       double rotationSpeed, int centerOfRotationPOV) {
 
-    if (drivetrainMode != DrivetrainMode.LOCKED) {
+    if (drivetrainMode == DrivetrainMode.NORMAL) {
       xSpeed *= kMaxSpeed;
       ySpeed *= kMaxSpeed;
       rotationSpeed *= kMaxAngularSpeed;
@@ -176,6 +176,7 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
+  /** Used for using a POV joystick to rotate around corner of robot */
   private Translation2d POVToTranslate2d(int centerOfRotation) {
     Translation2d rotationCenter;
     switch (centerOfRotation) {
