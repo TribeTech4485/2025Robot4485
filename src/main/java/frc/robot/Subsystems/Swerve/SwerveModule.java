@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -24,16 +25,15 @@ public class SwerveModule extends SubsystemBase {
   private final PIDController m_drivePIDController;
   private final PIDController m_turnPIDController;
 
-  private final double driveGearRatio = 10 * Math.PI * 1; // 1 is the gear ratio when I find out
-  private final double turnGearRatio = 27 / 5;
+  private final double driveGearRatio = 1/(10 * Math.PI * 15/50); // 1 is the gear ratio when I find out
 
   /**
    * Constructs a new SwerveModule.
    *
-   * @param driveMotor The motor that drives the module.
-   * @param turningMotor The motor that turns the module.
+   * @param driveMotor    The motor that drives the module.
+   * @param turningMotor  The motor that turns the module.
    * @param turningOffset The offset for the turning encoder. Starting position
-   * @param name The name of the module. Ie. "FrontLeft"
+   * @param name          The name of the module. Ie. "FrontLeft"
    */
   public SwerveModule(CANSparkMax driveMotor, CANSparkMax turningMotor, double turningOffset, String name) {
     this.setName(name);
@@ -59,11 +59,11 @@ public class SwerveModule extends SubsystemBase {
     m_turningMotor.setSmartCurrentLimit(10);
 
     m_turningEncoder = m_turningMotor.getAbsoluteEncoder();
-    m_turningEncoder.setPositionConversionFactor(turnGearRatio);
+    m_turningEncoder.setPositionConversionFactor(1);
     m_turningEncoder.setZeroOffset(turningOffset);
 
-    m_turnPIDController = new PIDController(0.1, 0, 0.01);
-    m_turnPIDController.enableContinuousInput(0, turnGearRatio);
+    m_turnPIDController = new PIDController(1.5, 0, 0.1);
+    m_turnPIDController.enableContinuousInput(0, 1);
 
     m_turningMotor.burnFlash();
     m_driveMotor.burnFlash();
@@ -79,7 +79,12 @@ public class SwerveModule extends SubsystemBase {
     // m_driveEncoder.getVelocity(), new
     // Rotation2d(m_turningEncoder.getPosition()));
     return new SwerveModuleState(
-        m_driveMotor.get(), new Rotation2d(convertToRadians(m_turningEncoder.getPosition())));
+        m_driveMotor.get(), getEncoderPos());
+  }
+
+  /** Converts to radians */
+  private Rotation2d getEncoderPos() {
+    return new Rotation2d(convertToRadians(m_turningEncoder.getPosition()));
   }
 
   /**
@@ -89,7 +94,7 @@ public class SwerveModule extends SubsystemBase {
    */
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(
-        m_driveEncoder.getPosition(), new Rotation2d(convertToRadians(m_turningEncoder.getPosition())));
+        m_driveEncoder.getPosition(), getEncoderPos());
   }
 
   public CANSparkMax getTurnMotor() {
@@ -106,11 +111,11 @@ public class SwerveModule extends SubsystemBase {
    * @param desiredState Desired state with speed and angle.
    */
   public void setDesiredState(SwerveModuleState desiredState) {
-    Rotation2d encoderRotation = new Rotation2d(m_turningEncoder.getPosition());
+    Rotation2d encoderRotation = getEncoderPos();
 
+    SwerveModuleState state = new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
     // Optimize the reference state to avoid spinning further than 90 degrees
-    // SwerveModuleState state = SwerveModuleState.optimize(desiredState, encoderRotation);
-    SwerveModuleState state = desiredState; // TODO: Switch back after debugging
+    state = SwerveModuleState.optimize(state, getEncoderPos());
 
     // Scale speed by cosine of angle error. This scales down movement perpendicular
     // to the desired direction of travel that can occur when modules change
@@ -119,35 +124,36 @@ public class SwerveModule extends SubsystemBase {
 
     // set the wanted position, actual moving done in periodic
     m_drivePIDController.setSetpoint(state.speedMetersPerSecond);
-    m_turnPIDController.setSetpoint(state.angle.getRadians());
+    m_turnPIDController.setSetpoint(covertFromRadians(state.angle.getRadians()));
   }
 
   private double covertFromRadians(double radians) {
-    return (radians + Math.PI) / (2 * Math.PI) * turnGearRatio;
+    return (radians / (-2 * Math.PI)) + (1 / 2);
   }
 
   private double convertToRadians(double position) {
-    return (position - (turnGearRatio / 2)) * (2 * Math.PI);
+    return (-(position - (1 / 2))) * (2 * Math.PI);
   }
 
   @Override
   public void periodic() {
 
-    if (this.getName() == "Front right") {
-    m_turningMotor.set(m_turnPIDController.calculate(
-        getState().angle.getRadians()));
-    }
+    m_turningMotor.set(m_turnPIDController.calculate(m_turningEncoder.getPosition()));
+    if (this.getName() == "Back right") {
+        // m_driveMotor.set(m_drivePIDController.calculate(m_driveEncoder.getVelocity()));
+      }
+      m_driveMotor.set(m_drivePIDController.getSetpoint()/5);
 
-    // m_driveMotor.set(m_drivePIDController.calculate(
-    //     m_driveEncoder.getVelocity()));\
-    m_driveMotor.set(0); // TODO: Switch back after debugging
+    //m_driveMotor.set(0); // TODO: Switch back after debugging
 
     SmartDashboard.putData(this.getName() + " swerve turning PID", m_turnPIDController);
     SmartDashboard.putNumber(this.getName() + " swerve turning encoder", m_turningEncoder.getPosition());
-
+    SmartDashboard.putNumber(this.getName() + " swerve turning degrees", getEncoderPos().getDegrees());
+    SmartDashboard.putNumber(this.getName() + " swerve turning power", m_turningMotor.get());
 
     SmartDashboard.putData(this.getName() + " swerve driving PID", m_drivePIDController);
     SmartDashboard.putNumber(this.getName() + " swerve driving speed", m_driveEncoder.getVelocity());
+    SmartDashboard.putNumber(this.getName() + " swerve driving power", m_driveMotor.get());
   }
 
   public void setDriveBrakeMode(boolean brake) {

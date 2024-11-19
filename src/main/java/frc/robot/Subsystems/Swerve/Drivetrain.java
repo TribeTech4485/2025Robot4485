@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 /** Represents a swerve drive style drivetrain. */
 public class Drivetrain extends SubsystemBase {
   public static final double kMaxSpeed = 1.0; // 3 meters per second // TODO: 3
-  public static final double kMaxAngularSpeed = 2 * Math.PI; // 1 rotation per second
+  public static final double kMaxAngularSpeed = 2 * Math.PI / 4; // 1/2 rotation per second
 
   // For a square 3ft x 3ft robot, the wheelbase is 0.381 meters from center to
   // module.
@@ -57,8 +57,11 @@ public class Drivetrain extends SubsystemBase {
   private SwerveModuleState[] swerveModuleStates = lockPositions;
 
   private DrivetrainMode drivetrainMode = DrivetrainMode.NORMAL;
-  private boolean fieldRelative = false;
+  private boolean fieldRelative = true;
   private boolean brakeMode = false;
+
+  public boolean allowTurnMotors = true;
+  public boolean allowDriveMotors = true;
 
   /**
    * An instance for controlling a swerve drivetrain
@@ -114,6 +117,7 @@ public class Drivetrain extends SubsystemBase {
     drivetrainMode = DrivetrainMode.LOCKED;
     setDriveBrakeMode(true);
     swerveModuleStates = lockPositions;
+    setDesiredStates();
   }
 
   public void disableXLock() {
@@ -160,20 +164,14 @@ public class Drivetrain extends SubsystemBase {
                   : new ChassisSpeeds(xSpeed, -ySpeed, rotationSpeed),
               0.02),
           centerOfRotation);
-
-      // Constrain wheel speeds to kMaxSpeed
-      counter++;
-      if (counter % 10 == -1) {
-        System.out.println("Speeds: " + swerveModuleStates[0].speedMetersPerSecond +
-            " " + swerveModuleStates[1].speedMetersPerSecond + " " +
-            swerveModuleStates[2].speedMetersPerSecond
-            + " " + swerveModuleStates[3].speedMetersPerSecond);
-        System.out.println("Angles: " + swerveModuleStates[0].angle.getDegrees() + " "
-            + swerveModuleStates[1].angle.getDegrees() + " "
-            + swerveModuleStates[2].angle.getDegrees() + " "
-            + swerveModuleStates[3].angle.getDegrees());
-      }
     }
+  }
+
+  private void setDesiredStates() {
+    m_frontLeft.setDesiredState(swerveModuleStates[0]);
+    m_frontRight.setDesiredState(swerveModuleStates[1]);
+    m_backLeft.setDesiredState(swerveModuleStates[2]);
+    m_backRight.setDesiredState(swerveModuleStates[3]);
   }
 
   /** Used for using a POV joystick to rotate around corner of robot */
@@ -228,11 +226,10 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed);
-    // m_frontLeft.setDesiredState(swerveModuleStates[0]);
-    // m_frontRight.setDesiredState(swerveModuleStates[1]);
-    // m_backLeft.setDesiredState(swerveModuleStates[2]);
-    // m_backRight.setDesiredState(swerveModuleStates[3]);
+    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed);
+    if (allowTurnMotors) {
+      setDesiredStates();
+    }
 
     NetworkTablesSwervePublisherDesired.set(swerveModuleStates);
     NetworkTablesSwervePublisherCurrent.set(
@@ -250,10 +247,10 @@ public class Drivetrain extends SubsystemBase {
 
   private SwerveModuleState[] generateLockPositions() {
     SwerveModuleState[] lockPositions = new SwerveModuleState[4];
-    lockPositions[0] = new SwerveModuleState(0, new Rotation2d(Math.PI / 4));
-    lockPositions[1] = new SwerveModuleState(0, new Rotation2d(2 * Math.PI / 4));
+    lockPositions[0] = new SwerveModuleState(0, new Rotation2d(1 * Math.PI / 4));
+    lockPositions[1] = new SwerveModuleState(0, new Rotation2d(7 * Math.PI / 4));
     lockPositions[2] = new SwerveModuleState(0, new Rotation2d(3 * Math.PI / 4));
-    lockPositions[3] = new SwerveModuleState(0, new Rotation2d(Math.PI));
+    lockPositions[3] = new SwerveModuleState(0, new Rotation2d(5 * Math.PI / 4));
     return lockPositions;
   }
 }

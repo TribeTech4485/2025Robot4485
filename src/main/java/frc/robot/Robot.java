@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -36,13 +37,16 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+  }
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+  }
 
   @Override
   public void autonomousInit() {
@@ -54,10 +58,12 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
-  public void autonomousExit() {}
+  public void autonomousExit() {
+  }
 
   @Override
   public void teleopInit() {
@@ -68,12 +74,31 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    // System.out.println("X: " + joystick.getX() + " Y: " + joystick.getY() + " Twist: " + joystick.getTwist());
-    m_robotContainer.drivetrain.inputDrivingX_Y(-joystick.getY(), joystick.getX(), -joystick.getTwist(), joystick.getPOV());
+    // System.out.println("X: " + joystick.getX() + " Y: " + joystick.getY() + "
+    // Twist: " + joystick.getTwist());
+    if (joystick.getRawButton(2)) {
+      m_robotContainer.drivetrain.enableXLock();
+    } else {
+      m_robotContainer.drivetrain.disableXLock();
+      m_robotContainer.drivetrain.inputDrivingX_Y(-joystick.getY(), joystick.getX(),
+          joystick.getTrigger() ? -joystick.getTwist() : 0,
+          joystick.getTrigger() ? joystick.getPOV() : -1);
+      // m_robotContainer.drivetrain.inputDrivingX_Y(-joystick.getY(),
+      // joystick.getX(), 0, -1);
+    }
+
+    m_robotContainer.drivetrain.allowTurnMotors = joystick.getRawButton(7);
+
+    SmartDashboard.putNumber("Joystick X", joystick.getX());
+    SmartDashboard.putNumber("Joystick Y", joystick.getY());
+    SmartDashboard.putNumber("Joystick Twist", joystick.getTwist());
+    // SmartDashboard.putNumber("Joystick Throttle", joystick.getThrottle());
+    SmartDashboard.putNumber("Joystick POV", joystick.getPOV());
   }
 
   @Override
-  public void teleopExit() {}
+  public void teleopExit() {
+  }
 
   @Override
   public void testInit() {
@@ -81,8 +106,10 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+  }
 
   @Override
-  public void testExit() {}
+  public void testExit() {
+  }
 }
