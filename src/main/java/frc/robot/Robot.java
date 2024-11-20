@@ -4,11 +4,11 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.SyncedLibraries.SystemBases.ControllerBase;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -24,7 +24,7 @@ public class Robot extends TimedRobot {
    */
 
   private RobotContainer m_robotContainer;
-  Joystick joystick = new Joystick(0);
+  ControllerBase joystick = m_robotContainer.controller;
 
   @Override
   public void robotInit() {
@@ -74,24 +74,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    // System.out.println("X: " + joystick.getX() + " Y: " + joystick.getY() + "
-    // Twist: " + joystick.getTwist());
-    if (joystick.getRawButton(2)) {
-      m_robotContainer.drivetrain.enableXLock();
-    } else {
-      m_robotContainer.drivetrain.disableXLock();
-      m_robotContainer.drivetrain.inputDrivingX_Y(-joystick.getY(), joystick.getX(),
-          joystick.getTrigger() ? -joystick.getTwist() : 0,
-          joystick.getTrigger() ? joystick.getPOV() : -1);
-      // m_robotContainer.drivetrain.inputDrivingX_Y(-joystick.getY(),
-      // joystick.getX(), 0, -1);
+    if (joystick.getRawButton(7)) {
+      m_robotContainer.drivetrain.inputDrivingX_Y(-joystick.getLeftY(),
+          joystick.getLeftX(), -joystick.getRightX(), joystick.getPOV());
     }
 
-    m_robotContainer.drivetrain.allowTurnMotors = joystick.getRawButton(7);
-
-    SmartDashboard.putNumber("Joystick X", joystick.getX());
-    SmartDashboard.putNumber("Joystick Y", joystick.getY());
-    SmartDashboard.putNumber("Joystick Twist", joystick.getTwist());
+    SmartDashboard.putNumber("Joystick X", joystick.getLeftX());
+    SmartDashboard.putNumber("Joystick Y", joystick.getLeftY());
+    SmartDashboard.putNumber("Joystick Twist", joystick.getRightX());
     // SmartDashboard.putNumber("Joystick Throttle", joystick.getThrottle());
     SmartDashboard.putNumber("Joystick POV", joystick.getPOV());
   }

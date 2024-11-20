@@ -6,11 +6,16 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Subsystems.Swerve.*;
+import frc.robot.SyncedLibraries.BasicFunctions;
+import frc.robot.SyncedLibraries.SystemBases.ControllerBase;
 
 public class RobotContainer {
   Drivetrain drivetrain = new Drivetrain();
+  ControllerBase controller = new ControllerBase(0, false, false, true);
 
   public RobotContainer() {
     configureBindings();
@@ -18,6 +23,13 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+    CommandScheduler.getInstance().getActiveButtonLoop().clear();
+    controller.buttons[2].get().onTrue(
+        new InstantCommand(() -> drivetrain.enableXLock())).onFalse(
+            new InstantCommand(() -> drivetrain.disableXLock()));
+
+    controller.ESTOPCondition.get().onTrue(
+        new InstantCommand(() -> BasicFunctions.KILLIT()));
   }
 
   public Command getAutonomousCommand() {
