@@ -8,7 +8,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -25,7 +24,7 @@ public class SwerveModule extends SubsystemBase {
   private final PIDController m_drivePIDController;
   private final PIDController m_turnPIDController;
 
-  private final double driveGearRatio = 1/(10 * Math.PI * 15/50); // 1 is the gear ratio when I find out
+  private final double driveGearRatio = 1 / (10 * Math.PI * 15 / 50); // 1 is the gear ratio when I find out
 
   /**
    * Constructs a new SwerveModule.
@@ -82,11 +81,6 @@ public class SwerveModule extends SubsystemBase {
         m_driveMotor.get(), getEncoderPos());
   }
 
-  /** Converts to radians */
-  private Rotation2d getEncoderPos() {
-    return new Rotation2d(convertToRadians(m_turningEncoder.getPosition()));
-  }
-
   /**
    * Returns the current position of the module.
    *
@@ -95,14 +89,6 @@ public class SwerveModule extends SubsystemBase {
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(
         m_driveEncoder.getPosition(), getEncoderPos());
-  }
-
-  public CANSparkMax getTurnMotor() {
-    return m_turningMotor;
-  }
-
-  public CANSparkMax getDriveMotor() {
-    return m_driveMotor;
   }
 
   /**
@@ -127,24 +113,12 @@ public class SwerveModule extends SubsystemBase {
     m_turnPIDController.setSetpoint(covertFromRadians(state.angle.getRadians()));
   }
 
-  private double covertFromRadians(double radians) {
-    return (radians / (-2 * Math.PI)) + (1 / 2);
-  }
-
-  private double convertToRadians(double position) {
-    return (-(position - (1 / 2))) * (2 * Math.PI);
-  }
-
   @Override
   public void periodic() {
-
     m_turningMotor.set(m_turnPIDController.calculate(m_turningEncoder.getPosition()));
-    if (this.getName() == "Back right") {
-        // m_driveMotor.set(m_drivePIDController.calculate(m_driveEncoder.getVelocity()));
-      }
-      m_driveMotor.set(m_drivePIDController.getSetpoint()/5);
 
-    //m_driveMotor.set(0); // TODO: Switch back after debugging
+    // m_driveMotor.set(m_drivePIDController.calculate(m_driveEncoder.getVelocity())); // TODO
+    m_driveMotor.set(m_drivePIDController.getSetpoint() / 5);
 
     SmartDashboard.putData(this.getName() + " swerve turning PID", m_turnPIDController);
     SmartDashboard.putNumber(this.getName() + " swerve turning encoder", m_turningEncoder.getPosition());
@@ -162,5 +136,26 @@ public class SwerveModule extends SubsystemBase {
     } else {
       m_driveMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     }
+  }
+
+  private double covertFromRadians(double radians) {
+    return (radians / (-2 * Math.PI)) + (1 / 2);
+  }
+
+  private double convertToRadians(double position) {
+    return (-(position - (1 / 2))) * (2 * Math.PI);
+  }
+
+  /** Converts to radians */
+  private Rotation2d getEncoderPos() {
+    return new Rotation2d(convertToRadians(m_turningEncoder.getPosition()));
+  }
+
+  public CANSparkMax getTurnMotor() {
+    return m_turningMotor;
+  }
+
+  public CANSparkMax getDriveMotor() {
+    return m_driveMotor;
   }
 }
