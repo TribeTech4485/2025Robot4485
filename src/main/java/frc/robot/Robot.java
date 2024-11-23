@@ -6,10 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.SyncedLibraries.SystemBases.ControllerBase;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -90,10 +88,6 @@ public class Robot extends TimedRobot {
 
     if (joystick.getRawButton(12)) {
       m_robotContainer.drivetrain.resetGyro();
-    }
-
-    if (joystick.getRawButton(11)) {
-      m_robotContainer.drivetrain.resetDriveEncoder();
     }
 
     // SmartDashboard.putNumber("Joystick X", joystick.getLeftX());

@@ -5,18 +5,11 @@
 package frc.robot.Subsystems.Swerve;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import com.revrobotics.CANSparkMax;
 import frc.robot.SyncedLibraries.SystemBases.SwerveDriveBase;
 
 /** Represents a swerve drive style drivetrain. */
 public class Drivetrain extends SwerveDriveBase {
-	SwerveModule[] modules;
-	PIDController fakeController = new PIDController(0.5, 0, 0.01);
-
 	public Drivetrain() {
 		super(3, 3, new SwerveModule[] {
 				new SwerveModule(new CANSparkMax(3, MotorType.kBrushless),
@@ -35,40 +28,7 @@ public class Drivetrain extends SwerveDriveBase {
 		});
 	}
 
-	public void resetDriveEncoder() {
-		m_frontLeft.resetDriveEncoder();
-		m_frontRight.resetDriveEncoder();
-		m_backLeft.resetDriveEncoder();
-		m_backRight.resetDriveEncoder();
-	}
-
-	@Override
-	public void periodic() {
-		super.periodic();
-		if (m_frontLeft.m_drivePIDController.getP() != fakeController.getP()) {
-			m_frontLeft.m_drivePIDController.setP(fakeController.getP());
-			m_frontRight.m_drivePIDController.setP(fakeController.getP());
-			m_backLeft.m_drivePIDController.setP(fakeController.getP());
-			m_backRight.m_drivePIDController.setP(fakeController.getP());
-		}
-		if (m_frontLeft.m_drivePIDController.getI() != fakeController.getI()) {
-			m_frontLeft.m_drivePIDController.setI(fakeController.getI());
-			m_frontRight.m_drivePIDController.setI(fakeController.getI());
-			m_backLeft.m_drivePIDController.setI(fakeController.getI());
-			m_backRight.m_drivePIDController.setI(fakeController.getI());
-		}
-		if (m_frontLeft.m_drivePIDController.getD() != fakeController.getD()) {
-			m_frontLeft.m_drivePIDController.setD(fakeController.getD());
-			m_frontRight.m_drivePIDController.setD(fakeController.getD());
-			m_backLeft.m_drivePIDController.setD(fakeController.getD());
-			m_backRight.m_drivePIDController.setD(fakeController.getD());
-		}
-		if (m_frontLeft.m_drivePIDController.getSetpoint() != fakeController.getSetpoint()) {
-			m_frontLeft.m_drivePIDController.setSetpoint(fakeController.getSetpoint());
-			m_frontRight.m_drivePIDController.setSetpoint(fakeController.getSetpoint());
-			m_backLeft.m_drivePIDController.setSetpoint(fakeController.getSetpoint());
-			m_backRight.m_drivePIDController.setSetpoint(fakeController.getSetpoint());
-		}
-		SmartDashboard.putData("Driving PIDs", fakeController);
-	}
+  public void resetGyro() {
+		m_gyro.zeroYaw();
+  }
 }
