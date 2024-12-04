@@ -5,7 +5,8 @@
 package frc.robot.Subsystems.Swerve;
 
 import com.revrobotics.CANSparkMax;
-import frc.robot.SyncedLibraries.SystemBases.SwerveModuleBase;
+
+import frc.robot.SyncedLibraries.SystemBases.Swerve.SwerveModuleBase;
 
 public class SwerveModule extends SwerveModuleBase {
 
