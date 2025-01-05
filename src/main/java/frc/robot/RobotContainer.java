@@ -4,19 +4,25 @@
 
 package frc.robot;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import frc.robot.Commands.MoveToDistanceApriltag;
+import frc.robot.Subsystems.PhotonVision;
 import frc.robot.Subsystems.Swerve.*;
 
 public class RobotContainer {
   Drivetrain drivetrain = new Drivetrain();
+  PhotonVision photon = new PhotonVision(new PhotonCamera("photonvision"));
   // ControllerBase controller = new ControllerBase(0, false, false, true);
   CommandJoystick cont = new CommandJoystick(0);
   Joystick controller = cont.getHID();
+  MoveToDistanceApriltag moveToDistanceApriltag = new MoveToDistanceApriltag(drivetrain, null, 0, 0, 0);
 
   public RobotContainer() {
     configureBindings();
@@ -25,6 +31,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
+    cont.button(0).onTrue(moveToDistanceApriltag);
     // controller.buttons[2].get().onTrue(
     //     new InstantCommand(() -> drivetrain.enableXLock())).onFalse(
     //         new InstantCommand(() -> drivetrain.disableXLock()));
