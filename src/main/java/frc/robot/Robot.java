@@ -23,12 +23,10 @@ public class Robot extends TimedRobot {
    */
 
   private RobotContainer m_robotContainer;
-  Joystick joystick;
 
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
-    joystick = m_robotContainer.controller;
   }
 
   @Override
@@ -74,20 +72,16 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    if (joystick.getRawButton(7)) {
-      m_robotContainer.drivetrain.inputDrivingX_Y(-1, // -joystick.getY()
-          joystick.getX(), -joystick.getTwist(), joystick.getPOV());
+    if (m_robotContainer.driverController.RightTrigger.getAsBoolean()) {
+      m_robotContainer.drivetrain.inputDrivingX_Y_A(
+          m_robotContainer.driverController.getRightX(),
+          -m_robotContainer.driverController.getRightY(),
+          Math.atan2(m_robotContainer.driverController.getLeftX(), m_robotContainer.driverController.getLeftY()),
+          m_robotContainer.driverController.getPOV());
       // m_robotContainer.drivetrain.inputDrivingX_Y(-joystick.getLeftY(),
-      //     joystick.getLeftX(), -joystick.getRightX(), joystick.getPOV());
-    }
-    if (joystick.getRawButton(2)) {
-      m_robotContainer.drivetrain.enableXLock();
+      // joystick.getLeftX(), -joystick.getRightX(), joystick.getPOV());
     } else {
-      m_robotContainer.drivetrain.disableXLock();
-    }
-
-    if (joystick.getRawButton(12)) {
-      m_robotContainer.drivetrain.resetGyro();
+      m_robotContainer.drivetrain.inputDrivingX_Y(0, 0, 0);
     }
 
     // SmartDashboard.putNumber("Joystick X", joystick.getLeftX());

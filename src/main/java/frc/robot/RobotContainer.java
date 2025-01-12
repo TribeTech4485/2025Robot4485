@@ -7,22 +7,24 @@ package frc.robot;
 import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.Commands.MoveToDistanceApriltag;
 import frc.robot.Subsystems.PhotonVision;
 import frc.robot.Subsystems.Swerve.*;
+import frc.robot.SyncedLibraries.BasicFunctions;
+import frc.robot.SyncedLibraries.Controllers;
+import frc.robot.SyncedLibraries.SystemBases.ControllerBase;
 
 public class RobotContainer {
+  Controllers controllers = new Controllers(0.05, 0.05);
+  ControllerBase driverController = controllers.Zero;
   Drivetrain drivetrain = new Drivetrain();
-  PhotonVision photon = new PhotonVision(new PhotonCamera("photonvision"));
-  // ControllerBase controller = new ControllerBase(0, false, false, true);
-  CommandJoystick cont = new CommandJoystick(0);
-  Joystick controller = cont.getHID();
-  MoveToDistanceApriltag moveToDistanceApriltag = new MoveToDistanceApriltag(drivetrain, null, 0, 0, 0);
+  PhotonVision photon = new PhotonVision(new PhotonCamera("mainCamera"));
+  MoveToDistanceApriltag moveToDistanceApriltag = new MoveToDistanceApriltag(drivetrain, photon, 1, 0, 0);
 
   public RobotContainer() {
     configureBindings();
@@ -31,17 +33,24 @@ public class RobotContainer {
 
   private void configureBindings() {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
-    cont.button(0).onTrue(moveToDistanceApriltag);
+    driverController.ESTOPCondition.onTrue(new InstantCommand(BasicFunctions::KILLIT));
+
+    driverController.A.onTrue(moveToDistanceApriltag);
+
+    driverController.RightBumper.toggleOnTrue(
+        new StartEndCommand(drivetrain::enableXLock,
+            drivetrain::disableXLock));
+
     // controller.buttons[2].get().onTrue(
-    //     new InstantCommand(() -> drivetrain.enableXLock())).onFalse(
-    //         new InstantCommand(() -> drivetrain.disableXLock()));
+    // new InstantCommand(() -> drivetrain.enableXLock())).onFalse(
+    // new InstantCommand(() -> drivetrain.disableXLock()));
 
     // cont.get(2).onTrue(
     // new InstantCommand(() -> drivetrain.enableXLock())).onFalse(
     // new InstantCommand(() -> drivetrain.disableXLock()));
 
     // controller.ESTOPCondition.get().onTrue(
-    //     new InstantCommand(() -> BasicFunctions.KILLIT()));
+    // new InstantCommand(() -> BasicFunctions.KILLIT()));
   }
 
   public Command getAutonomousCommand() {

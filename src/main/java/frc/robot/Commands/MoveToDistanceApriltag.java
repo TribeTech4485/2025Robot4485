@@ -12,7 +12,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems.Swerve.Drivetrain;
 import frc.robot.SyncedLibraries.SystemBases.PhotonVisionBase;
-import frc.robot.SyncedLibraries.SystemBases.Swerve.SwerveDriveBase;
 
 public class MoveToDistanceApriltag extends Command {
   /** Creates a new MoveToDistanceApriltag. */
@@ -69,7 +68,7 @@ public class MoveToDistanceApriltag extends Command {
     double yOutput = yController.calculate(y);
     double thetaOutput = thetaController.calculate(theta);
 
-    driveBase.inputDrivingX_Y(xOutput, yOutput, thetaOutput, -1);
+    driveBase.inputDrivingX_Y(xOutput, yOutput, thetaOutput);
   }
 
   // Called once the command ends or is interrupted.
