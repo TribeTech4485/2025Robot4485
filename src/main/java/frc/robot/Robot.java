@@ -82,12 +82,6 @@ public class Robot extends TimedRobot {
     } else {
       m_robotContainer.drivetrain.inputDrivingX_Y(0, 0, 0);
     }
-
-    // SmartDashboard.putNumber("Joystick X", joystick.getLeftX());
-    // SmartDashboard.putNumber("Joystick Y", joystick.getLeftY());
-    // SmartDashboard.putNumber("Joystick Twist", joystick.getRightX());
-    // SmartDashboard.putNumber("Joystick Throttle", joystick.getThrottle());
-    // SmartDashboard.putNumber("Joystick POV", joystick.getPOV());
   }
 
   @Override

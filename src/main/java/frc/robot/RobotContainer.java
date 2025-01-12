@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import org.photonvision.PhotonCamera;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -16,9 +14,9 @@ import frc.robot.Commands.MoveToDistanceApriltag;
 import frc.robot.Subsystems.AlgaeClaw;
 import frc.robot.Subsystems.PhotonVision;
 import frc.robot.Subsystems.Swerve.*;
-import frc.robot.SyncedLibraries.BasicFunctions;
 import frc.robot.SyncedLibraries.Controllers;
 import frc.robot.SyncedLibraries.SystemBases.ControllerBase;
+import frc.robot.SyncedLibraries.SystemBases.Estopable;
 
 public class RobotContainer {
   Controllers controllers = new Controllers(0.05, 0.05);
@@ -36,7 +34,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
-    driverController.ESTOPCondition.onTrue(new InstantCommand(BasicFunctions::KILLIT));
+    driverController.ESTOPCondition.onTrue(new InstantCommand(Estopable::KILLIT));
 
     driverController.A.onTrue(moveToDistanceApriltag);
 
