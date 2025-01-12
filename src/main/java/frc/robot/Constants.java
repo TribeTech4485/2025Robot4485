@@ -14,7 +14,7 @@ public final class Constants {
         public static final int elevatorMotor1 = 9;
         public static final int elevatorMotor2 = 10;
 
-        public static final int algaeManipulatorMotor = 11;
+        public static final int algaeClawMotor = 11;
         public static final int coralManipulatorMotor = 12;
     }
 
@@ -25,8 +25,16 @@ public final class Constants {
         public static final int driveAmps = 10;
         public static final int turnAmps = 10;
 
-        
-        public static final double manipulatorCurrentLimit = 10;
+        public static final double module1Offset = 0.4547673;
+        public static final double module2Offset = 0.3288317;
+        public static final double module3Offset = 0.2699317;
+        public static final double module4Offset = 0.5163250;
+
+        public static final String module1Name = "Front right";
+        public static final String module2Name = "Front left";
+        public static final String module3Name = "Back left";
+        public static final String module4Name = "Back right";
+        public static final double sideLength = 29.75;
     }
     
     public static class Elevator {        
@@ -37,7 +45,14 @@ public final class Constants {
         public static final double posI = 0;
         public static final double posD = 0;
         public static final double posTolerance = 0.1;
-        public static final double amps = 10;
+        public static final int amps = 10;
+    }
 
+    public static class AlgaeClaw {
+        public static final int currentLimit = 10;
+    }
+
+    public static class CoralManipulator {
+        public static final int currentLimit = 10;
     }
 }

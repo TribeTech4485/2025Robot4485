@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.Commands.MoveToDistanceApriltag;
+import frc.robot.Subsystems.AlgaeClaw;
 import frc.robot.Subsystems.PhotonVision;
 import frc.robot.Subsystems.Swerve.*;
 import frc.robot.SyncedLibraries.BasicFunctions;
@@ -24,6 +25,8 @@ public class RobotContainer {
   ControllerBase driverController = controllers.Zero;
   Drivetrain drivetrain = new Drivetrain();
   PhotonVision photon = new PhotonVision(new PhotonCamera("mainCamera"));
+  AlgaeClaw algaeManipulator = new AlgaeClaw();
+
   MoveToDistanceApriltag moveToDistanceApriltag = new MoveToDistanceApriltag(drivetrain, photon, 1, 0, 0);
 
   public RobotContainer() {

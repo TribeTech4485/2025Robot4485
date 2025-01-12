@@ -6,14 +6,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Constants;
 import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
 
-public class AlgaeManipulator extends ManipulatorBase {
+public class AlgaeClaw extends ManipulatorBase {
 
-    public AlgaeManipulator(CANSparkMax motor) {
-        addMotors(motor);
+    public AlgaeClaw() {
+        addMotors(new CANSparkMax(Constants.Wirings.algaeClawMotor, CANSparkMax.MotorType.kBrushless));
         setBrakeMode(true);
-        setCurrentLimit(10);
+        setCurrentLimit(Constants.AlgaeClaw.currentLimit);
     }
 
     public void intake() {
@@ -39,5 +40,5 @@ public class AlgaeManipulator extends ManipulatorBase {
         setBrakeMode(false);
         fullStop();
     }
-    
+
 }

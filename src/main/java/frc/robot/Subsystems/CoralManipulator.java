@@ -6,14 +6,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Constants;
 import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
 
 public class CoralManipulator extends ManipulatorBase {
 
-    public CoralManipulator(CANSparkMax motor) {
-        addMotors(motor);
+    public CoralManipulator() {
+        addMotors(new CANSparkMax(Constants.Wirings.coralManipulatorMotor, CANSparkMax.MotorType.kBrushless));
         setBrakeMode(true);
-        setCurrentLimit(10);
+        setCurrentLimit(Constants.CoralManipulator.currentLimit);
     }
 
     public void intake() {
