@@ -24,7 +24,7 @@ public class RobotContainer {
   Controllers controllers = new Controllers(0.05, 0.05);
   ControllerBase driverController = controllers.Zero;
   Drivetrain drivetrain = new Drivetrain();
-  PhotonVision photon = new PhotonVision(new PhotonCamera("mainCamera"));
+  PhotonVision photon = new PhotonVision();
   AlgaeClaw algaeManipulator = new AlgaeClaw();
 
   MoveToDistanceApriltag moveToDistanceApriltag = new MoveToDistanceApriltag(drivetrain, photon, 1, 0, 0);
