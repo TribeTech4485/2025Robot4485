@@ -5,11 +5,8 @@
 package frc.robot.Subsystems.Swerve;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import edu.wpi.first.math.util.Units;
-
 import com.revrobotics.CANSparkMax;
-
 import frc.robot.Constants;
 import frc.robot.SyncedLibraries.SystemBases.Swerve.SwerveDriveBase;
 import frc.robot.SyncedLibraries.SystemBases.Swerve.SwerveModuleBase;
@@ -43,6 +40,8 @@ public class Drivetrain extends SwerveDriveBase {
 				}, Constants.Swerve.drivePID,
 				Constants.Swerve.turningPID,
 				Constants.Swerve.botTurnPID,
+				Constants.Swerve.maxWheelSpeed, 
+				Constants.Swerve.maxRotationSpeed,
 				Constants.Swerve.driveAmps,
 				Constants.Swerve.turnAmps);
 
