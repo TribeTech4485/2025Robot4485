@@ -40,7 +40,7 @@ public class Drivetrain extends SwerveDriveBase {
 				}, Constants.Swerve.drivePID,
 				Constants.Swerve.turningPID,
 				Constants.Swerve.botTurnPID,
-				Constants.Swerve.maxWheelSpeed, 
+				Constants.Swerve.maxWheelSpeed,
 				Constants.Swerve.maxRotationSpeed,
 				Constants.Swerve.driveAmps,
 				Constants.Swerve.turnAmps);

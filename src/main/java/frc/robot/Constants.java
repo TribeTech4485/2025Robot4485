@@ -49,9 +49,10 @@ public final class Constants {
         public static final double posP = 0.1; // TODO find elevator PID values
         public static final double posI = 0;
         public static final double posD = 0;
-        public static final double posFFS = 0;
+        public static final double posFFS = 0; // TODO find elevator FF values
         public static final double posFFV = 0;
         public static final double posFFG = 0;
+        public static final double posFFA = 0;
         public static final double maxVelocity = 3;
         public static final double maxAcceleration = 3;
     }
