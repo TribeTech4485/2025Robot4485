@@ -34,7 +34,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
-    driverController.ESTOPCondition.onTrue(new InstantCommand(Estopable::KILLIT));
+    driverController.ESTOPCondition.onTrue(new InstantCommand(() -> Estopable.KILLIT()));
 
     driverController.A.onTrue(moveToDistanceApriltag);
 

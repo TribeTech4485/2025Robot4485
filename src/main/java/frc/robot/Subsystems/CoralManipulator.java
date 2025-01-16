@@ -3,11 +3,11 @@ package frc.robot.Subsystems;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.Constants;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
+import frc.robot.Constants;
 
 public class CoralManipulator extends ManipulatorBase {
 
@@ -17,13 +17,7 @@ public class CoralManipulator extends ManipulatorBase {
         setCurrentLimit(Constants.CoralManipulator.currentLimit);
     }
 
-    public void intake() {
-        setPower(1);
-    }
-
-    public void outtake() {
-        setPower(-1);
-    }
+    // TODO: Basic intake and outtake methods for the smooth brain folk
 
     @Override
     public Command test() {
@@ -37,8 +31,7 @@ public class CoralManipulator extends ManipulatorBase {
 
     @Override
     public void ESTOP() {
-        setBrakeMode(false);
-        fullStop();
+        // TODO: your turn...
     }
-    
+
 }
