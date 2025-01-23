@@ -4,9 +4,9 @@
 
 package frc.robot.Subsystems.Swerve;
 
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.util.Units;
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.spark.SparkMax;
 import frc.robot.Constants;
 import frc.robot.SyncedLibraries.SystemBases.Swerve.SwerveDriveBase;
 import frc.robot.SyncedLibraries.SystemBases.Swerve.SwerveModuleBase;
