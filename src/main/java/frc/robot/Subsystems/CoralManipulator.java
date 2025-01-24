@@ -17,7 +17,6 @@ public class CoralManipulator extends ManipulatorBase {
         setCurrentLimit(Constants.CoralManipulator.currentLimit);
     }
 
-    // TODO: Basic intake and outtake methods for the smooth brain folk
 
     @Override
     public Command test() {
@@ -28,10 +27,19 @@ public class CoralManipulator extends ManipulatorBase {
                 new WaitCommand(1),
                 new InstantCommand(() -> setPower(0)));
     }
+    public void intake() {
+        setPower(1);
+        
+    }
+    public void outtake() {
+        setPower(-1);
+
+    }
 
     @Override
     public void ESTOP() {
-        // TODO: your turn...
+        setBrakeMode(false);
+        fullStop();
     }
 
 }
