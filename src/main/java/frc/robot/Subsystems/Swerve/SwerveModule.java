@@ -10,7 +10,7 @@ import frc.robot.SyncedLibraries.SystemBases.Swerve.SwerveModuleBase;
 
 public class SwerveModule extends SwerveModuleBase {
 
-  public SwerveModule(CANSparkMax driveMotor, CANSparkMax turningMotor, double turningOffset, String name) {
+  public SwerveModule(SparkMax driveMotor, SparkMax turningMotor, double turningOffset, String name) {
     super(driveMotor, turningMotor, turningOffset, name);
   }
 }

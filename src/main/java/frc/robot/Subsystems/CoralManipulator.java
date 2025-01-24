@@ -1,6 +1,6 @@
 package frc.robot.Subsystems;
 
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -12,7 +12,7 @@ import frc.robot.Constants;
 public class CoralManipulator extends ManipulatorBase {
 
     public CoralManipulator() {
-        addMotors(new CANSparkMax(Constants.Wirings.coralManipulatorMotor, CANSparkMax.MotorType.kBrushless));
+        addMotors(new SparkMax(Constants.Wirings.coralManipulatorMotor, SparkMax.MotorType.kBrushless));
         setBrakeMode(true);
         setCurrentLimit(Constants.CoralManipulator.currentLimit);
     }

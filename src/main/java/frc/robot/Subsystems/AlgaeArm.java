@@ -1,6 +1,6 @@
 package frc.robot.Subsystems;
 
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -13,7 +13,7 @@ public class AlgaeArm extends ManipulatorBase {
 
     // 0 is straight up, 90 is perpendicular to the ground
     public AlgaeArm() {
-        addMotors(new CANSparkMax(Constants.Wirings.algaeArmMotor, CANSparkMax.MotorType.kBrushless));
+        addMotors(new SparkMax(Constants.Wirings.algaeArmMotor, SparkMax.MotorType.kBrushless));
         setBrakeMode(true);
         setCurrentLimit(Constants.AlgaeArm.currentLimit);
     }

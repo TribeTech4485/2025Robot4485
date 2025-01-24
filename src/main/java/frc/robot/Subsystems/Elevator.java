@@ -1,6 +1,6 @@
 package frc.robot.Subsystems;
 
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -13,8 +13,8 @@ public class Elevator extends ManipulatorBase {
 
     public Elevator() {
         // TODO: Custom sensor as lower limit switch
-        addMotors(new CANSparkMax(Constants.Wirings.elevatorMotor1, CANSparkMax.MotorType.kBrushless),
-                new CANSparkMax(Constants.Wirings.elevatorMotor2, CANSparkMax.MotorType.kBrushless));
+        addMotors(new SparkMax(Constants.Wirings.elevatorMotor1, SparkMax.MotorType.kBrushless),
+                new SparkMax(Constants.Wirings.elevatorMotor2, SparkMax.MotorType.kBrushless));
         invertSpecificMotors(true, 1);
         setBrakeMode(true);
         setCurrentLimit(Constants.Elevator.amps);
