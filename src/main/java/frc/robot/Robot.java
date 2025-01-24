@@ -120,4 +120,12 @@ public class Robot extends TimedRobot {
       testCommand.cancel();
     }
   }
+
+  @Override
+  public void simulationInit() {
+  }
+
+  @Override
+  public void simulationPeriodic() {
+  }
 }
