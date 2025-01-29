@@ -20,13 +20,8 @@ public final class Constants {
     }
 
     public static class Swerve {
-        public static final double[] drivePID = { 0.5, 0, 0.01 };
-        public static final double[] turningPID = { 0.5, 0, 0.01 };
-        public static final double[] botTurnPID = { 0.5, 0, 0.1 };
         public static final int driveAmps = 10;
         public static final int turnAmps = 10;
-        public static final double maxWheelSpeed = 1;
-        public static final double maxRotationSpeed = 1;
 
         public static final double module1Offset = 0.4547673;
         public static final double module2Offset = 0.3288317;
@@ -38,12 +33,48 @@ public final class Constants {
         public static final String module3Name = "Back left";
         public static final String module4Name = "Back right";
         public static final double sideLength = 29.75;
+
+        public static class Movement {
+            public static final double maxSpeed = 1;
+            public static final double maxAccel = 1;
+            public static final double maxRotationSpeed = 1;
+            public static final double maxRotationAccel = 1;
+
+            public static final double driveGearRatio = 1 / (10 * Math.PI * 15 / 50);
+
+            public static class Drive {
+                public static final double P = 0.1;
+                public static final double I = 0;
+                public static final double D = 0;
+                public static final double S = 0;
+                public static final double V = 0;
+                public static final double A = 0;
+                public static final double[] PIDF = { P, I, D, S, V, A };
+            }
+
+            public static class Turn {
+                public static final double P = 0.1;
+                public static final double I = 0;
+                public static final double D = 0;
+                public static final double[] PID = { P, I, D };
+            }
+
+            public static class BotTurn {
+                public static final double P = 0.1;
+                public static final double I = 0;
+                public static final double D = 0;
+                public static final double S = 0;
+                public static final double V = 0;
+                public static final double A = 0;
+                public static final double[] PIDF = { P, I, D, S, V, A };
+            }
+        }
     }
 
     public static class Elevator {
         public static final int amps = 10;
-        public static final double positionMultiplier = 100;  // TODO find elevator position multiplier to be in meters
-        public static final double positionBoundsMin = 0;  // TODO find elevator position bounds
+        public static final double positionMultiplier = 100; // TODO find elevator position multiplier to be in meters
+        public static final double positionBoundsMin = 0; // TODO find elevator position bounds
         public static final double positionBoundsMax = 2;
 
         public static final double posP = 0.1; // TODO find elevator PID values
@@ -53,8 +84,10 @@ public final class Constants {
         public static final double posFFV = 0;
         public static final double posFFG = 0;
         public static final double posFFA = 0;
-        public static final double maxVelocity = 3;
-        public static final double maxAcceleration = 3;
+        public static final double[] posPIDF = { posP, posI, posD, posFFS, posFFV, posFFG, posFFA };
+
+        public static final double maxVelocity = 0.25;
+        public static final double maxAcceleration = 0.25;
     }
 
     public static class AlgaeClaw {

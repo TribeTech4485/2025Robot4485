@@ -4,12 +4,10 @@
 
 package frc.robot;
 
-import java.util.LinkedList;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.SyncedLibraries.SystemBases.Estopable;
 import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
 
 public class Robot extends TimedRobot {
@@ -26,7 +24,7 @@ public class Robot extends TimedRobot {
    * POV: change rotation center
    */
 
-  private RobotContainer m_robotContainer;
+  public RobotContainer m_robotContainer;
 
   @Override
   public void robotInit() {
@@ -96,15 +94,10 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
     CommandScheduler.getInstance().cancelAll();
-    LinkedList<ManipulatorBase> manipulators = new LinkedList<ManipulatorBase>();
-    for (Estopable estopable : Estopable.getAllEstopables()) {
-      if (estopable instanceof ManipulatorBase) {
-        manipulators.add((ManipulatorBase) estopable);
-      }
-    }
-    Command[] tests = new Command[manipulators.size()];
-    for (int i = 0; i < manipulators.size(); i++) {
-      tests[i] = manipulators.get(i).test();
+    ManipulatorBase[] manipulators = ManipulatorBase.getAllManipulators();
+    Command[] tests = new Command[manipulators.length];
+    for (int i = 0; i < manipulators.length; i++) {
+      tests[i++] = manipulators[i].test();
     }
     testCommand = new SequentialCommandGroup(tests);
     testCommand.schedule();

@@ -5,48 +5,48 @@
 package frc.robot.Subsystems.Swerve;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import com.revrobotics.spark.SparkMax;
-import frc.robot.Constants;
+import frc.robot.Constants.Swerve;
+import frc.robot.Constants.Wirings;
+import frc.robot.Constants.Swerve.Movement;
 import frc.robot.SyncedLibraries.SystemBases.Swerve.SwerveDriveBase;
-import frc.robot.SyncedLibraries.SystemBases.Swerve.SwerveModuleBase;
 
 /** Represents a swerve drive style drivetrain. */
 public class Drivetrain extends SwerveDriveBase {
+	public static final TrapezoidProfile.Constraints driveConstraints = new TrapezoidProfile.Constraints(
+			Movement.maxSpeed, Movement.maxAccel);
+
 	public Drivetrain() {
-		super(Units.inchesToMeters(Constants.Swerve.sideLength),
-				Units.inchesToMeters(Constants.Swerve.sideLength),
+		super(Units.inchesToMeters(Swerve.sideLength),
+				Units.inchesToMeters(Swerve.sideLength),
 				new SwerveModule[] {
 						new SwerveModule(
-								new SparkMax(Constants.Wirings.swerveModule2DriveMotor, MotorType.kBrushless),
-								new SparkMax(Constants.Wirings.swerveModule2TurningMotor, MotorType.kBrushless),
-								Constants.Swerve.module2Offset, Constants.Swerve.module2Name), // front left, 3, 4
+								new SparkMax(Wirings.swerveModule2DriveMotor, MotorType.kBrushless),
+								new SparkMax(Wirings.swerveModule2TurningMotor, MotorType.kBrushless),
+								Swerve.module2Offset, Swerve.module2Name), // front left, 3, 4
 
 						new SwerveModule(
-								new SparkMax(Constants.Wirings.swerveModule1DriveMotor, MotorType.kBrushless),
-								new SparkMax(Constants.Wirings.swerveModule1TurningMotor, MotorType.kBrushless),
-								Constants.Swerve.module1Offset, Constants.Swerve.module1Name), // front right 1, 2
+								new SparkMax(Wirings.swerveModule1DriveMotor, MotorType.kBrushless),
+								new SparkMax(Wirings.swerveModule1TurningMotor, MotorType.kBrushless),
+								Swerve.module1Offset, Swerve.module1Name), // front right 1, 2
 
 						new SwerveModule(
-								new SparkMax(Constants.Wirings.swerveModule3DriveMotor, MotorType.kBrushless),
-								new SparkMax(Constants.Wirings.swerveModule3TurningMotor, MotorType.kBrushless),
-								Constants.Swerve.module3Offset, Constants.Swerve.module3Name), // back left 5, 6
+								new SparkMax(Wirings.swerveModule3DriveMotor, MotorType.kBrushless),
+								new SparkMax(Wirings.swerveModule3TurningMotor, MotorType.kBrushless),
+								Swerve.module3Offset, Swerve.module3Name), // back left 5, 6
 
 						new SwerveModule(
-								new SparkMax(Constants.Wirings.swerveModule4DriveMotor, MotorType.kBrushless),
-								new SparkMax(Constants.Wirings.swerveModule4TurningMotor, MotorType.kBrushless),
-								Constants.Swerve.module4Offset, Constants.Swerve.module4Name) // back right 7, 8
+								new SparkMax(Wirings.swerveModule4DriveMotor, MotorType.kBrushless),
+								new SparkMax(Wirings.swerveModule4TurningMotor, MotorType.kBrushless),
+								Swerve.module4Offset, Swerve.module4Name) // back right 7, 8
 				// drive motors are odd, turning motors are even
-				}, Constants.Swerve.drivePID,
-				Constants.Swerve.turningPID,
-				Constants.Swerve.botTurnPID,
-				Constants.Swerve.maxWheelSpeed,
-				Constants.Swerve.maxRotationSpeed,
-				Constants.Swerve.driveAmps,
-				Constants.Swerve.turnAmps);
-
-		for (SwerveModuleBase module : modules) {
-			module.inputDriveTrain(this);
-		}
+				},
+				// Swerve.drivePID,
+				// Swerve.turningPID,
+				Swerve.Movement.BotTurn.PIDF,
+				driveConstraints,
+				Movement.maxRotationSpeed);
 	}
 }

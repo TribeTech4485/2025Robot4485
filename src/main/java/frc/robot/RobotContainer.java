@@ -28,13 +28,13 @@ public class RobotContainer {
   MoveToDistanceApriltag moveToDistanceApriltag = new MoveToDistanceApriltag(drivetrain, photon, 1, 0, 0);
 
   public RobotContainer() {
-    configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
+    configureBindings();
   }
 
   private void configureBindings() {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
-    driverController.ESTOPCondition.onTrue(new InstantCommand(() -> Estopable.KILLIT()));
+    driverController.ESTOPCondition.onTrue(new InstantCommand(Estopable::KILLIT));
 
     driverController.A.onTrue(moveToDistanceApriltag);
 

@@ -24,8 +24,10 @@ public class Elevator extends ManipulatorBase {
         home().schedule();
         setPositionPID(
                 new ManipulatorFFMoveCommand(this, 0, 0, Constants.Elevator.posP, Constants.Elevator.posI,
-                        Constants.Elevator.posD, "Elevator", Constants.Elevator.posFFS, Constants.Elevator.posFFV,
-                        Constants.Elevator.posFFG, Constants.Elevator.posFFA, Constants.Elevator.maxVelocity, Constants.Elevator.maxAcceleration));
+                        Constants.Elevator.posD, ManipulatorFFMoveCommand.FeedForwardType.Elevator,
+                        Constants.Elevator.posFFS, Constants.Elevator.posFFV,
+                        Constants.Elevator.posFFG, Constants.Elevator.posFFA, Constants.Elevator.maxVelocity,
+                        Constants.Elevator.maxAcceleration));
     }
 
     public void retract() {
