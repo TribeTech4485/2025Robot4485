@@ -4,10 +4,14 @@
 
 package frc.robot;
 
+import org.littletonrobotics.urcl.URCL;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.SyncedLibraries.SystemBases.Estopable;
 import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
 
 public class Robot extends TimedRobot {
@@ -29,6 +33,10 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
+
+    // If publishing to NetworkTables and DataLog
+    DataLogManager.start();
+    URCL.start();
   }
 
   @Override
@@ -38,6 +46,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
+    if (DriverStation.isEStopped()) {
+      Estopable.dontAllowFullEstop();
+      Estopable.KILLIT();
+    }
   }
 
   @Override
@@ -74,17 +86,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    if (m_robotContainer.driverController.RightTrigger.getAsBoolean()) {
-      m_robotContainer.drivetrain.inputDrivingX_Y_A(
-          m_robotContainer.driverController.getRightX(),
-          -m_robotContainer.driverController.getRightY(),
-          Math.atan2(m_robotContainer.driverController.getLeftX(), m_robotContainer.driverController.getLeftY()),
-          m_robotContainer.driverController.getPOV());
-      // m_robotContainer.drivetrain.inputDrivingX_Y(-joystick.getLeftY(),
-      // joystick.getLeftX(), -joystick.getRightX(), joystick.getPOV());
-    } else {
-      m_robotContainer.drivetrain.inputDrivingX_Y(0, 0, 0);
-    }
   }
 
   @Override

@@ -20,8 +20,8 @@ public final class Constants {
     }
 
     public static class Swerve {
-        public static final int driveAmps = 10;
-        public static final int turnAmps = 10;
+        public static final int driveAmps = 20;
+        public static final int turnAmps = 20;
 
         public static final double module1Offset = 0.4547673;
         public static final double module2Offset = 0.3288317;
@@ -72,7 +72,7 @@ public final class Constants {
     }
 
     public static class Elevator {
-        public static final int amps = 10;
+        public static final int amps = 20;
         public static final double positionMultiplier = 100; // TODO find elevator position multiplier to be in meters
         public static final double positionBoundsMin = 0; // TODO find elevator position bounds
         public static final double positionBoundsMax = 2;

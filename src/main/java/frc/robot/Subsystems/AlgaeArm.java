@@ -16,6 +16,8 @@ public class AlgaeArm extends ManipulatorBase {
         addMotors(new SparkMax(Constants.Wirings.algaeArmMotor, SparkMax.MotorType.kBrushless));
         setBrakeMode(true);
         setCurrentLimit(Constants.AlgaeArm.currentLimit);
+
+        // TODO: if elevator is going down, arm should go up
     }
 
     @Override
