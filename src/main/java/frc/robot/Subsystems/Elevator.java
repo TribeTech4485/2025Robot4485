@@ -28,10 +28,10 @@ public class Elevator extends ManipulatorBase {
                 Constants.Elevator.positionBoundsMax);
         home().schedule();
         setPositionPID(
-                new ManipulatorFFMoveCommand(this, 0, 0, Constants.Elevator.posP, Constants.Elevator.posI,
-                        Constants.Elevator.posD, ManipulatorFFMoveCommand.FeedForwardType.Elevator,
-                        Constants.Elevator.posFFS, Constants.Elevator.posFFV,
-                        Constants.Elevator.posFFG, Constants.Elevator.posFFA, Constants.Elevator.maxVelocity,
+                new ManipulatorFFMoveCommand(this, 0, 0, Constants.Elevator.P, Constants.Elevator.I,
+                        Constants.Elevator.D, ManipulatorFFMoveCommand.FeedForwardType.Elevator,
+                        Constants.Elevator.S, Constants.Elevator.V,
+                        Constants.Elevator.G, Constants.Elevator.A, Constants.Elevator.maxVelocity,
                         Constants.Elevator.maxAcceleration));
 
         sysIdRoutine = new SysIdRoutine(new SysIdRoutine.Config(),

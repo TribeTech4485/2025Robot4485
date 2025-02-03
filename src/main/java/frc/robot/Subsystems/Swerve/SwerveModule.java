@@ -14,8 +14,8 @@ public class SwerveModule extends SwerveModuleBase {
 
   private static final double[] drivePIDF = { 0, 0, 0, 0, 0, 0 };
   private static final double[] turnPID = { 0, 0, 0 };
-  private static final SparkMaxConfig driveConfig = new SparkMaxConfig(); // TODO
-  private static final SparkMaxConfig turningConfig = new SparkMaxConfig(); // TODO
+  private static final SparkMaxConfig driveConfig = new SparkMaxConfig(); // TODO make swerve motor config
+  private static final SparkMaxConfig turningConfig = new SparkMaxConfig(); // TODO make swerve motor config
   private static final TrapezoidProfile.Constraints driveConstraints = Drivetrain.driveConstraints;
 
   public SwerveModule(SparkMax driveMotor, SparkMax turningMotor, double turningOffset, String name) {

@@ -11,7 +11,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Commands.MoveToDistanceApriltag;
 import frc.robot.Commands.TeleDrive;
+import frc.robot.Subsystems.CoralManipulator;
 import frc.robot.Subsystems.Elevator;
+import frc.robot.Subsystems.AlgaeArm;
 import frc.robot.Subsystems.AlgaeClaw;
 import frc.robot.Subsystems.PhotonVision;
 import frc.robot.Subsystems.Swerve.Drivetrain;
@@ -20,50 +22,52 @@ import frc.robot.SyncedLibraries.SystemBases.ControllerBase;
 import frc.robot.SyncedLibraries.SystemBases.Estopable;
 
 public class RobotContainer {
-  Controllers controllers = new Controllers();
-  ControllerBase driverController = controllers.Zero;
-  ControllerBase operatorController = controllers.One;
-  Drivetrain drivetrain = new Drivetrain();
-  PhotonVision photon = new PhotonVision();
-  AlgaeClaw algaeManipulator = new AlgaeClaw();
-  Elevator elevator = new Elevator();
-  TeleDrive teleDrive = new TeleDrive(drivetrain, driverController, operatorController);
+    Controllers controllers = new Controllers();
+    ControllerBase driverController = controllers.Zero;
+    ControllerBase operatorController = controllers.One;
+    Drivetrain drivetrain = new Drivetrain();
+    PhotonVision photon = new PhotonVision();
+    AlgaeClaw algaeClaw = new AlgaeClaw();
+    AlgaeArm algaeArm = new AlgaeArm();
+    Elevator elevator = new Elevator();
+    CoralManipulator coralManipulator = new CoralManipulator();
+    TeleDrive teleDrive = new TeleDrive(drivetrain, controllers, elevator, algaeArm, algaeClaw, coralManipulator);
 
-  MoveToDistanceApriltag moveToDistanceApriltag = new MoveToDistanceApriltag(drivetrain, photon, 1, 0, 0);
+    MoveToDistanceApriltag moveToDistanceApriltag = new MoveToDistanceApriltag(drivetrain, photon, 1, 0, 0);
 
-  public RobotContainer() {
-    DriverStation.silenceJoystickConnectionWarning(true);
-    configureBindings();
-    Estopable.dontAllowFullEstop();
-  }
+    public RobotContainer() {
+        DriverStation.silenceJoystickConnectionWarning(true);
+        configureBindings();
+        Estopable.dontAllowFullEstop();
+    }
 
-  private void configureBindings() {
-    CommandScheduler.getInstance().getActiveButtonLoop().clear();
-    // driverController.A.onTrue(moveToDistanceApriltag);
-    teleDrive.setNormalTriggerBinds();
+    private void configureBindings() {
+        CommandScheduler.getInstance().getActiveButtonLoop().clear();
+        // driverController.A.onTrue(moveToDistanceApriltag);
+        teleDrive.setNormalTriggerBinds();
 
-    driverController.PovUp.and(driverController.A)
-        .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    driverController.PovUp.and(driverController.B)
-        .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        driverController.PovUp.and(driverController.A)
+                .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        driverController.PovUp.and(driverController.B)
+                .whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    driverController.PovUp.and(driverController.X)
-        .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    driverController.PovUp.and(driverController.Y)
-        .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        driverController.PovUp.and(driverController.X)
+                .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        driverController.PovUp.and(driverController.Y)
+                .whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
 
-    driverController.PovDown.and(driverController.A)
-        .whileTrue(drivetrain.dynamicSysID(SysIdRoutine.Direction.kForward));
-    driverController.PovDown.and(driverController.B)
-        .whileTrue(drivetrain.dynamicSysID(SysIdRoutine.Direction.kReverse));
+        driverController.PovDown.and(driverController.A)
+                .whileTrue(drivetrain.dynamicSysID(SysIdRoutine.Direction.kForward));
+        driverController.PovDown.and(driverController.B)
+                .whileTrue(drivetrain.dynamicSysID(SysIdRoutine.Direction.kReverse));
 
-    driverController.PovDown.and(driverController.X)
-        .whileTrue(drivetrain.quasistaticSysID(SysIdRoutine.Direction.kForward));
-    driverController.PovDown.and(driverController.Y)
-        .whileTrue(drivetrain.quasistaticSysID(SysIdRoutine.Direction.kReverse));
-  }
+        driverController.PovDown.and(driverController.X)
+                .whileTrue(drivetrain.quasistaticSysID(SysIdRoutine.Direction.kForward));
+        driverController.PovDown.and(driverController.Y)
+                .whileTrue(drivetrain.quasistaticSysID(SysIdRoutine.Direction.kReverse));
+    }
 
-  public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
-  }
+    public Command getAutonomousCommand() {
+        return Commands.print("No autonomous command configured");
+    }
 }

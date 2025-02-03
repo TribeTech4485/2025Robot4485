@@ -77,16 +77,16 @@ public final class Constants {
         public static final double positionBoundsMin = 0; // TODO find elevator position bounds
         public static final double positionBoundsMax = 2;
 
-        public static final double posP = 0.1; // TODO find elevator PID values
-        public static final double posI = 0;
-        public static final double posD = 0;
-        public static final double posFFS = 0; // TODO find elevator FF values
-        public static final double posFFV = 0;
-        public static final double posFFG = 0;
-        public static final double posFFA = 0;
-        public static final double[] posPIDF = { posP, posI, posD, posFFS, posFFV, posFFG, posFFA };
+        public static final double P = 0.1; // TODO find elevator PID values
+        public static final double I = 0;
+        public static final double D = 0;
+        public static final double S = 0; // TODO find elevator FF values
+        public static final double V = 0;
+        public static final double G = 0;
+        public static final double A = 0;
+        public static final double[] PIDF = { P, I, D, S, V, G, A };
 
-        public static final double maxVelocity = 0.25;
+        public static final double maxVelocity = 0.25; // TODO find elevator max velocity
         public static final double maxAcceleration = 0.25;
     }
 
@@ -96,6 +96,21 @@ public final class Constants {
 
     public static class AlgaeArm {
         public static final int currentLimit = 10;
+        public static final double positionMultiplier = 100; // TODO find arm position multiplier to be in radians
+        public static final double positionBoundsMin = Math.PI / 2;
+        public static final double positionBoundsMax = -Math.PI / 2;
+
+        public static final double P = 0.1; // TODO find arm PID values
+        public static final double I = 0;
+        public static final double D = 0;
+        public static final double S = 0; // TODO find arm FF values
+        public static final double V = 0;
+        public static final double G = 0;
+        public static final double A = 0;
+        public static final double[] PIDF = { P, I, D, S, V, G, A };
+
+        public static final double maxVelocity = 0.25; // TODO find arm max velocity
+        public static final double maxAcceleration = 0.25;
     }
 
     public static class CoralManipulator {
