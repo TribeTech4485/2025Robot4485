@@ -1,19 +1,17 @@
 package frc.robot.Subsystems;
 
 import com.revrobotics.spark.SparkMax;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.Constants;
+import frc.robot.SyncedLibraries.ManipulatorBaseSysID;
 import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
 import frc.robot.SyncedLibraries.SystemBases.ManipulatorFFMoveCommand;
 
 public class Elevator extends ManipulatorBase {
-    SysIdRoutine sysIdRoutine;
+    public ManipulatorBaseSysID sysID;
 
     public Elevator() {
         // TODO: Custom sensor as lower limit switch
@@ -34,8 +32,7 @@ public class Elevator extends ManipulatorBase {
                         Constants.Elevator.G, Constants.Elevator.A, Constants.Elevator.maxVelocity,
                         Constants.Elevator.maxAcceleration));
 
-        sysIdRoutine = new SysIdRoutine(new SysIdRoutine.Config(),
-                new Mechanism(this::setVoltage, null, this));
+        sysID = new ManipulatorBaseSysID(this);
     }
 
     public void retract() {
@@ -99,19 +96,5 @@ public class Elevator extends ManipulatorBase {
     @Override
     public void moveToPosition(double position) {
         moveToPosition(position, false);
-    }
-
-    public void setVoltage(Voltage voltage) {
-        super.setVoltage(voltage.magnitude(), true);
-    }
-
-    /** Voltage ramp, no accels */
-    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-        return sysIdRoutine.quasistatic(direction);
-    }
-
-    /** Voltage steps, for accel */
-    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-        return sysIdRoutine.dynamic(direction);
     }
 }
