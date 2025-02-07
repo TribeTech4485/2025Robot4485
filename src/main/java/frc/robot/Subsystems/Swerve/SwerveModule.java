@@ -8,7 +8,9 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.AbsoluteEncoderConfig;
+import com.revrobotics.spark.config.AlternateEncoderConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig;
+import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
@@ -22,12 +24,16 @@ public class SwerveModule extends SwerveModuleBase {
   private static final double[] drivePIDF = Movement.Drive.PIDF;
   private static final double[] turnPID = Movement.Turn.PID;
   private static final SparkBaseConfig driveConfig = new SparkMaxConfig()
-      .smartCurrentLimit(Constants.Swerve.driveAmps);
+      .smartCurrentLimit(Constants.Swerve.driveAmps)
+      .inverted(true)
+      .apply(new EncoderConfig().velocityConversionFactor(Movement.driveGearRatio));
   private static final SparkBaseConfig turningConfig = new SparkMaxConfig()
       .smartCurrentLimit(Constants.Swerve.turnAmps)
       // .apply(new
       // ClosedLoopConfig().p(Movement.Turn.P).i(Movement.Turn.I).d(Movement.Turn.D))
-      .apply(new AbsoluteEncoderConfig().positionConversionFactor(1));
+      .apply(new AbsoluteEncoderConfig().positionConversionFactor(Math.PI * 2)
+      .inverted(true)
+      .velocityConversionFactor(Math.PI * 2));
   private static final TrapezoidProfile.Constraints driveConstraints = Drivetrain.driveConstraints;
 
   public SwerveModule(SparkMax driveMotor, SparkMax turningMotor, double turningOffset, String name) {
