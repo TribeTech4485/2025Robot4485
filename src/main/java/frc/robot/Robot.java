@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.SyncedLibraries.SystemBases.Estopable;
 import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
@@ -93,9 +94,15 @@ public class Robot extends TimedRobot {
   public void testInit() {
     CommandScheduler.getInstance().cancelAll();
     ManipulatorBase[] manipulators = ManipulatorBase.getAllManipulators();
-    Command[] tests = new Command[manipulators.length];
-    for (int i = 0; i < manipulators.length; i++) {
-      tests[i++] = manipulators[i].test();
+    Command[] tests = new Command[manipulators.length + 1];
+    tests[0] = new PrintCommand("Starting Tests");
+    for (int i = 1; i < manipulators.length; i++) {
+      Command test = manipulators[i].test();
+      if (test != null) {
+        tests[i] = test;
+      } else {
+        tests[i] = new PrintCommand("No test for " + manipulators[i].getName());
+      }
     }
     testCommand = new SequentialCommandGroup(tests);
     testCommand.schedule();

@@ -46,25 +46,27 @@ public class RobotContainer {
     // driverController.A.onTrue(moveToDistanceApriltag);
     teleDrive.setNormalTriggerBinds();
 
-    driverController.PovUp.and(driverController.A)
-        .whileTrue(elevator.sysID.dynamicForwards());
-    driverController.PovUp.and(driverController.B)
-        .whileTrue(elevator.sysID.dynamicReverse());
+    if (false) {
+      driverController.PovUp.and(driverController.A)
+          .whileTrue(elevator.sysID.dynamicForwards());
+      driverController.PovUp.and(driverController.B)
+          .whileTrue(elevator.sysID.dynamicReverse());
 
-    driverController.PovUp.and(driverController.X)
-        .whileTrue(elevator.sysID.quasistaticForwards());
-    driverController.PovUp.and(driverController.Y)
-        .whileTrue(elevator.sysID.quasistaticReverse());
+      driverController.PovUp.and(driverController.X)
+          .whileTrue(elevator.sysID.quasistaticForwards());
+      driverController.PovUp.and(driverController.Y)
+          .whileTrue(elevator.sysID.quasistaticReverse());
 
-    driverController.PovDown.and(driverController.A)
-        .whileTrue(drivetrain.dynamicSysID(SysIdRoutine.Direction.kForward));
-    driverController.PovDown.and(driverController.B)
-        .whileTrue(drivetrain.dynamicSysID(SysIdRoutine.Direction.kReverse));
+      driverController.PovDown.and(driverController.A)
+          .whileTrue(drivetrain.dynamicSysID(SysIdRoutine.Direction.kForward));
+      driverController.PovDown.and(driverController.B)
+          .whileTrue(drivetrain.dynamicSysID(SysIdRoutine.Direction.kReverse));
 
-    driverController.PovDown.and(driverController.X)
-        .whileTrue(drivetrain.quasistaticSysID(SysIdRoutine.Direction.kForward));
-    driverController.PovDown.and(driverController.Y)
-        .whileTrue(drivetrain.quasistaticSysID(SysIdRoutine.Direction.kReverse));
+      driverController.PovDown.and(driverController.X)
+          .whileTrue(drivetrain.quasistaticSysID(SysIdRoutine.Direction.kForward));
+      driverController.PovDown.and(driverController.Y)
+          .whileTrue(drivetrain.quasistaticSysID(SysIdRoutine.Direction.kReverse));
+    }
   }
 
   public Command getAutonomousCommand() {

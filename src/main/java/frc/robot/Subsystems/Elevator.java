@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.SyncedLibraries.ManipulatorBaseSysID;
 import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
-import frc.robot.SyncedLibraries.SystemBases.ManipulatorFFMoveCommand;
+import frc.robot.SyncedLibraries.SystemBases.Utils.ManipulatorFFMoveCommand;
 
 public class Elevator extends ManipulatorBase {
     public ManipulatorBaseSysID sysID;

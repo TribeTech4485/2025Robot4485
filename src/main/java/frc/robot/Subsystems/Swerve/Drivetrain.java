@@ -48,6 +48,6 @@ public class Drivetrain extends SwerveDriveBase {
 				Swerve.Movement.BotTurn.PIDF,
 				driveConstraints,
 				Movement.maxRotationSpeed);
-		prepareSysID();
+		// prepareSysID(); // TODO: Uncomment this line to enable system identification
 	}
 }
