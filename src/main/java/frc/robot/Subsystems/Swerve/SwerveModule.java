@@ -5,11 +5,7 @@
 package frc.robot.Subsystems.Swerve;
 
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.AbsoluteEncoderConfig;
-import com.revrobotics.spark.config.AlternateEncoderConfig;
-import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -32,8 +28,8 @@ public class SwerveModule extends SwerveModuleBase {
       // .apply(new
       // ClosedLoopConfig().p(Movement.Turn.P).i(Movement.Turn.I).d(Movement.Turn.D))
       .apply(new AbsoluteEncoderConfig().positionConversionFactor(Math.PI * 2)
-      .inverted(true)
-      .velocityConversionFactor(Math.PI * 2));
+          .inverted(true)
+          .velocityConversionFactor(Math.PI * 2));
   private static final TrapezoidProfile.Constraints driveConstraints = Drivetrain.driveConstraints;
 
   public SwerveModule(SparkMax driveMotor, SparkMax turningMotor, double turningOffset, String name) {
