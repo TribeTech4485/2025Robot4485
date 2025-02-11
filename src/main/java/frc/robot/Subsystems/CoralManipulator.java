@@ -11,35 +11,36 @@ import frc.robot.Constants;
 
 public class CoralManipulator extends ManipulatorBase {
 
-    public CoralManipulator() {
-        addMotors(new SparkMax(Constants.Wirings.coralManipulatorMotor, SparkMax.MotorType.kBrushless));
-        setBrakeMode(true);
-        setCurrentLimit(Constants.CoralManipulator.currentLimit);
-    }
+  public CoralManipulator() {
+    addMotors(new SparkMax(Constants.Wirings.coralManipulatorMotor, SparkMax.MotorType.kBrushless));
+    setBrakeMode(true);
+    setCurrentLimit(Constants.CoralManipulator.currentLimit);
+  }
 
+  @Override
+  public Command test() {
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> setPower(1)),
+        new WaitCommand(1),
+        new InstantCommand(() -> setPower(-1)),
+        new WaitCommand(1),
+        new InstantCommand(() -> setPower(0)));
+  }
 
-    @Override
-    public Command test() {
-        return new SequentialCommandGroup(
-                new InstantCommand(() -> setPower(1)),
-                new WaitCommand(1),
-                new InstantCommand(() -> setPower(-1)),
-                new WaitCommand(1),
-                new InstantCommand(() -> setPower(0)));
-    }
-    public void intake() {
-        setPower(1);
-        
-    }
-    public void outtake() {
-        setPower(-1);
+  public void intake() {
+    setPower(1);
 
-    }
+  }
 
-    @Override
-    public void ESTOP() {
-        setBrakeMode(false);
-        fullStop();
-    }
+  public void outtake() {
+    setPower(-1);
+
+  }
+
+  @Override
+  public void ESTOP() {
+    setBrakeMode(false);
+    fullStop();
+  }
 
 }

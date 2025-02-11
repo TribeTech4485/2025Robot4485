@@ -35,21 +35,21 @@ public final class Constants {
     public static final double sideLength = 29.75;
 
     public static class Movement {
-      public static final double maxSpeed = 5;
-      public static final double maxAccel = 2;
+      public static final double maxSpeed = 2;
+      public static final double maxAccel = 1;
       public static final double maxRotationSpeed = Math.PI;
-      public static final double maxRotationAccel = 1;
+      public static final double maxRotationAccel = Math.PI / 4;
 
       // public static final double driveGearRatio = 1 / (10 * Math.PI * 15 / 50);
       // public static final double driveGearRatio = 1 / 6.75 * (Math.PI * 4 * 0.254);
       public static final double driveGearRatio = 1.8 / 2150;
 
       public static class Drive {
-        public static final double P = 5;
-        public static final double I = 0.1;
+        public static final double P = 0;
+        public static final double I = 0;
         public static final double D = 0;
         public static final double S = 0;
-        public static final double V = 0;
+        public static final double V = 3;
         public static final double A = 0;
         public static final double[] PIDF = { P, I, D, S, V, A };
       }
