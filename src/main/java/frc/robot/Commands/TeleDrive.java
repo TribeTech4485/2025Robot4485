@@ -25,8 +25,10 @@ public class TeleDrive extends TeleDriveCommandBase {
 
   // Percentage from center to edge, once outside:
   // the power goes to reverse in opposite the direction
-  final double powerControlMaxSafeMove = 0.75;
-  final double powerControlReversePower = 0.5;
+  final double powerControlMaxSafeMoveArm = 0.75;
+  final double powerControlMaxSafeMoveEle = 0.75;
+  final double powerControlReversePowerArm = 0.5;
+  final double powerControlReversePowerEle = 0.5;
 
   public TeleDrive(SwerveDriveBase driveTrain, Controllers controllers, Elevator elevator, AlgaeArm algaeArm,
       AlgaeClaw algaeClaw, CoralManipulator coralManipulator) {
@@ -77,33 +79,33 @@ public class TeleDrive extends TeleDriveCommandBase {
     if (controllers[1].LeftTrigger.getAsBoolean()) {
       if (controllers[1].getRightY() > 0) {
         if (elevator.getPosition() > elevatorPositionMiddle
-            + elevatorPositionRadius * powerControlMaxSafeMove) {
+            + elevatorPositionRadius * powerControlMaxSafeMoveEle) {
           elevator.setPower(controllers[1].getRightY());
         } else {
-          elevator.setPower(-powerControlReversePower);
+          elevator.setPower(-powerControlReversePowerEle);
         }
       } else if (controllers[1].getRightY() < 0) {
         if (elevator.getPosition() < elevatorPositionMiddle
-            - elevatorPositionRadius * powerControlMaxSafeMove) {
+            - elevatorPositionRadius * powerControlMaxSafeMoveEle) {
           elevator.setPower(controllers[1].getRightY());
         } else {
-          elevator.setPower(powerControlReversePower);
+          elevator.setPower(powerControlReversePowerEle);
         }
       } else {
         elevator.setPower(0);
       }
 
       if (controllers[1].getLeftY() > 0) {
-        if (algaeArm.getPosition() > armPositionMiddle + armPositionRadius * powerControlMaxSafeMove) {
+        if (algaeArm.getPosition() > armPositionMiddle + armPositionRadius * powerControlMaxSafeMoveArm) {
           algaeArm.setPower(controllers[1].getLeftY());
         } else {
-          algaeArm.setPower(-powerControlReversePower);
+          algaeArm.setPower(-powerControlReversePowerArm);
         }
       } else if (controllers[1].getLeftY() < 0) {
-        if (algaeArm.getPosition() < armPositionMiddle - armPositionRadius * powerControlMaxSafeMove) {
+        if (algaeArm.getPosition() < armPositionMiddle - armPositionRadius * powerControlMaxSafeMoveArm) {
           algaeArm.setPower(controllers[1].getLeftY());
         } else {
-          algaeArm.setPower(powerControlReversePower);
+          algaeArm.setPower(powerControlReversePowerArm);
         }
       } else {
         algaeArm.setPower(0);
