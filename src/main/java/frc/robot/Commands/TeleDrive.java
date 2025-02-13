@@ -75,23 +75,27 @@ public class TeleDrive extends TeleDriveCommandBase {
 
     // Left trigger = power control
     if (controllers[1].LeftTrigger.getAsBoolean()) {
-      if (controllers[1].getRightY() > 0) {
-        if (elevator.getPosition() > elevatorPositionMiddle
-            + elevatorPositionRadius * powerControlMaxSafeMove) {
-          elevator.setPower(controllers[1].getRightY());
+      if (false) {
+        if (controllers[1].getRightY() > 0) {
+          if (elevator.getPosition() > elevatorPositionMiddle
+              + elevatorPositionRadius * powerControlMaxSafeMove) {
+            elevator.setPower(controllers[1].getRightY());
+          } else {
+            elevator.setPower(-powerControlReversePower);
+          }
+
+        } else if (controllers[1].getRightY() < 0) {
+          if (elevator.getPosition() < elevatorPositionMiddle
+              - elevatorPositionRadius * powerControlMaxSafeMove) {
+            elevator.setPower(controllers[1].getRightY());
+          } else {
+            elevator.setPower(powerControlReversePower);
+          }
         } else {
-          elevator.setPower(-powerControlReversePower);
+          elevator.setPower(0);
         }
-      } else if (controllers[1].getRightY() < 0) {
-        if (elevator.getPosition() < elevatorPositionMiddle
-            - elevatorPositionRadius * powerControlMaxSafeMove) {
-          elevator.setPower(controllers[1].getRightY());
-        } else {
-          elevator.setPower(powerControlReversePower);
-        }
-      } else {
-        elevator.setPower(0);
       }
+      elevator.setPower(controllers[1].getRightY());
 
       if (controllers[1].getLeftY() > 0) {
         if (algaeArm.getPosition() > armPositionMiddle + armPositionRadius * powerControlMaxSafeMove) {
