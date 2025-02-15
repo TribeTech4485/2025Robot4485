@@ -1,16 +1,19 @@
 package frc.robot.Subsystems;
 
+import static edu.wpi.first.units.Units.Degrees;
+
 import com.revrobotics.spark.SparkMax;
 
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
-import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
-import frc.robot.SyncedLibraries.SystemBases.Utils.ManipulatorFFMoveCommand;
+import frc.robot.SyncedLibraries.SystemBases.AngleManipulatorBase;
+import frc.robot.SyncedLibraries.SystemBases.Utils.ManipulatorFFAngleCommand;
 
-public class AlgaeArm extends ManipulatorBase {
+public class AlgaeArm extends AngleManipulatorBase {
 
   // 0 is straight up, 90 is perpendicular to the ground
   public AlgaeArm() {
@@ -19,10 +22,11 @@ public class AlgaeArm extends ManipulatorBase {
     setCurrentLimit(Constants.AlgaeArm.currentLimit);
     setPositionMultiplier(Constants.AlgaeArm.positionMultiplier);
     // 0 is straight out, pi/2 is straight up
-    setPositionBounds(Constants.AlgaeArm.positionBoundsMin, Constants.AlgaeArm.positionBoundsMax);
+    setAngleBounds(Constants.AlgaeArm.positionBoundsMin, Constants.AlgaeArm.positionBoundsMax);
 
-    setPositionPID(new ManipulatorFFMoveCommand(this, 1.4, 0, Constants.AlgaeArm.P, Constants.AlgaeArm.I,
-        Constants.AlgaeArm.D, ManipulatorFFMoveCommand.FeedForwardType.Arm, Constants.AlgaeArm.S,
+    setPositionPID(new ManipulatorFFAngleCommand(this, getAngle(), Degrees.of(0), Constants.AlgaeArm.P,
+        Constants.AlgaeArm.I,
+        Constants.AlgaeArm.D, ManipulatorFFAngleCommand.FeedForwardType.Arm, Constants.AlgaeArm.S,
         Constants.AlgaeArm.V, Constants.AlgaeArm.G, Constants.AlgaeArm.A,
         Constants.AlgaeArm.maxVelocity, Constants.AlgaeArm.maxAcceleration));
     // TODO: if elevator is going down, arm should go up
@@ -31,9 +35,9 @@ public class AlgaeArm extends ManipulatorBase {
   @Override
   public Command test() {
     return new SequentialCommandGroup(
-        new InstantCommand(() -> moveToPosition(90, false)),
+        new InstantCommand(() -> moveToPosition(90)),
         new WaitUntilCommand(() -> isAtPosition()),
-        new InstantCommand(() -> moveToPosition(0, false)));
+        new InstantCommand(() -> moveToPosition(0)));
   }
 
   @Override
@@ -47,7 +51,11 @@ public class AlgaeArm extends ManipulatorBase {
   }
 
   @Override
-  public void moveToPosition(double position) {
-    moveToPosition(0, false);
+  public void moveToPosition(Angle position) {
+    moveToPosition(position, false);
+  }
+
+  public void moveToPosition(double degrees) {
+    moveToPosition(Degrees.of(degrees));
   }
 }

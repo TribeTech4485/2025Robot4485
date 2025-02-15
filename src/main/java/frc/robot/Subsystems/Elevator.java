@@ -1,16 +1,18 @@
 package frc.robot.Subsystems;
 
+import static edu.wpi.first.units.Units.Meters;
 import com.revrobotics.spark.SparkMax;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.SyncedLibraries.ManipulatorBaseSysID;
-import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
-import frc.robot.SyncedLibraries.SystemBases.Utils.ManipulatorFFMoveCommand;
+import frc.robot.SyncedLibraries.SystemBases.PositionManipulatorBase;
+import frc.robot.SyncedLibraries.SystemBases.Utils.ManipulatorFFDistanceCommand;
 
-public class Elevator extends ManipulatorBase {
+public class Elevator extends PositionManipulatorBase {
   public ManipulatorBaseSysID sysID;
 
   public Elevator() {
@@ -26,11 +28,13 @@ public class Elevator extends ManipulatorBase {
         Constants.Elevator.positionBoundsMax);
     home().schedule();
     setPositionPID(
-        new ManipulatorFFMoveCommand(this, 0, 0, Constants.Elevator.P, Constants.Elevator.I,
-            Constants.Elevator.D, ManipulatorFFMoveCommand.FeedForwardType.Elevator,
+        new ManipulatorFFDistanceCommand(this, Meters.of(0), Meters.of(0), Constants.Elevator.P, Constants.Elevator.I,
+            Constants.Elevator.D, ManipulatorFFDistanceCommand.FeedForwardType.Elevator,
             Constants.Elevator.S, Constants.Elevator.V,
             Constants.Elevator.G, Constants.Elevator.A, Constants.Elevator.maxVelocity,
             Constants.Elevator.maxAcceleration));
+
+    // TODO: custom sensor limit switch
 
     // sysID = new ManipulatorBaseSysID(this);
   }
@@ -78,7 +82,7 @@ public class Elevator extends ManipulatorBase {
         new InstantCommand(() -> setCurrentLimit(1)),
         new InstantCommand(() -> setPower(-0.1)),
         new WaitUntilCommand(customSensor),
-        new InstantCommand(() -> _setPosition(0)),
+        new InstantCommand(() -> _setPosition(Meters.of(0))),
         new InstantCommand(() -> setCurrentLimit(Constants.Elevator.amps)),
         new InstantCommand(() -> fullStop()),
         new InstantCommand(() -> moveToPosition(0)),
@@ -88,13 +92,17 @@ public class Elevator extends ManipulatorBase {
   @Override
   public Command test() {
     return new SequentialCommandGroup(
-        new InstantCommand(() -> moveToPosition(0)),
+        new InstantCommand(() -> moveToPosition(Meters.of(0))),
         new WaitUntilCommand(() -> isAtPosition()),
-        new InstantCommand(() -> moveToPosition(1.5)));
+        new InstantCommand(() -> moveToPosition(Meters.of(1.5))));
   }
 
   @Override
-  public void moveToPosition(double position) {
+  public void moveToPosition(Distance position) {
     moveToPosition(position, false);
+  }
+
+  public void moveToPosition(double meters) {
+    moveToPosition(Meters.of(meters));
   }
 }

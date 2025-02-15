@@ -1,6 +1,11 @@
 package frc.robot.Commands;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
+
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.Subsystems.AlgaeArm;
@@ -17,11 +22,11 @@ public class TeleDrive extends TeleDriveCommandBase {
   final AlgaeClaw algaeClaw;
   final CoralManipulator coralManipulator;
 
-  final double elevatorPositionMiddle;
-  final double elevatorPositionRadius;
+  final Distance elevatorPositionMiddle;
+  final Distance elevatorPositionRadius;
 
-  final double armPositionMiddle;
-  final double armPositionRadius;
+  final Angle armPositionMiddle;
+  final Angle armPositionRadius;
 
   // Percentage from center to edge, once outside:
   // the power goes to reverse in opposite the direction
@@ -38,18 +43,18 @@ public class TeleDrive extends TeleDriveCommandBase {
     this.algaeClaw = algaeClaw;
     this.coralManipulator = coralManipulator;
 
-    elevatorPositionMiddle = (Constants.Elevator.positionBoundsMax + Constants.Elevator.positionBoundsMin) / 2;
-    elevatorPositionRadius = elevatorPositionMiddle - Constants.Elevator.positionBoundsMin;
-    armPositionMiddle = (Constants.AlgaeArm.positionBoundsMax + Constants.AlgaeArm.positionBoundsMin) / 2;
-    armPositionRadius = armPositionMiddle - Constants.AlgaeArm.positionBoundsMin;
+    elevatorPositionMiddle = (Constants.Elevator.positionBoundsMax.plus(Constants.Elevator.positionBoundsMin)).div(2);
+    elevatorPositionRadius = elevatorPositionMiddle.minus(Constants.Elevator.positionBoundsMin);
+    armPositionMiddle = (Constants.AlgaeArm.positionBoundsMax.plus(Constants.AlgaeArm.positionBoundsMin)).div(2);
+    armPositionRadius = armPositionMiddle.minus(Constants.AlgaeArm.positionBoundsMin);
 
     this.controllers[1].RightTrigger
         .onFalse(new InstantCommand(() -> elevator.moveToPosition(elevator.getPosition())))
-        .onFalse(new InstantCommand(() -> algaeArm.moveToPosition(algaeArm.getPosition())));
+        .onFalse(new InstantCommand(() -> algaeArm.moveToPosition(algaeArm.getAngle())));
 
     this.controllers[1].LeftTrigger
         .onFalse(new InstantCommand(() -> elevator.moveToPosition(elevator.getPosition())))
-        .onFalse(new InstantCommand(() -> algaeArm.moveToPosition(algaeArm.getPosition())));
+        .onFalse(new InstantCommand(() -> algaeArm.moveToPosition(algaeArm.getAngle())));
   }
 
   @Override
@@ -59,7 +64,7 @@ public class TeleDrive extends TeleDriveCommandBase {
     // Right trigger = move to position
     if (controllers[1].RightTrigger.getAsBoolean()) {
       if (controllers[1].RightJoyMoved.getAsBoolean()) {
-        elevator.moveToPosition(elevatorPositionMiddle + elevatorPositionRadius * controllers[1].getRightY());
+        elevator.moveToPosition(elevatorPositionMiddle.plus(elevatorPositionRadius.times(controllers[1].getRightY())));
       } else {
         elevator.moveToPosition(elevator.getPosition());
       }
@@ -71,22 +76,22 @@ public class TeleDrive extends TeleDriveCommandBase {
         }
         algaeArm.moveToPosition(rotation.getRadians());
       } else {
-        algaeArm.moveToPosition(algaeArm.getPosition());
+        algaeArm.moveToPosition(algaeArm.getAngle());
       }
     }
 
     // Left trigger = power control
     if (controllers[1].LeftTrigger.getAsBoolean()) {
       if (controllers[1].getRightY() > 0) {
-        if (elevator.getPosition() > elevatorPositionMiddle
-            + elevatorPositionRadius * powerControlMaxSafeMoveEle) {
+        if (elevator.getPosition()
+            .compareTo(elevatorPositionMiddle.plus(elevatorPositionRadius.times(powerControlMaxSafeMoveEle))) > 0) {
           elevator.setPower(controllers[1].getRightY());
         } else {
           elevator.setPower(-powerControlReversePowerEle);
         }
       } else if (controllers[1].getRightY() < 0) {
-        if (elevator.getPosition() < elevatorPositionMiddle
-            - elevatorPositionRadius * powerControlMaxSafeMoveEle) {
+        if (elevator.getPosition()
+            .compareTo(elevatorPositionMiddle.minus(elevatorPositionRadius.times(powerControlMaxSafeMoveEle))) < 0) {
           elevator.setPower(controllers[1].getRightY());
         } else {
           elevator.setPower(powerControlReversePowerEle);
@@ -96,13 +101,15 @@ public class TeleDrive extends TeleDriveCommandBase {
       }
 
       if (controllers[1].getLeftY() > 0) {
-        if (algaeArm.getPosition() > armPositionMiddle + armPositionRadius * powerControlMaxSafeMoveArm) {
+        if (algaeArm.getAngle()
+            .compareTo(armPositionMiddle.plus(armPositionRadius.times(powerControlMaxSafeMoveArm))) > 0) {
           algaeArm.setPower(controllers[1].getLeftY());
         } else {
           algaeArm.setPower(-powerControlReversePowerArm);
         }
       } else if (controllers[1].getLeftY() < 0) {
-        if (algaeArm.getPosition() < armPositionMiddle - armPositionRadius * powerControlMaxSafeMoveArm) {
+        if (algaeArm.getAngle()
+            .compareTo(armPositionMiddle.minus(armPositionRadius.times(powerControlMaxSafeMoveArm))) < 0) {
           algaeArm.setPower(controllers[1].getLeftY());
         } else {
           algaeArm.setPower(powerControlReversePowerArm);

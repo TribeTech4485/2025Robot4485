@@ -1,5 +1,22 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
+
 public final class Constants {
   public static class Wirings {
     public static final int swerveModule1DriveMotor = 1;
@@ -32,13 +49,13 @@ public final class Constants {
     public static final String module2Name = "Front left";
     public static final String module3Name = "Back left";
     public static final String module4Name = "Back right";
-    public static final double sideLength = 29.75;
+    public static final Distance sideLength = Inches.of(29.75);
 
     public static class Movement {
-      public static final double maxSpeed = 2;
-      public static final double maxAccel = 1;
-      public static final double maxRotationSpeed = Math.PI;
-      public static final double maxRotationAccel = Math.PI / 4;
+      public static final LinearVelocity maxSpeed = MetersPerSecond.of(2);
+      public static final LinearAcceleration maxAccel = MetersPerSecondPerSecond.of(1);
+      public static final AngularVelocity maxRotationSpeed = RotationsPerSecond.of(1);
+      public static final AngularAcceleration maxRotationAccel = RotationsPerSecondPerSecond.of(0.25);
 
       // public static final double driveGearRatio = 1 / (10 * Math.PI * 15 / 50);
       // public static final double driveGearRatio = 1 / 6.75 * (Math.PI * 4 * 0.254);
@@ -76,8 +93,8 @@ public final class Constants {
   public static class Elevator {
     public static final int amps = 20;
     public static final double positionMultiplier = 100; // TODO find elevator position multiplier to be in meters
-    public static final double positionBoundsMin = 0; // TODO find elevator position bounds
-    public static final double positionBoundsMax = 2;
+    public static final Distance positionBoundsMin = Meters.of(0);
+    public static final Distance positionBoundsMax = Meters.of(2); // TODO find elevator position bounds
 
     public static final double P = 0.1; // TODO find elevator PID values
     public static final double I = 0;
@@ -88,8 +105,8 @@ public final class Constants {
     public static final double A = 0;
     public static final double[] PIDF = { P, I, D, S, V, G, A };
 
-    public static final double maxVelocity = 0.25; // TODO find elevator max velocity
-    public static final double maxAcceleration = 0.25;
+    public static final LinearVelocity maxVelocity = MetersPerSecond.of(0.25); // TODO find elevator max velocity
+    public static final LinearAcceleration maxAcceleration = MetersPerSecondPerSecond.of(0.25);
   }
 
   public static class AlgaeClaw {
@@ -99,8 +116,8 @@ public final class Constants {
   public static class AlgaeArm {
     public static final int currentLimit = 10;
     public static final double positionMultiplier = 100; // TODO find arm position multiplier to be in radians
-    public static final double positionBoundsMin = Math.PI / 2;
-    public static final double positionBoundsMax = -Math.PI / 2;
+    public static final Angle positionBoundsMin = Degrees.of(90);
+    public static final Angle positionBoundsMax = Degrees.of(-90);
 
     public static final double P = 0.1; // TODO find arm PID values
     public static final double I = 0;
@@ -111,8 +128,8 @@ public final class Constants {
     public static final double A = 0;
     public static final double[] PIDF = { P, I, D, S, V, G, A };
 
-    public static final double maxVelocity = 0.25; // TODO find arm max velocity
-    public static final double maxAcceleration = 0.25;
+    public static final AngularVelocity maxVelocity = RadiansPerSecond.of(0.25); // TODO find arm max velocity
+    public static final AngularAcceleration maxAcceleration = RadiansPerSecondPerSecond.of(0.25);
   }
 
   public static class CoralManipulator {

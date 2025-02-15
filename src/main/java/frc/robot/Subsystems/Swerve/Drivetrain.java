@@ -6,7 +6,8 @@ package frc.robot.Subsystems.Swerve;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import com.revrobotics.spark.SparkMax;
 import frc.robot.Constants.Swerve;
 import frc.robot.Constants.Wirings;
@@ -16,11 +17,11 @@ import frc.robot.SyncedLibraries.SystemBases.Swerve.SwerveDriveBase;
 /** Represents a swerve drive style drivetrain. */
 public class Drivetrain extends SwerveDriveBase {
 	public static final TrapezoidProfile.Constraints driveConstraints = new TrapezoidProfile.Constraints(
-			Movement.maxSpeed, Movement.maxAccel);
+			Movement.maxSpeed.in(MetersPerSecond), Movement.maxAccel.in(MetersPerSecondPerSecond));
 
 	public Drivetrain() {
-		super(Units.inchesToMeters(Swerve.sideLength),
-				Units.inchesToMeters(Swerve.sideLength),
+		super((Swerve.sideLength),
+				(Swerve.sideLength),
 				new SwerveModule[] {
 						new SwerveModule(
 								new SparkMax(Wirings.swerveModule2DriveMotor, MotorType.kBrushless),
@@ -43,8 +44,6 @@ public class Drivetrain extends SwerveDriveBase {
 								Swerve.module4Offset, Swerve.module4Name) // back right 7, 8
 				// drive motors are odd, turning motors are even
 				},
-				// Swerve.drivePID,
-				// Swerve.turningPID,
 				Swerve.Movement.BotTurn.PIDF,
 				driveConstraints,
 				Movement.maxRotationSpeed);
