@@ -72,7 +72,7 @@ public final class Constants {
       }
 
       public static class Turn {
-        public static final double P = 05;
+        public static final double P = 0; // 5
         public static final double I = 0;
         public static final double D = 0;
         public static final double[] PID = { P, I, D };
