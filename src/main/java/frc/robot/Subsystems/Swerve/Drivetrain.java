@@ -45,7 +45,8 @@ public class Drivetrain extends SwerveDriveBase {
 				// drive motors are odd, turning motors are even
 				},
 				Swerve.Movement.BotTurn.PIDF,
-				driveConstraints,
+				Movement.maxSpeed,
+				Movement.maxAccel,
 				Movement.maxRotationSpeed);
 		// prepareSysID(); // TODO: Uncomment this line to enable system identification
 	}

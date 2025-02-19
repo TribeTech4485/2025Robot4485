@@ -41,7 +41,7 @@ public class Elevator extends PositionManipulatorBase {
             Constants.Elevator.G, Constants.Elevator.A, Constants.Elevator.maxVelocity,
             Constants.Elevator.maxAcceleration));
 
-    // TODO: custom sensor limit switch
+    customSensor = getMotor(0).getForwardLimitSwitch()::isPressed;
 
     // sysID = new ManipulatorBaseSysID(this);
   }
@@ -90,8 +90,8 @@ public class Elevator extends PositionManipulatorBase {
         new InstantCommand(() -> setPower(-0.1)),
         new WaitUntilCommand(customSensor),
         new InstantCommand(() -> _setPosition(Meters.of(0))),
-        new InstantCommand(() -> setCurrentLimit(Constants.Elevator.amps)),
         new InstantCommand(() -> fullStop()),
+        new InstantCommand(() -> setCurrentLimit(Constants.Elevator.amps)),
         new InstantCommand(() -> moveToPosition(0)),
         new InstantCommand(() -> getMoveCommand().setEndOnTarget(false)));
   }
@@ -111,5 +111,10 @@ public class Elevator extends PositionManipulatorBase {
 
   public void moveToPosition(double meters) {
     moveToPosition(Meters.of(meters));
+  }
+
+  @Override
+  public void periodic() {
+    super.periodic();
   }
 }

@@ -114,10 +114,10 @@ public final class Constants {
   }
 
   public static class AlgaeArm {
-    public static final int currentLimit = 10;
+    public static final int amps = 10;
     public static final double positionMultiplier = 100; // TODO find arm position multiplier to be in radians
-    public static final Angle positionBoundsMin = Degrees.of(90);
-    public static final Angle positionBoundsMax = Degrees.of(-90);
+    public static final Angle positionBoundsMin = Degrees.of(-80);
+    public static final Angle positionBoundsMax = Degrees.of(90);
 
     public static final double P = 0.1; // TODO find arm PID values
     public static final double I = 0;
