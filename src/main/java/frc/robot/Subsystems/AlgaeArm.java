@@ -1,10 +1,13 @@
 package frc.robot.Subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Feet;
+import static edu.wpi.first.units.Units.Meters;
 
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -14,30 +17,47 @@ import frc.robot.SyncedLibraries.SystemBases.AngleManipulatorBase;
 import frc.robot.SyncedLibraries.SystemBases.Utils.ManipulatorFFAngleCommand;
 
 public class AlgaeArm extends AngleManipulatorBase {
+  final Elevator elevator;
 
-  // 0 is straight up, 90 is perpendicular to the ground
-  public AlgaeArm() {
+  public AlgaeArm(Elevator elevator) {
     addMotors(new SparkMax(Constants.Wirings.algaeArmMotor, SparkMax.MotorType.kBrushless));
     setBrakeMode(true);
-    setCurrentLimit(Constants.AlgaeArm.currentLimit);
+    setCurrentLimit(Constants.AlgaeArm.amps);
     setPositionMultiplier(Constants.AlgaeArm.positionMultiplier);
-    // 0 is straight out, pi/2 is straight up
+    // 0 is straight out, positive is up
     setAngleBounds(Constants.AlgaeArm.positionBoundsMin, Constants.AlgaeArm.positionBoundsMax);
 
     setPositionPID(new ManipulatorFFAngleCommand(this, getAngle(), Degrees.of(0), Constants.AlgaeArm.P,
-        Constants.AlgaeArm.I,
-        Constants.AlgaeArm.D, ManipulatorFFAngleCommand.FeedForwardType.Arm, Constants.AlgaeArm.S,
-        Constants.AlgaeArm.V, Constants.AlgaeArm.G, Constants.AlgaeArm.A,
+        Constants.AlgaeArm.I, Constants.AlgaeArm.D, ManipulatorFFAngleCommand.FeedForwardType.Arm,
+        Constants.AlgaeArm.S, Constants.AlgaeArm.V, Constants.AlgaeArm.G, Constants.AlgaeArm.A,
         Constants.AlgaeArm.maxVelocity, Constants.AlgaeArm.maxAcceleration));
+    home().schedule();
+    customSensor = getMotor(0).getForwardLimitSwitch()::isPressed;
     // TODO: if elevator is going down, arm should go up
+    this.elevator = elevator;
   }
 
   @Override
   public Command test() {
     return new SequentialCommandGroup(
-        new InstantCommand(() -> moveToPosition(90)),
-        new WaitUntilCommand(() -> isAtPosition()),
-        new InstantCommand(() -> moveToPosition(0)));
+        new InstantCommand(this::retract),
+        new WaitUntilCommand(this::isAtPosition),
+        new InstantCommand(() -> moveToPosition(0)),
+        new WaitUntilCommand(this::isAtPosition),
+        new InstantCommand(this::retract));
+  }
+
+  @Override
+  public Command home() {
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> setCurrentLimit(1)),
+        new InstantCommand(() -> setPower(0.1)),
+        new WaitUntilCommand(customSensor),
+        new InstantCommand(() -> _setAngle(Degrees.of(110))),
+        new InstantCommand(this::fullStop),
+        new InstantCommand(() -> setCurrentLimit(Constants.AlgaeArm.amps)),
+        new InstantCommand(this::retract),
+        new InstantCommand(() -> getMoveCommand().setEndOnTarget(false)));
   }
 
   @Override
@@ -47,7 +67,7 @@ public class AlgaeArm extends AngleManipulatorBase {
   }
 
   public void retract() {
-    moveToPosition(0);
+    moveToPosition(80);
   }
 
   @Override
@@ -57,5 +77,26 @@ public class AlgaeArm extends AngleManipulatorBase {
 
   public void moveToPosition(double degrees) {
     moveToPosition(Degrees.of(degrees));
+  }
+
+  public void elevatorCheck() {
+    Distance elevatorPosition = elevator.getPosition();
+    if (elevatorPosition.compareTo(Feet.of(0.5)) < 0
+        && getAngle().compareTo(Degrees.of(0)) < 0) {
+      // if elevator is below 0.5ft and arm is below level
+      retract();
+    }
+
+    if (elevatorPosition.compareTo(Meters.of(1.5)) > 0
+        && getAngle().compareTo(Degrees.of(50)) > 0) {
+      // if elevator is above 1.5m and arm is above 50 degrees
+      moveToPosition(Degrees.of(45));
+    }
+  }
+
+  @Override
+  public void periodic() {
+    super.periodic();
+    elevatorCheck();
   }
 }

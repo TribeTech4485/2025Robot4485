@@ -43,4 +43,8 @@ public class CoralManipulator extends ManipulatorBase {
     fullStop();
   }
 
+  @Override
+  public void periodic() {
+    super.periodic();
+  }
 }

@@ -28,8 +28,8 @@ public class RobotContainer {
   Drivetrain drivetrain = new Drivetrain();
   PhotonVision photon = new PhotonVision();
   AlgaeClaw algaeClaw = new AlgaeClaw();
-  AlgaeArm algaeArm = new AlgaeArm();
   Elevator elevator = new Elevator();
+  AlgaeArm algaeArm = new AlgaeArm(elevator);
   CoralManipulator coralManipulator = new CoralManipulator();
   TeleDrive teleDrive = new TeleDrive(drivetrain, controllers, elevator, algaeArm, algaeClaw, coralManipulator);
 

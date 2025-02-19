@@ -39,4 +39,9 @@ public class AlgaeClaw extends ManipulatorBase {
     setBrakeMode(false);
     fullStop();
   }
+
+  @Override
+  public void periodic() {
+    super.periodic();
+  }
 }
