@@ -62,17 +62,17 @@ public final class Constants {
       public static final double driveGearRatio = 1.8 / 2150;
 
       public static class Drive {
-        public static final double P = 0;
+        public static final double P = 0.5;
         public static final double I = 0;
         public static final double D = 0;
         public static final double S = 0;
-        public static final double V = 3;
+        public static final double V = 0.5;
         public static final double A = 0;
         public static final double[] PIDF = { P, I, D, S, V, A };
       }
 
       public static class Turn {
-        public static final double P = 0; // 5
+        public static final double P = 5; // 5
         public static final double I = 0;
         public static final double D = 0;
         public static final double[] PID = { P, I, D };
@@ -96,7 +96,7 @@ public final class Constants {
     public static final Distance positionBoundsMin = Meters.of(0);
     public static final Distance positionBoundsMax = Meters.of(2); // TODO find elevator position bounds
 
-    public static final double P = 0.1; // TODO find elevator PID values
+    public static final double P = 0; // TODO find elevator PID values
     public static final double I = 0;
     public static final double D = 0;
     public static final double S = 0; // TODO find elevator FF values

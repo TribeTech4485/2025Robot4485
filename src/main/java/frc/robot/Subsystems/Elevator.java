@@ -2,6 +2,10 @@ package frc.robot.Subsystems;
 
 import static edu.wpi.first.units.Units.Meters;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -16,10 +20,13 @@ public class Elevator extends PositionManipulatorBase {
   public ManipulatorBaseSysID sysID;
 
   public Elevator() {
+    for (SparkMax motor: getMotors()) {
+      motor.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    }
     // TODO: Custom sensor as lower limit switch
     addMotors(new SparkMax(Constants.Wirings.elevatorMotor1, SparkMax.MotorType.kBrushless),
         new SparkMax(Constants.Wirings.elevatorMotor2, SparkMax.MotorType.kBrushless));
-    invertSpecificMotors(true, 1);
+    // invertSpecificMotors(true, 0);
     setBrakeMode(true);
     setBreakerMaxAmps(40);
     setCurrentLimit(Constants.Elevator.amps);

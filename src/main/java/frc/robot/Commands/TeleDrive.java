@@ -80,18 +80,18 @@ public class TeleDrive extends TeleDriveCommandBase {
     // Left trigger = power control
     if (controllers[1].LeftTrigger.getAsBoolean()) {
       if (controllers[1].getRightY() > 0) {
+        elevator.setPower(controllers[1].getRightY());
         if (elevator.getPosition()
             .compareTo(elevatorPositionMiddle.plus(elevatorPositionRadius.times(powerControlMaxSafeMoveEle))) > 0) {
-          elevator.setPower(controllers[1].getRightY());
         } else {
-          elevator.setPower(-powerControlReversePowerEle);
+          // elevator.setPower(-powerControlReversePowerEle);
         }
       } else if (controllers[1].getRightY() < 0) {
+        elevator.setPower(controllers[1].getRightY());
         if (elevator.getPosition()
             .compareTo(elevatorPositionMiddle.minus(elevatorPositionRadius.times(powerControlMaxSafeMoveEle))) < 0) {
-          elevator.setPower(controllers[1].getRightY());
         } else {
-          elevator.setPower(powerControlReversePowerEle);
+          // elevator.setPower(powerControlReversePowerEle);
         }
       } else {
         elevator.setPower(0);
