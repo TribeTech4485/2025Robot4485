@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Commands.MoveToDistanceApriltag;
 import frc.robot.Commands.TeleDrive;
@@ -27,7 +29,7 @@ public class RobotContainer {
   ControllerBase driverController = controllers.Zero;
   ControllerBase operatorController = controllers.One;
   Drivetrain drivetrain = new Drivetrain();
-  PhotonVision photon = new PhotonVision();
+  // PhotonVision photon = new PhotonVision();
   AlgaeClaw algaeClaw = new AlgaeClaw();
   Elevator elevator = new Elevator();
   AlgaeArm algaeArm = new AlgaeArm(elevator);
@@ -35,7 +37,7 @@ public class RobotContainer {
   TeleDrive teleDrive = new TeleDrive(drivetrain, controllers, elevator, algaeArm, algaeClaw, coralManipulator);
   PIDConfig testConfig = new PIDConfig().set(1, 0, 0);
 
-  MoveToDistanceApriltag moveToDistanceApriltag = new MoveToDistanceApriltag(drivetrain, photon, 1, 0, 0);
+  // MoveToDistanceApriltag moveToDistanceApriltag = new MoveToDistanceApriltag(drivetrain, photon, 1, 0, 0);
 
   public RobotContainer() {
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -47,6 +49,18 @@ public class RobotContainer {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
     // driverController.A.onTrue(moveToDistanceApriltag);
     teleDrive.setNormalTriggerBinds();
+
+    operatorController.A.onTrue(new InstantCommand(() -> coralManipulator.setPower(0.75)));
+    operatorController.Y.onTrue(new InstantCommand(() -> coralManipulator.setPower(-1)));
+    operatorController.B.onTrue(new InstantCommand(() -> coralManipulator.setPower(0)));
+
+    operatorController.PovDown.onTrue(new InstantCommand(() -> algaeClaw.setPower(1)));
+    operatorController.PovUp.onTrue(new InstantCommand(() -> algaeClaw.setPower(-1)));
+    operatorController.PovLeft.onTrue(new InstantCommand(() -> algaeClaw.setPower(-0.25)));
+    operatorController.PovRight.onTrue(new InstantCommand(() -> algaeClaw.setPower(0)));
+
+    operatorController.ESTOPCondition.onTrue(new InstantCommand(Estopable::KILLIT));
+    driverController.ESTOPCondition.onTrue(new InstantCommand(Estopable::KILLIT));
 
     if (false) {
       driverController.PovUp.and(driverController.A)

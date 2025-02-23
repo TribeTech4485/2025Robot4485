@@ -50,6 +50,8 @@ public class TeleDrive extends TeleDriveCommandBase {
         .onFalse(new InstantCommand(() -> algaeArm.moveToPosition(algaeArm.getAngle())));
 
     this.controllers[1].LeftTrigger
+        .onTrue(new InstantCommand(() -> elevator.stopCommand()))
+        .onTrue(new InstantCommand(() -> algaeArm.stopCommand()))
         .onFalse(new InstantCommand(() -> elevator.moveToPosition(elevator.getPosition())))
         .onFalse(new InstantCommand(() -> algaeArm.moveToPosition(algaeArm.getAngle())));
   }
@@ -80,14 +82,14 @@ public class TeleDrive extends TeleDriveCommandBase {
     // Left trigger = power control
     if (controllers[1].LeftTrigger.getAsBoolean()) {
       if (controllers[1].getRightY() > 0) {
-        elevator.setPower(controllers[1].getRightY());
+        elevator.setPower(controllers[1].getRightY(), false);
         if (elevator.getPosition()
             .compareTo(elevatorPositionMiddle.plus(elevatorPositionRadius.times(powerControlMaxSafeMoveEle))) > 0) {
         } else {
           // elevator.setPower(-powerControlReversePowerEle);
         }
       } else if (controllers[1].getRightY() < 0) {
-        elevator.setPower(controllers[1].getRightY());
+        elevator.setPower(controllers[1].getRightY(), false);
         if (elevator.getPosition()
             .compareTo(elevatorPositionMiddle.minus(elevatorPositionRadius.times(powerControlMaxSafeMoveEle))) < 0) {
         } else {
@@ -98,21 +100,23 @@ public class TeleDrive extends TeleDriveCommandBase {
       }
 
       if (controllers[1].getLeftY() > 0) {
-        if (algaeArm.getAngle()
-            .compareTo(armPositionMiddle.plus(armPositionRadius.times(powerControlMaxSafeMoveArm))) > 0) {
-          algaeArm.setPower(controllers[1].getLeftY());
-        } else {
-          algaeArm.setPower(-powerControlReversePowerArm);
-        }
+        // if (algaeArm.getAngle()
+        // .compareTo(armPositionMiddle.plus(armPositionRadius.times(powerControlMaxSafeMoveArm)))
+        // > 0) {
+        algaeArm.setPower(controllers[1].getLeftY(), false);
+        // } else {
+        // algaeArm.setPower(-powerControlReversePowerArm);
+        // }
       } else if (controllers[1].getLeftY() < 0) {
-        if (algaeArm.getAngle()
-            .compareTo(armPositionMiddle.minus(armPositionRadius.times(powerControlMaxSafeMoveArm))) < 0) {
-          algaeArm.setPower(controllers[1].getLeftY());
-        } else {
-          algaeArm.setPower(powerControlReversePowerArm);
-        }
+        // if (algaeArm.getAngle()
+        // .compareTo(armPositionMiddle.minus(armPositionRadius.times(powerControlMaxSafeMoveArm)))
+        // < 0) {
+        algaeArm.setPower(controllers[1].getLeftY(), false);
+        // } else {
+        // algaeArm.setPower(powerControlReversePowerArm);
+        // }
       } else {
-        algaeArm.setPower(0);
+        algaeArm.setPower(0, false);
       }
     }
   }
