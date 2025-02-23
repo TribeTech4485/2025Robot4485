@@ -12,6 +12,7 @@ public class AlgaeClaw extends ManipulatorBase {
 
   public AlgaeClaw() {
     addMotors(new SparkMax(Constants.Wirings.algaeClawMotor, SparkMax.MotorType.kBrushless));
+    resetMotors();
     setBrakeMode(true);
     setCurrentLimit(Constants.AlgaeClaw.currentLimit);
   }

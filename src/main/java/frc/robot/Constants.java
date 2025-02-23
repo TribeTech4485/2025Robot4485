@@ -92,9 +92,9 @@ public final class Constants {
 
   public static class Elevator {
     public static final int amps = 20;
-    public static final double positionMultiplier = 100; // TODO find elevator position multiplier to be in meters
-    public static final Distance positionBoundsMin = Meters.of(0);
-    public static final Distance positionBoundsMax = Meters.of(2); // TODO find elevator position bounds
+    public static final double positionMultiplier = 0.00013335;
+    public static final Distance positionBoundsMin = Inches.of(16);
+    public static final Distance positionBoundsMax = Inches.of(79);
 
     public static final double P = 0; // TODO find elevator PID values
     public static final double I = 0;
@@ -114,7 +114,7 @@ public final class Constants {
   }
 
   public static class AlgaeArm {
-    public static final int amps = 10;
+    public static final int amps = 20;
     public static final double positionMultiplier = 100; // TODO find arm position multiplier to be in radians
     public static final Angle positionBoundsMin = Degrees.of(-80);
     public static final Angle positionBoundsMax = Degrees.of(90);

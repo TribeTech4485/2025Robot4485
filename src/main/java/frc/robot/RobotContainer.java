@@ -20,6 +20,7 @@ import frc.robot.Subsystems.Swerve.Drivetrain;
 import frc.robot.SyncedLibraries.Controllers;
 import frc.robot.SyncedLibraries.SystemBases.ControllerBase;
 import frc.robot.SyncedLibraries.SystemBases.Estopable;
+import frc.robot.SyncedLibraries.SystemBases.Utils.PIDConfig;
 
 public class RobotContainer {
   Controllers controllers = new Controllers();
@@ -32,6 +33,7 @@ public class RobotContainer {
   AlgaeArm algaeArm = new AlgaeArm(elevator);
   CoralManipulator coralManipulator = new CoralManipulator();
   TeleDrive teleDrive = new TeleDrive(drivetrain, controllers, elevator, algaeArm, algaeClaw, coralManipulator);
+  PIDConfig testConfig = new PIDConfig().set(1, 0, 0);
 
   MoveToDistanceApriltag moveToDistanceApriltag = new MoveToDistanceApriltag(drivetrain, photon, 1, 0, 0);
 

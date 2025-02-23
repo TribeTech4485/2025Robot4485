@@ -9,32 +9,28 @@ import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.Constants;
 import frc.robot.Constants.Swerve.Movement;
 import frc.robot.SyncedLibraries.SystemBases.Swerve.SwerveModuleBase;
+import frc.robot.SyncedLibraries.SystemBases.Utils.PIDConfig;
 
 public class SwerveModule extends SwerveModuleBase {
 
-  private static final double[] drivePIDF = Movement.Drive.PIDF;
-  private static final double[] turnPID = Movement.Turn.PID;
+  private static final PIDConfig drivePIDF = new PIDConfig().set(Movement.Drive.P, Movement.Drive.I, Movement.Drive.D,
+      Movement.Drive.S, Movement.Drive.V, Movement.Drive.A, Movement.maxSpeed,
+      Movement.maxAccel);
+  private static final PIDConfig turnPID = new PIDConfig().set(Movement.Turn.P, Movement.Turn.I, Movement.Turn.D);
   private static final SparkBaseConfig driveConfig = new SparkMaxConfig()
-      .smartCurrentLimit(Constants.Swerve.driveAmps)
-      .inverted(true)
+      .smartCurrentLimit(Constants.Swerve.driveAmps).inverted(true)
       .apply(new EncoderConfig().velocityConversionFactor(Movement.driveGearRatio));
   private static final SparkBaseConfig turningConfig = new SparkMaxConfig()
       .smartCurrentLimit(Constants.Swerve.turnAmps)
-      // .apply(new
-      // ClosedLoopConfig().p(Movement.Turn.P).i(Movement.Turn.I).d(Movement.Turn.D))
       .apply(new AbsoluteEncoderConfig().positionConversionFactor(Math.PI * 2)
-          .inverted(true)
-          .velocityConversionFactor(Math.PI * 2));
-  private static final TrapezoidProfile.Constraints driveConstraints = Drivetrain.driveConstraints;
+          .inverted(true).velocityConversionFactor(Math.PI * 2));
 
   public SwerveModule(SparkMax driveMotor, SparkMax turningMotor, double turningOffset, String name) {
     super(driveMotor, turningMotor, turningOffset, name,
-        driveConfig, turningConfig, drivePIDF, turnPID, driveConstraints);
+        driveConfig, turningConfig, drivePIDF, turnPID);
     breakerMaxAmps = 30;
   }
 }
