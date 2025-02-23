@@ -52,10 +52,10 @@ public final class Constants {
     public static final Distance sideLength = Inches.of(29.75);
 
     public static class Movement {
-      public static final LinearVelocity maxSpeed = MetersPerSecond.of(2);
-      public static final LinearAcceleration maxAccel = MetersPerSecondPerSecond.of(1);
-      public static final AngularVelocity maxRotationSpeed = RotationsPerSecond.of(1);
-      public static final AngularAcceleration maxRotationAccel = RotationsPerSecondPerSecond.of(0.25);
+      public static final LinearVelocity maxSpeed = MetersPerSecond.of(4);
+      public static final LinearAcceleration maxAccel = MetersPerSecondPerSecond.of(4);
+      public static final AngularVelocity maxRotationSpeed = RotationsPerSecond.of(0.5);
+      public static final AngularAcceleration maxRotationAccel = RotationsPerSecondPerSecond.of(0.5);
 
       // public static final double driveGearRatio = 1 / (10 * Math.PI * 15 / 50);
       // public static final double driveGearRatio = 1 / 6.75 * (Math.PI * 4 * 0.254);
@@ -91,7 +91,7 @@ public final class Constants {
   }
 
   public static class Elevator {
-    public static final int amps = 20;
+    public static final int amps = 30;
     public static final double positionMultiplier = 100; // TODO find elevator position multiplier to be in meters
     public static final Distance positionBoundsMin = Meters.of(0);
     public static final Distance positionBoundsMax = Meters.of(2); // TODO find elevator position bounds
@@ -110,16 +110,16 @@ public final class Constants {
   }
 
   public static class AlgaeClaw {
-    public static final int currentLimit = 10;
+    public static final int currentLimit = 20;
   }
 
   public static class AlgaeArm {
-    public static final int amps = 10;
+    public static final int amps = 30;
     public static final double positionMultiplier = 100; // TODO find arm position multiplier to be in radians
     public static final Angle positionBoundsMin = Degrees.of(-80);
     public static final Angle positionBoundsMax = Degrees.of(90);
 
-    public static final double P = 0.1; // TODO find arm PID values
+    public static final double P = 0; // TODO find arm PID values
     public static final double I = 0;
     public static final double D = 0;
     public static final double S = 0; // TODO find arm FF values

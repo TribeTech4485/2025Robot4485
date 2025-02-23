@@ -26,7 +26,7 @@ public class Elevator extends PositionManipulatorBase {
     // TODO: Custom sensor as lower limit switch
     addMotors(new SparkMax(Constants.Wirings.elevatorMotor1, SparkMax.MotorType.kBrushless),
         new SparkMax(Constants.Wirings.elevatorMotor2, SparkMax.MotorType.kBrushless));
-    // invertSpecificMotors(true, 0);
+    invertSpecificMotors(true, 0);
     setBrakeMode(true);
     setBreakerMaxAmps(40);
     setCurrentLimit(Constants.Elevator.amps);
