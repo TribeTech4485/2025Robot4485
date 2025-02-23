@@ -5,7 +5,6 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -15,17 +14,19 @@ import frc.robot.Constants;
 import frc.robot.SyncedLibraries.ManipulatorBaseSysID;
 import frc.robot.SyncedLibraries.SystemBases.PositionManipulatorBase;
 import frc.robot.SyncedLibraries.SystemBases.Utils.ManipulatorFFDistanceCommand;
+import frc.robot.SyncedLibraries.SystemBases.Utils.PIDConfig;
 
 public class Elevator extends PositionManipulatorBase {
   public ManipulatorBaseSysID sysID;
 
   public Elevator() {
-    for (SparkMax motor: getMotors()) {
-      motor.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    }
-    // TODO: Custom sensor as lower limit switch
+    super(new PIDConfig().set(Constants.Elevator.P, Constants.Elevator.I, Constants.Elevator.D,
+        Constants.Elevator.S, Constants.Elevator.V, Constants.Elevator.A, Constants.Elevator.G,
+        Constants.Elevator.maxVelocity, Constants.Elevator.maxAcceleration),
+        ManipulatorFFDistanceCommand.FeedForwardType.Elevator);
     addMotors(new SparkMax(Constants.Wirings.elevatorMotor1, SparkMax.MotorType.kBrushless),
         new SparkMax(Constants.Wirings.elevatorMotor2, SparkMax.MotorType.kBrushless));
+    resetMotors();
     invertSpecificMotors(true, 0);
     setBrakeMode(true);
     setBreakerMaxAmps(40);
@@ -34,16 +35,8 @@ public class Elevator extends PositionManipulatorBase {
     setPositionBounds(Constants.Elevator.positionBoundsMin,
         Constants.Elevator.positionBoundsMax);
     home().schedule();
-    setPositionPID(
-        new ManipulatorFFDistanceCommand(this, Meters.of(0), Meters.of(0), Constants.Elevator.P, Constants.Elevator.I,
-            Constants.Elevator.D, ManipulatorFFDistanceCommand.FeedForwardType.Elevator,
-            Constants.Elevator.S, Constants.Elevator.V,
-            Constants.Elevator.G, Constants.Elevator.A, Constants.Elevator.maxVelocity,
-            Constants.Elevator.maxAcceleration));
 
     customSensor = getMotor(0).getForwardLimitSwitch()::isPressed;
-
-    // sysID = new ManipulatorBaseSysID(this);
   }
 
   public void retract() {
@@ -52,7 +45,6 @@ public class Elevator extends PositionManipulatorBase {
 
   /** If falling, send it */
   public void RETRACT() {
-    // TODO: make it manual overide
     setCurrentLimit(40);
     retract();
   }

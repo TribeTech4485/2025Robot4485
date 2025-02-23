@@ -48,6 +48,5 @@ public class Drivetrain extends SwerveDriveBase {
 				Movement.maxSpeed,
 				Movement.maxAccel,
 				Movement.maxRotationSpeed);
-		// prepareSysID(); // TODO: Uncomment this line to enable system identification
 	}
 }

@@ -15,25 +15,27 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.SyncedLibraries.SystemBases.AngleManipulatorBase;
 import frc.robot.SyncedLibraries.SystemBases.Utils.ManipulatorFFAngleCommand;
+import frc.robot.SyncedLibraries.SystemBases.Utils.PIDConfig;
 
 public class AlgaeArm extends AngleManipulatorBase {
   final Elevator elevator;
 
   public AlgaeArm(Elevator elevator) {
+    super(
+        new PIDConfig().set(Constants.AlgaeArm.P, Constants.AlgaeArm.I, Constants.AlgaeArm.D, Constants.AlgaeArm.S,
+            Constants.AlgaeArm.V, Constants.AlgaeArm.A, Constants.AlgaeArm.G, Constants.AlgaeArm.maxVelocity,
+            Constants.AlgaeArm.maxAcceleration),
+        ManipulatorFFAngleCommand.FeedForwardType.Arm);
     addMotors(new SparkMax(Constants.Wirings.algaeArmMotor, SparkMax.MotorType.kBrushless));
+    resetMotors();
     setBrakeMode(true);
     setCurrentLimit(Constants.AlgaeArm.amps);
     setPositionMultiplier(Constants.AlgaeArm.positionMultiplier);
+    invertSpecificMotors(true, 0);
     // 0 is straight out, positive is up
     setAngleBounds(Constants.AlgaeArm.positionBoundsMin, Constants.AlgaeArm.positionBoundsMax);
-
-    setPositionPID(new ManipulatorFFAngleCommand(this, getAngle(), Degrees.of(0), Constants.AlgaeArm.P,
-        Constants.AlgaeArm.I, Constants.AlgaeArm.D, ManipulatorFFAngleCommand.FeedForwardType.Arm,
-        Constants.AlgaeArm.S, Constants.AlgaeArm.V, Constants.AlgaeArm.G, Constants.AlgaeArm.A,
-        Constants.AlgaeArm.maxVelocity, Constants.AlgaeArm.maxAcceleration));
-    home().schedule();
+    // home().schedule();
     customSensor = getMotor(0).getForwardLimitSwitch()::isPressed;
-    // TODO: if elevator is going down, arm should go up
     this.elevator = elevator;
   }
 
@@ -81,6 +83,7 @@ public class AlgaeArm extends AngleManipulatorBase {
 
   public void elevatorCheck() {
     Distance elevatorPosition = elevator.getPosition();
+    // TODO: find the correct values for elevator check
     if (elevatorPosition.compareTo(Feet.of(0.5)) < 0
         && getAngle().compareTo(Degrees.of(0)) < 0) {
       // if elevator is below 0.5ft and arm is below level
