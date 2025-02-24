@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Commands.MoveToDistanceApriltag;
 import frc.robot.Commands.TeleDrive;
@@ -37,7 +36,8 @@ public class RobotContainer {
   TeleDrive teleDrive = new TeleDrive(drivetrain, controllers, elevator, algaeArm, algaeClaw, coralManipulator);
   PIDConfig testConfig = new PIDConfig().set(1, 0, 0);
 
-  // MoveToDistanceApriltag moveToDistanceApriltag = new MoveToDistanceApriltag(drivetrain, photon, 1, 0, 0);
+  // MoveToDistanceApriltag moveToDistanceApriltag = new
+  // MoveToDistanceApriltag(drivetrain, photon, 1, 0, 0);
 
   public RobotContainer() {
     DriverStation.silenceJoystickConnectionWarning(true);
