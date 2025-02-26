@@ -16,7 +16,6 @@ import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private Command testCommand;
-  private int counter = 0;
 
   /*
    * Wanted controls:
@@ -39,9 +38,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    if (counter++ % 100 == 0) {
-      System.out.println(m_robotContainer.testConfig.P);
-    }
   }
 
   @Override

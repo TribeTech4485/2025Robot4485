@@ -5,6 +5,11 @@ import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Meters;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.config.AlternateEncoderConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
@@ -28,13 +33,16 @@ public class AlgaeArm extends AngleManipulatorBase {
         ManipulatorFFAngleCommand.FeedForwardType.Arm);
     addMotors(new SparkMax(Constants.Wirings.algaeArmMotor, SparkMax.MotorType.kBrushless));
     resetMotors();
-    setBrakeMode(true);
+    setBrakeMode(false);
     setCurrentLimit(Constants.AlgaeArm.amps);
     setPositionMultiplier(Constants.AlgaeArm.positionMultiplier);
     invertSpecificMotors(true, 0);
     // 0 is straight out, positive is up
     setAngleBounds(Constants.AlgaeArm.positionBoundsMin, Constants.AlgaeArm.positionBoundsMax);
     // home().schedule();
+    // getMotor(0).configure(new SparkMaxConfig().inverted(true)
+    // .idleMode(IdleMode.kCoast).smartCurrentLimit(Constants.AlgaeArm.amps)
+    // , ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     customSensor = getMotor(0).getForwardLimitSwitch()::isPressed;
     this.elevator = elevator;
   }

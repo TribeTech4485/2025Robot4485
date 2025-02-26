@@ -34,7 +34,6 @@ public class RobotContainer {
   AlgaeArm algaeArm = new AlgaeArm(elevator);
   CoralManipulator coralManipulator = new CoralManipulator();
   TeleDrive teleDrive = new TeleDrive(drivetrain, controllers, elevator, algaeArm, algaeClaw, coralManipulator);
-  PIDConfig testConfig = new PIDConfig().set(1, 0, 0);
 
   // MoveToDistanceApriltag moveToDistanceApriltag = new
   // MoveToDistanceApriltag(drivetrain, photon, 1, 0, 0);
