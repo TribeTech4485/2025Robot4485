@@ -51,8 +51,10 @@ public final class Constants {
     public static final Distance sideLength = Inches.of(29.75);
 
     public static class Movement {
-      public static final LinearVelocity maxSpeed = MetersPerSecond.of(4);
-      public static final LinearAcceleration maxAccel = MetersPerSecondPerSecond.of(4);
+      public static final LinearVelocity maxBotSpeed = MetersPerSecond.of(4);
+      public static final LinearAcceleration maxBotAccel = MetersPerSecondPerSecond.of(3);
+      public static final LinearVelocity maxWheelSpeed = MetersPerSecond.of(5);
+      public static final LinearAcceleration maxWheelAccel = MetersPerSecondPerSecond.of(5);
       public static final AngularVelocity maxRotationSpeed = RotationsPerSecond.of(0.5);
       public static final AngularAcceleration maxRotationAccel = RotationsPerSecondPerSecond.of(0.5);
 

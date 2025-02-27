@@ -17,8 +17,8 @@ import frc.robot.SyncedLibraries.SystemBases.Utils.PIDConfig;
 public class SwerveModule extends SwerveModuleBase {
 
   private static final PIDConfig drivePIDF = new PIDConfig().set(Movement.Drive.P, Movement.Drive.I, Movement.Drive.D,
-      Movement.Drive.S, Movement.Drive.V, Movement.Drive.A, Movement.maxSpeed,
-      Movement.maxAccel);
+      Movement.Drive.S, Movement.Drive.V, Movement.Drive.A, Movement.maxWheelSpeed,
+      Movement.maxWheelAccel);
   private static final PIDConfig turnPID = new PIDConfig().set(Movement.Turn.P, Movement.Turn.I, Movement.Turn.D);
   private static final SparkBaseConfig driveConfig = new SparkMaxConfig()
       .smartCurrentLimit(Constants.Swerve.driveAmps).inverted(true)
