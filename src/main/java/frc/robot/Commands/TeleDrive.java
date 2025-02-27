@@ -1,5 +1,7 @@
 package frc.robot.Commands;
 
+import static edu.wpi.first.units.Units.Radians;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
@@ -69,11 +71,11 @@ public class TeleDrive extends TeleDriveCommandBase {
       }
 
       if (controllers[1].LeftJoyMoved.getAsBoolean()) {
-        Rotation2d rotation = new Rotation2d(controllers[1].getLeftX(), controllers[1].getLeftY());
-        if (rotation.getDegrees() > 90 || rotation.getDegrees() < -90) {
-          rotation = rotation.unaryMinus();
-        }
-        algaeArm.moveToPosition(rotation.getRadians());
+        Angle rotation = Radians.of(-Math.atan2(controllers[1].getLeftY(), Math.abs(controllers[1].getLeftX())));
+        // if (rotation.getDegrees() > 90 || rotation.getDegrees() < -90) {
+        // rotation = rotation.unaryMinus();
+        // }
+        algaeArm.moveToPosition(rotation);
       } else {
         algaeArm.moveToPosition(algaeArm.getAngle());
       }
@@ -103,7 +105,7 @@ public class TeleDrive extends TeleDriveCommandBase {
         // if (algaeArm.getAngle()
         // .compareTo(armPositionMiddle.plus(armPositionRadius.times(powerControlMaxSafeMoveArm)))
         // > 0) {
-        algaeArm.setPower(controllers[1].getLeftY(), false);
+        algaeArm.setPower(-controllers[1].getLeftY(), false);
         // } else {
         // algaeArm.setPower(-powerControlReversePowerArm);
         // }
@@ -111,7 +113,7 @@ public class TeleDrive extends TeleDriveCommandBase {
         // if (algaeArm.getAngle()
         // .compareTo(armPositionMiddle.minus(armPositionRadius.times(powerControlMaxSafeMoveArm)))
         // < 0) {
-        algaeArm.setPower(controllers[1].getLeftY(), false);
+        algaeArm.setPower(-controllers[1].getLeftY(), false);
         // } else {
         // algaeArm.setPower(powerControlReversePowerArm);
         // }

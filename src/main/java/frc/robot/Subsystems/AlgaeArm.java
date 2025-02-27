@@ -13,6 +13,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -36,13 +37,10 @@ public class AlgaeArm extends AngleManipulatorBase {
     setBrakeMode(false);
     setCurrentLimit(Constants.AlgaeArm.amps);
     setPositionMultiplier(Constants.AlgaeArm.positionMultiplier);
-    invertSpecificMotors(true, 0);
+    invertSpecificMotors(false, 0);
     // 0 is straight out, positive is up
     setAngleBounds(Constants.AlgaeArm.positionBoundsMin, Constants.AlgaeArm.positionBoundsMax);
     // home().schedule();
-    // getMotor(0).configure(new SparkMaxConfig().inverted(true)
-    // .idleMode(IdleMode.kCoast).smartCurrentLimit(Constants.AlgaeArm.amps)
-    // , ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     customSensor = getMotor(0).getForwardLimitSwitch()::isPressed;
     this.elevator = elevator;
   }
@@ -108,6 +106,8 @@ public class AlgaeArm extends AngleManipulatorBase {
   @Override
   public void periodic() {
     super.periodic();
+    SmartDashboard.putNumber(getName() + " Setpoint Angle (deg)",
+        ((ManipulatorFFAngleCommand) getMoveCommand()).getSetpoint().in(Degrees));
     elevatorCheck();
   }
 }

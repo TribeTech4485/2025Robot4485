@@ -114,21 +114,22 @@ public final class Constants {
 
   public static class AlgaeArm {
     public static final int amps = 30;
-    public static final double positionMultiplier = 100; // TODO find arm position multiplier to be in radians
+    // 2350 for 90 degrees to radians
+    public static final double positionMultiplier = Math.PI / 2 / 23.5;
     public static final Angle positionBoundsMin = Degrees.of(-80);
     public static final Angle positionBoundsMax = Degrees.of(90);
 
-    public static final double P = 0; // TODO find arm PID values
+    public static final double P = 3; // TODO find arm PID values // 3
     public static final double I = 0;
     public static final double D = 0;
     public static final double S = 0; // TODO find arm FF values
     public static final double V = 0;
-    public static final double G = 0;
+    public static final double G = 0; // 0.4
     public static final double A = 0;
     public static final double[] PIDF = { P, I, D, S, V, G, A };
 
-    public static final AngularVelocity maxVelocity = RadiansPerSecond.of(0.25); // TODO find arm max velocity
-    public static final AngularAcceleration maxAcceleration = RadiansPerSecondPerSecond.of(0.25);
+    public static final AngularVelocity maxVelocity = RadiansPerSecond.of(1); // TODO find arm max velocity
+    public static final AngularAcceleration maxAcceleration = RadiansPerSecondPerSecond.of(1);
   }
 
   public static class CoralManipulator {
