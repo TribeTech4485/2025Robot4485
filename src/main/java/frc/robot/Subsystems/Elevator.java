@@ -3,6 +3,7 @@ package frc.robot.Subsystems;
 import static edu.wpi.first.units.Units.Meters;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -24,7 +25,7 @@ public class Elevator extends PositionManipulatorBase {
     addMotors(new SparkMax(Constants.Wirings.elevatorMotor1, SparkMax.MotorType.kBrushless),
         new SparkMax(Constants.Wirings.elevatorMotor2, SparkMax.MotorType.kBrushless));
     resetMotors();
-    invertSpecificMotors(true, 0);
+    invertSpecificMotors(true, 1);
     setBrakeMode(true);
     setBreakerMaxAmps(40);
     setCurrentLimit(Constants.Elevator.amps);
@@ -105,5 +106,8 @@ public class Elevator extends PositionManipulatorBase {
   @Override
   public void periodic() {
     super.periodic();
+    SmartDashboard.putNumber("Elevator target position", ((ManipulatorFFDistanceCommand) moveCommand).getController().getSetpoint().position);
+    SmartDashboard.putNumber("Elevator Setpoint", ((ManipulatorFFDistanceCommand) moveCommand).getController().getGoal().position);
+    SmartDashboard.putNumber("Elevator current position", getPosition().in(Meters));
   }
 }

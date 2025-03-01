@@ -62,6 +62,7 @@ public class RobotContainer {
     driverController.ESTOPCondition.onTrue(new InstantCommand(Estopable::KILLIT));
 
     operatorController.Start.onTrue(new InstantCommand(() -> algaeArm.getEncoder(0).setPosition(0)));
+    operatorController.Options.onTrue(new InstantCommand(() -> elevator._setPosition(Constants.Elevator.positionBoundsMin)));
 
     if (false) {
       driverController.PovUp.and(driverController.A)

@@ -1,10 +1,12 @@
 package frc.robot.Commands;
 
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.Subsystems.AlgaeArm;
@@ -65,7 +67,8 @@ public class TeleDrive extends TeleDriveCommandBase {
     // Right trigger = move to position
     if (controllers[1].RightTrigger.getAsBoolean()) {
       if (controllers[1].RightJoyMoved.getAsBoolean()) {
-        elevator.moveToPosition(elevatorPositionMiddle.plus(elevatorPositionRadius.times(controllers[1].getRightY())));
+        elevator.moveToPosition(elevatorPositionMiddle.plus(elevatorPositionRadius.times(-controllers[1].getRightY())));
+        SmartDashboard.putNumber("AAAAA", elevatorPositionMiddle.plus(elevatorPositionRadius.times(-controllers[1].getRightY())).in(Meters));
       } else {
         elevator.moveToPosition(elevator.getPosition());
       }
@@ -84,14 +87,14 @@ public class TeleDrive extends TeleDriveCommandBase {
     // Left trigger = power control
     if (controllers[1].LeftTrigger.getAsBoolean()) {
       if (controllers[1].getRightY() > 0) {
-        elevator.setPower(controllers[1].getRightY(), false);
+        elevator.setPower(-controllers[1].getRightY(), false);
         if (elevator.getPosition()
             .compareTo(elevatorPositionMiddle.plus(elevatorPositionRadius.times(powerControlMaxSafeMoveEle))) > 0) {
         } else {
           // elevator.setPower(-powerControlReversePowerEle);
         }
       } else if (controllers[1].getRightY() < 0) {
-        elevator.setPower(controllers[1].getRightY(), false);
+        elevator.setPower(-controllers[1].getRightY(), false);
         if (elevator.getPosition()
             .compareTo(elevatorPositionMiddle.minus(elevatorPositionRadius.times(powerControlMaxSafeMoveEle))) < 0) {
         } else {
