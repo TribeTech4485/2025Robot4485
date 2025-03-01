@@ -1,5 +1,6 @@
 package frc.robot.Subsystems;
 
+import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Meters;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.units.measure.Distance;
@@ -32,7 +33,9 @@ public class Elevator extends PositionManipulatorBase {
     setPositionMultiplier(Constants.Elevator.positionMultiplier);
     setPositionBounds(Constants.Elevator.positionBoundsMin,
         Constants.Elevator.positionBoundsMax);
-    home().schedule();
+    // home().schedule();
+    persistMotorConfig();
+    _setPosition(minPosition);
 
     customSensor = getMotor(0).getForwardLimitSwitch()::isPressed;
   }
@@ -48,15 +51,15 @@ public class Elevator extends PositionManipulatorBase {
   }
 
   public void positionIntake() {
-    moveToPosition(0.1);
+    moveToPosition(Feet.of(2));
   }
 
   public void positionL1() {
-    moveToPosition(0.5);
+    moveToPosition(1);
   }
 
   public void positionL2() {
-    moveToPosition(1);
+    moveToPosition(1.25);
   }
 
   public void positionL3() {
@@ -79,19 +82,19 @@ public class Elevator extends PositionManipulatorBase {
         new InstantCommand(() -> setCurrentLimit(1)),
         new InstantCommand(() -> setPower(-0.1)),
         new WaitUntilCommand(customSensor),
-        new InstantCommand(() -> _setPosition(Meters.of(0))),
+        new InstantCommand(() -> _setPosition(minPosition)),
         new InstantCommand(() -> fullStop()),
         new InstantCommand(() -> setCurrentLimit(Constants.Elevator.amps)),
-        new InstantCommand(() -> moveToPosition(0)),
+        new InstantCommand(() -> moveToPosition(minPosition)),
         new InstantCommand(() -> getMoveCommand().setEndOnTarget(false)));
   }
 
   @Override
   public Command test() {
     return new SequentialCommandGroup(
-        new InstantCommand(() -> moveToPosition(Meters.of(0))),
+        new InstantCommand(() -> moveToPosition(minPosition)),
         new WaitUntilCommand(() -> isAtPosition()),
-        new InstantCommand(() -> moveToPosition(Meters.of(1.5))));
+        new InstantCommand(() -> moveToPosition(maxPosition)));
   }
 
   @Override
@@ -106,8 +109,11 @@ public class Elevator extends PositionManipulatorBase {
   @Override
   public void periodic() {
     super.periodic();
-    SmartDashboard.putNumber("Elevator target position", ((ManipulatorFFDistanceCommand) moveCommand).getController().getSetpoint().position);
-    SmartDashboard.putNumber("Elevator Setpoint", ((ManipulatorFFDistanceCommand) moveCommand).getController().getGoal().position);
+    SmartDashboard.putNumber("Elevator target position",
+        ((ManipulatorFFDistanceCommand) moveCommand).getController().getSetpoint().position);
+    SmartDashboard.putNumber("Elevator Setpoint",
+        ((ManipulatorFFDistanceCommand) moveCommand).getController().getGoal().position);
     SmartDashboard.putNumber("Elevator current position", getPosition().in(Meters));
+    SmartDashboard.putNumber("Line Voltage", getMotor(0).getBusVoltage());
   }
 }
