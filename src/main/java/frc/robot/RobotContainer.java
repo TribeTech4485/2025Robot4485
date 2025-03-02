@@ -4,11 +4,14 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Feet;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Commands.MoveToDistanceApriltag;
 import frc.robot.Commands.TeleDrive;
@@ -16,17 +19,16 @@ import frc.robot.Subsystems.CoralManipulator;
 import frc.robot.Subsystems.Elevator;
 import frc.robot.Subsystems.AlgaeArm;
 import frc.robot.Subsystems.AlgaeClaw;
+import frc.robot.Subsystems.Controllers2025;
 import frc.robot.Subsystems.PhotonVision;
 import frc.robot.Subsystems.Swerve.Drivetrain;
-import frc.robot.SyncedLibraries.Controllers;
 import frc.robot.SyncedLibraries.SystemBases.ControllerBase;
 import frc.robot.SyncedLibraries.SystemBases.Estopable;
-import frc.robot.SyncedLibraries.SystemBases.Utils.PIDConfig;
 
 public class RobotContainer {
-  Controllers controllers = new Controllers();
-  ControllerBase driverController = controllers.Zero;
-  ControllerBase operatorController = controllers.One;
+  Controllers2025 controllers = new Controllers2025();
+  ControllerBase drivCont = controllers.Zero;
+  ControllerBase opCont = controllers.One;
   Drivetrain drivetrain = new Drivetrain();
   // PhotonVision photon = new PhotonVision();
   AlgaeClaw algaeClaw = new AlgaeClaw();
@@ -41,48 +43,72 @@ public class RobotContainer {
   public RobotContainer() {
     DriverStation.silenceJoystickConnectionWarning(true);
     configureBindings();
-    Estopable.dontAllowFullEstop();
   }
 
   private void configureBindings() {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
     // driverController.A.onTrue(moveToDistanceApriltag);
     teleDrive.setNormalTriggerBinds();
+    drivCont.A.onTrue(new InstantCommand(() -> {
+      elevator.retract();
+      algaeArm.retract();
+    }));
 
-    operatorController.A.onTrue(new InstantCommand(() -> coralManipulator.setPower(0.75)));
-    operatorController.Y.onTrue(new InstantCommand(() -> coralManipulator.setPower(-1)));
-    operatorController.B.onTrue(new InstantCommand(() -> coralManipulator.setPower(0)));
+    // left bumper is coral/algae spinners
+    opCont.A.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> coralManipulator.setPower(1)));
+    opCont.Y.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> coralManipulator.setPower(-1)));
+    opCont.X.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> coralManipulator.setPower(-0.25)));
+    opCont.B.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> coralManipulator.setPower(0)));
 
-    operatorController.PovDown.onTrue(new InstantCommand(() -> algaeClaw.setPower(1)));
-    operatorController.PovUp.onTrue(new InstantCommand(() -> algaeClaw.setPower(-1)));
-    operatorController.PovLeft.onTrue(new InstantCommand(() -> algaeClaw.setPower(-0.25)));
-    operatorController.PovRight.onTrue(new InstantCommand(() -> algaeClaw.setPower(0)));
+    opCont.PovDown.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> algaeClaw.setPower(1)));
+    opCont.PovUp.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> algaeClaw.setPower(-1)));
+    opCont.PovLeft.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> algaeClaw.setPower(-0.25)));
+    opCont.PovRight.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> algaeClaw.setPower(0)));
 
-    operatorController.ESTOPCondition.onTrue(new InstantCommand(Estopable::KILLIT));
-    driverController.ESTOPCondition.onTrue(new InstantCommand(Estopable::KILLIT));
+    opCont.ESTOPCondition.onTrue(new InstantCommand(Estopable::KILLIT));
+    drivCont.ESTOPCondition.onTrue(new InstantCommand(Estopable::KILLIT));
 
-    operatorController.Start.onTrue(new InstantCommand(() -> algaeArm.getEncoder(0).setPosition(0)));
-    operatorController.Options.onTrue(new InstantCommand(() -> elevator._setPosition(Constants.Elevator.positionBoundsMin)));
+    opCont.Start.onTrue(new InstantCommand(() -> algaeArm.getEncoder(0).setPosition(0)));
+    opCont.Options
+        .onTrue(new InstantCommand(() -> elevator._setPosition(Constants.Elevator.positionBoundsMin)));
 
-    if (false) {
-      driverController.PovUp.and(driverController.A)
+    opCont.Y.and(opCont.RightBumper).onTrue(new InstantCommand(() -> {
+      elevator.moveToPosition(Constants.Elevator.positionBoundsMax);
+      algaeArm.moveToPosition(45);
+    }));
+    opCont.B.and(opCont.RightBumper).onTrue(new InstantCommand(() -> {
+      elevator.moveToPosition(Feet.of(4));
+      algaeArm.moveToPosition(0);
+    }));
+    opCont.X.and(opCont.RightBumper).onTrue(new InstantCommand(() -> {
+      elevator.moveToPosition(Feet.of(2));
+      algaeArm.moveToPosition(-15);
+    }));
+    opCont.A.and(opCont.RightBumper).onTrue(new InstantCommand(() -> {
+      elevator.retract();
+      algaeArm.retract();
+    }));
+
+    boolean maybe = false;
+    if (maybe) {
+      drivCont.PovUp.and(drivCont.A)
           .whileTrue(elevator.sysID.dynamicForwards());
-      driverController.PovUp.and(driverController.B)
+      drivCont.PovUp.and(drivCont.B)
           .whileTrue(elevator.sysID.dynamicReverse());
 
-      driverController.PovUp.and(driverController.X)
+      drivCont.PovUp.and(drivCont.X)
           .whileTrue(elevator.sysID.quasistaticForwards());
-      driverController.PovUp.and(driverController.Y)
+      drivCont.PovUp.and(drivCont.Y)
           .whileTrue(elevator.sysID.quasistaticReverse());
 
-      driverController.PovDown.and(driverController.A)
+      drivCont.PovDown.and(drivCont.A)
           .whileTrue(drivetrain.dynamicSysID(SysIdRoutine.Direction.kForward));
-      driverController.PovDown.and(driverController.B)
+      drivCont.PovDown.and(drivCont.B)
           .whileTrue(drivetrain.dynamicSysID(SysIdRoutine.Direction.kReverse));
 
-      driverController.PovDown.and(driverController.X)
+      drivCont.PovDown.and(drivCont.X)
           .whileTrue(drivetrain.quasistaticSysID(SysIdRoutine.Direction.kForward));
-      driverController.PovDown.and(driverController.Y)
+      drivCont.PovDown.and(drivCont.Y)
           .whileTrue(drivetrain.quasistaticSysID(SysIdRoutine.Direction.kReverse));
     }
   }

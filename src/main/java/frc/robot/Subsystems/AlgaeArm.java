@@ -41,6 +41,7 @@ public class AlgaeArm extends AngleManipulatorBase {
     // 0 is straight out, positive is up
     setAngleBounds(Constants.AlgaeArm.positionBoundsMin, Constants.AlgaeArm.positionBoundsMax);
     // home().schedule();
+    getMoveCommand().setEndOnTarget(false);
     customSensor = getMotor(0).getForwardLimitSwitch()::isPressed;
     this.elevator = elevator;
   }
@@ -75,7 +76,7 @@ public class AlgaeArm extends AngleManipulatorBase {
   }
 
   public void retract() {
-    moveToPosition(80);
+    moveToPosition(60);
   }
 
   @Override

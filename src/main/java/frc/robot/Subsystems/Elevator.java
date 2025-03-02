@@ -41,7 +41,7 @@ public class Elevator extends PositionManipulatorBase {
   }
 
   public void retract() {
-    moveToPosition(0);
+    moveToPosition(minPosition);
   }
 
   /** If falling, send it */
