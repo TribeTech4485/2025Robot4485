@@ -9,6 +9,8 @@ import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
+import com.revrobotics.spark.SparkMax;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -33,6 +35,7 @@ public final class Constants {
     public static final int algaeClawMotor = 11;
     public static final int algaeArmMotor = 12;
     public static final int coralManipulatorMotor = 13;
+    public static final int climberMotor = 14;
   }
 
   public static class Swerve {
@@ -51,10 +54,12 @@ public final class Constants {
     public static final Distance sideLength = Inches.of(29.75);
 
     public static class Movement {
-      public static final LinearVelocity maxBotSpeed = MetersPerSecond.of(8);
+      public static final LinearVelocity maxBotSpeed = MetersPerSecond.of(12);
       public static final LinearAcceleration maxBotAccel = MetersPerSecondPerSecond.of(8);
+
       public static final LinearVelocity maxWheelSpeed = MetersPerSecond.of(15);
-      public static final LinearAcceleration maxWheelAccel = MetersPerSecondPerSecond.of(8);
+      public static final LinearAcceleration maxWheelAccel = MetersPerSecondPerSecond.of(10);
+
       public static final AngularVelocity maxRotationSpeed = RotationsPerSecond.of(2);
       public static final AngularAcceleration maxRotationAccel = RotationsPerSecondPerSecond.of(0.5);
 
@@ -136,5 +141,9 @@ public final class Constants {
 
   public static class CoralManipulator {
     public static final int currentLimit = 10;
+  }
+
+  public static class Climber {
+    public static final int currentLimit = 40;
   }
 }

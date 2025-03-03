@@ -49,10 +49,17 @@ public class RobotContainer {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
     // driverController.A.onTrue(moveToDistanceApriltag);
     teleDrive.setNormalTriggerBinds();
-    drivCont.A.onTrue(new InstantCommand(() -> {
-      elevator.retract();
-      algaeArm.retract();
-    }));
+    if (drivCont.isXbox) {
+      drivCont.A.onTrue(new InstantCommand(() -> {
+        elevator.retract();
+        algaeArm.retract();
+      }));
+    } else {
+      drivCont.buttons[6].onTrue(new InstantCommand(() -> {
+        elevator.retract();
+        algaeArm.retract();
+      }));
+    }
 
     // left bumper is coral/algae spinners
     opCont.A.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> coralManipulator.setPower(1)));
@@ -65,8 +72,8 @@ public class RobotContainer {
     opCont.PovLeft.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> algaeClaw.setPower(-0.25)));
     opCont.PovRight.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> algaeClaw.setPower(0)));
 
-    opCont.ESTOPCondition.onTrue(new InstantCommand(Estopable::KILLIT));
-    drivCont.ESTOPCondition.onTrue(new InstantCommand(Estopable::KILLIT));
+    // opCont.ESTOPCondition.onTrue(new InstantCommand(Estopable::KILLIT));
+    // drivCont.ESTOPCondition.onTrue(new InstantCommand(Estopable::KILLIT));
 
     opCont.Start.onTrue(new InstantCommand(() -> algaeArm.getEncoder(0).setPosition(0)));
     opCont.Options
@@ -88,29 +95,6 @@ public class RobotContainer {
       elevator.retract();
       algaeArm.retract();
     }));
-
-    boolean maybe = false;
-    if (maybe) {
-      drivCont.PovUp.and(drivCont.A)
-          .whileTrue(elevator.sysID.dynamicForwards());
-      drivCont.PovUp.and(drivCont.B)
-          .whileTrue(elevator.sysID.dynamicReverse());
-
-      drivCont.PovUp.and(drivCont.X)
-          .whileTrue(elevator.sysID.quasistaticForwards());
-      drivCont.PovUp.and(drivCont.Y)
-          .whileTrue(elevator.sysID.quasistaticReverse());
-
-      drivCont.PovDown.and(drivCont.A)
-          .whileTrue(drivetrain.dynamicSysID(SysIdRoutine.Direction.kForward));
-      drivCont.PovDown.and(drivCont.B)
-          .whileTrue(drivetrain.dynamicSysID(SysIdRoutine.Direction.kReverse));
-
-      drivCont.PovDown.and(drivCont.X)
-          .whileTrue(drivetrain.quasistaticSysID(SysIdRoutine.Direction.kForward));
-      drivCont.PovDown.and(drivCont.Y)
-          .whileTrue(drivetrain.quasistaticSysID(SysIdRoutine.Direction.kReverse));
-    }
   }
 
   public Command getAutonomousCommand() {

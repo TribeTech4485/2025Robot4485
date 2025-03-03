@@ -2,7 +2,6 @@ package frc.robot.Subsystems;
 
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.spark.SparkMax;
-
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -13,16 +12,15 @@ import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
 import frc.robot.Constants;
 
 public class CoralManipulator extends ManipulatorBase {
-  // ColorSensorV3 sensor;
-  // boolean sensed = false;
+  ColorSensorV3 sensor = new ColorSensorV3(Port.kOnboard);
+  boolean sensed = false;
   int counter = 0;
 
   public CoralManipulator() {
     addMotors(new SparkMax(Constants.Wirings.coralManipulatorMotor, SparkMax.MotorType.kBrushless));
     setBrakeMode(true);
     setCurrentLimit(Constants.CoralManipulator.currentLimit);
-    // sensor = new ColorSensorV3(Port.kOnboard);
-    // customSensor = () -> sensed;
+    customSensor = () -> (sensed);
   }
 
   @Override
@@ -56,10 +54,10 @@ public class CoralManipulator extends ManipulatorBase {
     super.periodic();
     if (counter++ == 20) {
       counter = 0;
-      // sensed = sensor.getProximity() > 150;
+      sensed = sensor.getProximity() > 150;
     }
 
     // SmartDashboard.putNumber("Coral sensor distance", sensor.getProximity());
-    // SmartDashboard.putBoolean("Coral sened", customSensor.getAsBoolean());
+    SmartDashboard.putBoolean("Coral sensed", sensed);
   }
 }

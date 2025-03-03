@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.SyncedLibraries.ManipulatorBaseSysID;
 import frc.robot.SyncedLibraries.SystemBases.PositionManipulatorBase;
@@ -17,6 +18,7 @@ import frc.robot.SyncedLibraries.SystemBases.Utils.PIDConfig;
 
 public class Elevator extends PositionManipulatorBase {
   public ManipulatorBaseSysID sysID;
+  final Trigger lowLimit;
 
   public Elevator() {
     super(new PIDConfig().set(Constants.Elevator.P, Constants.Elevator.I, Constants.Elevator.D,
@@ -38,6 +40,8 @@ public class Elevator extends PositionManipulatorBase {
     _setPosition(minPosition);
 
     customSensor = getMotor(0).getForwardLimitSwitch()::isPressed;
+    lowLimit = new Trigger(customSensor);
+    lowLimit.onTrue(new InstantCommand(() -> _setPosition(minPosition)));
   }
 
   public void retract() {

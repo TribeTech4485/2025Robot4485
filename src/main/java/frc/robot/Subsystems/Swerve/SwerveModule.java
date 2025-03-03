@@ -8,6 +8,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.Constants;
 import frc.robot.Constants.Swerve.Movement;
@@ -25,6 +26,7 @@ public class SwerveModule extends SwerveModuleBase {
       .apply(new EncoderConfig().velocityConversionFactor(Movement.driveGearRatio));
   private static final SparkBaseConfig turningConfig = new SparkMaxConfig()
       .smartCurrentLimit(Constants.Swerve.turnAmps)
+      .idleMode(IdleMode.kBrake)
       .apply(new AbsoluteEncoderConfig().positionConversionFactor(Math.PI * 2)
           .inverted(true).velocityConversionFactor(Math.PI * 2));
 
