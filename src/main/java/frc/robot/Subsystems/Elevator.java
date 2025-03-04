@@ -1,6 +1,7 @@
 package frc.robot.Subsystems;
 
 import static edu.wpi.first.units.Units.Feet;
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.units.measure.Distance;
@@ -54,24 +55,38 @@ public class Elevator extends PositionManipulatorBase {
     retract();
   }
 
-  public void positionIntake() {
+  // Algae
+  public void positionAlgaeGround() {
     moveToPosition(Feet.of(2));
   }
 
+  public void positionAlgaeLow() {
+    moveToPosition(Feet.of(3.25));
+  }
+
+  public void positionAlgaeHigh() {
+    moveToPosition(Feet.of(4.5));
+  }
+
+  // Coral
   public void positionL1() {
-    moveToPosition(1);
+    moveToPosition(Feet.of(2));
   }
 
   public void positionL2() {
-    moveToPosition(1.25);
+    moveToPosition(Inches.of(24 + 8));
   }
 
   public void positionL3() {
-    moveToPosition(1.5);
+    moveToPosition(Inches.of(48));
   }
 
   public void positionL4() {
-    moveToPosition(2);
+    positionTop();
+  }
+
+  public void positionTop() {
+    moveToPosition(maxPosition);
   }
 
   @Override

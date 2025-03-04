@@ -13,6 +13,7 @@ import frc.robot.Constants.Swerve;
 import frc.robot.Constants.Wirings;
 import frc.robot.Constants.Swerve.Movement;
 import frc.robot.SyncedLibraries.SystemBases.Swerve.SwerveDriveBase;
+import frc.robot.SyncedLibraries.SystemBases.Utils.PIDConfig;
 
 /** Represents a swerve drive style drivetrain. */
 public class Drivetrain extends SwerveDriveBase {
@@ -45,9 +46,9 @@ public class Drivetrain extends SwerveDriveBase {
 								Swerve.module4Offset, Swerve.module4Name) // back right 7, 8
 				// drive motors are odd, turning motors are even
 				},
-				Swerve.Movement.BotTurn.PIDF,
+				// Swerve.Movement.BotTurn.PIDF,
+				new PIDConfig().set(Movement.BotTurn.P, Movement.BotTurn.I, Movement.BotTurn.D, 0, 0,0, Movement.maxRotationSpeed, Movement.maxRotationAccel),
 				Movement.maxBotSpeed, // TODO: check if this is correct +vvv+
-				Movement.maxBotAccel,
-				Movement.maxRotationSpeed);
+				Movement.maxBotAccel);
 	}
 }

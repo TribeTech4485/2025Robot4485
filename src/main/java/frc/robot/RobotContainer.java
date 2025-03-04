@@ -61,40 +61,90 @@ public class RobotContainer {
       }));
     }
 
-    // left bumper is coral/algae spinners
-    opCont.A.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> coralManipulator.setPower(1)));
-    opCont.Y.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> coralManipulator.setPower(-1)));
-    opCont.X.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> coralManipulator.setPower(-0.25)));
-    opCont.B.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> coralManipulator.setPower(0)));
+    boolean oldControls = false;
+    if (oldControls) {
+      // left bumper is coral/algae spinners
+      opCont.A.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> coralManipulator.setPower(1)));
+      opCont.Y.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> coralManipulator.setPower(-1)));
+      opCont.X.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> coralManipulator.setPower(-0.25)));
+      opCont.B.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> coralManipulator.setPower(0)));
 
-    opCont.PovDown.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> algaeClaw.setPower(1)));
-    opCont.PovUp.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> algaeClaw.setPower(-1)));
-    opCont.PovLeft.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> algaeClaw.setPower(-0.25)));
-    opCont.PovRight.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> algaeClaw.setPower(0)));
+      opCont.PovDown.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> algaeClaw.setPower(1)));
+      opCont.PovUp.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> algaeClaw.setPower(-1)));
+      opCont.PovLeft.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> algaeClaw.setPower(-0.25)));
+      opCont.PovRight.and(opCont.RightBumper.negate()).onTrue(new InstantCommand(() -> algaeClaw.setPower(0)));
 
-    // opCont.ESTOPCondition.onTrue(new InstantCommand(Estopable::KILLIT));
-    // drivCont.ESTOPCondition.onTrue(new InstantCommand(Estopable::KILLIT));
+      // opCont.ESTOPCondition.onTrue(new InstantCommand(Estopable::KILLIT));
+      // drivCont.ESTOPCondition.onTrue(new InstantCommand(Estopable::KILLIT));
 
-    opCont.Start.onTrue(new InstantCommand(() -> algaeArm.getEncoder(0).setPosition(0)));
-    opCont.Options
-        .onTrue(new InstantCommand(() -> elevator._setPosition(Constants.Elevator.positionBoundsMin)));
+      opCont.Start.onTrue(new InstantCommand(() -> algaeArm.getEncoder(0).setPosition(0)));
+      opCont.Options // Left one
+          .onTrue(new InstantCommand(() -> elevator._setPosition(Constants.Elevator.positionBoundsMin)));
 
-    opCont.Y.and(opCont.RightBumper).onTrue(new InstantCommand(() -> {
-      elevator.moveToPosition(Constants.Elevator.positionBoundsMax);
-      algaeArm.moveToPosition(45);
-    }));
-    opCont.B.and(opCont.RightBumper).onTrue(new InstantCommand(() -> {
-      elevator.moveToPosition(Feet.of(4));
-      algaeArm.moveToPosition(0);
-    }));
-    opCont.X.and(opCont.RightBumper).onTrue(new InstantCommand(() -> {
-      elevator.moveToPosition(Feet.of(2));
-      algaeArm.moveToPosition(-15);
-    }));
-    opCont.A.and(opCont.RightBumper).onTrue(new InstantCommand(() -> {
-      elevator.retract();
-      algaeArm.retract();
-    }));
+      opCont.Y.and(opCont.RightBumper).onTrue(new InstantCommand(() -> {
+        elevator.moveToPosition(Constants.Elevator.positionBoundsMax);
+        algaeArm.moveToPosition(45);
+      }));
+      opCont.B.and(opCont.RightBumper).onTrue(new InstantCommand(() -> {
+        elevator.moveToPosition(Feet.of(4));
+        algaeArm.moveToPosition(0);
+      }));
+      opCont.X.and(opCont.RightBumper).onTrue(new InstantCommand(() -> {
+        elevator.moveToPosition(Feet.of(2));
+        algaeArm.moveToPosition(-15);
+      }));
+      opCont.A.and(opCont.RightBumper).onTrue(new InstantCommand(() -> {
+        elevator.retract();
+        algaeArm.retract();
+      }));
+    } else {
+
+      Trigger bumpers = opCont.RightBumper.or(opCont.LeftBumper);
+      Trigger triggers = opCont.RightTrigger.or(opCont.LeftTrigger);
+      // algae mode, no trigger
+      opCont.Y.and(opCont.RightBumper.negate())
+          .onTrue(new InstantCommand(elevator::positionTop))
+          .onTrue(new InstantCommand(algaeArm::positionOut));
+      opCont.B.and(opCont.RightBumper.negate())
+          .onTrue(new InstantCommand(elevator::positionAlgaeHigh))
+          .onTrue(new InstantCommand(algaeArm::positionOut));
+      opCont.X.and(opCont.RightBumper.negate())
+          .onTrue(new InstantCommand(elevator::positionAlgaeLow))
+          .onTrue(new InstantCommand(algaeArm::positionOut));
+      opCont.A.and(opCont.RightBumper.negate())
+          .onTrue(new InstantCommand(elevator::positionAlgaeGround))
+          .onTrue(new InstantCommand(algaeArm::positionGroundIntake));
+      opCont.PovLeft.and(opCont.RightBumper.negate())
+          .onTrue(new InstantCommand(() -> algaeClaw.setPower(1)));
+      opCont.PovRight.and(opCont.RightBumper.negate())
+          .onTrue(new InstantCommand(() -> algaeClaw.setPower(-1)));
+      opCont.PovDown.and(opCont.RightBumper.negate())
+          .onTrue(new InstantCommand(() -> algaeClaw.setPower(0)));
+
+      // coral mode, with trigger
+      opCont.Y.and(opCont.RightBumper)
+          .onTrue(new InstantCommand(elevator::positionTop))
+          .onTrue(new InstantCommand(algaeArm::retract));
+      opCont.B.and(opCont.RightBumper)
+          .onTrue(new InstantCommand(elevator::positionL3))
+          .onTrue(new InstantCommand(algaeArm::retract));
+      opCont.X.and(opCont.RightBumper)
+          .onTrue(new InstantCommand(elevator::positionL2))
+          .onTrue(new InstantCommand(algaeArm::retract));
+      opCont.A.and(opCont.RightBumper)
+          .onTrue(new InstantCommand(elevator::positionL1))
+          .onTrue(new InstantCommand(algaeArm::retract));
+      opCont.PovLeft.and(opCont.RightBumper)
+          .onTrue(new InstantCommand(() -> coralManipulator.setPower(1)));
+      opCont.PovRight.and(opCont.RightBumper)
+          .onTrue(new InstantCommand(() -> coralManipulator.setPower(-1)));
+      opCont.PovDown.and(opCont.RightBumper)
+          .onTrue(new InstantCommand(() -> coralManipulator.setPower(0)));
+
+      drivCont.buttons[10] // Right one
+          .onTrue(new InstantCommand(() -> elevator._setPosition(Constants.Elevator.positionBoundsMin)));
+      opCont.Options.onTrue(new InstantCommand(() -> algaeArm.getEncoder(0).setPosition(0)));
+    }
   }
 
   public Command getAutonomousCommand() {

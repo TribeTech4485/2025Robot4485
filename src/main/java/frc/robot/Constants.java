@@ -8,9 +8,6 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-
-import com.revrobotics.spark.SparkMax;
-
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -19,6 +16,9 @@ import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 
 public final class Constants {
+
+  public static final boolean oldControls = false;
+
   public static class Wirings {
     public static final int swerveModule1DriveMotor = 1;
     public static final int swerveModule1TurningMotor = 2;
@@ -88,10 +88,10 @@ public final class Constants {
         public static final double P = 0.1;
         public static final double I = 0;
         public static final double D = 0;
-        public static final double S = 0;
-        public static final double V = 0;
-        public static final double A = 0;
-        public static final double[] PIDF = { P, I, D, S, V, A };
+        // public static final double S = 0;
+        // public static final double V = 0;
+        // public static final double A = 0;
+        // public static final double[] PIDF = { P, I, D, S, V, A };
       }
     }
   }
@@ -120,7 +120,7 @@ public final class Constants {
   }
 
   public static class AlgaeArm {
-    public static final int amps = 30;
+    public static final int amps = 20; // 30
     // 2350 for 90 degrees to radians
     public static final double positionMultiplier = Math.PI / 2 / 23.5;
     public static final Angle positionBoundsMin = Degrees.of(-80);
@@ -135,8 +135,8 @@ public final class Constants {
     public static final double A = 0.001;
     public static final double[] PIDF = { P, I, D, S, V, G, A };
 
-    public static final AngularVelocity maxVelocity = RadiansPerSecond.of(4);
-    public static final AngularAcceleration maxAcceleration = RadiansPerSecondPerSecond.of(3);
+    public static final AngularVelocity maxVelocity = RadiansPerSecond.of(1.5); // 4
+    public static final AngularAcceleration maxAcceleration = RadiansPerSecondPerSecond.of(1); // 3
   }
 
   public static class CoralManipulator {
