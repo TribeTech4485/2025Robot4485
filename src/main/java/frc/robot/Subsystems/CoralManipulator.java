@@ -12,15 +12,16 @@ import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
 import frc.robot.Constants;
 
 public class CoralManipulator extends ManipulatorBase {
-  ColorSensorV3 sensor = new ColorSensorV3(Port.kOnboard);
-  boolean sensed = false;
+  // ColorSensorV3 sensor;
+  // boolean sensed = false;
   int counter = 0;
 
   public CoralManipulator() {
     addMotors(new SparkMax(Constants.Wirings.coralManipulatorMotor, SparkMax.MotorType.kBrushless));
     setBrakeMode(true);
     setCurrentLimit(Constants.CoralManipulator.currentLimit);
-    customSensor = () -> (sensed);
+    // sensor = new ColorSensorV3(Port.kOnboard);
+    // customSensor = () -> sensed;
   }
 
   @Override
@@ -54,10 +55,10 @@ public class CoralManipulator extends ManipulatorBase {
     super.periodic();
     if (counter++ == 20) {
       counter = 0;
-      sensed = sensor.getProximity() > 150;
+      // sensed = sensor.getProximity() > 150;
     }
 
     // SmartDashboard.putNumber("Coral sensor distance", sensor.getProximity());
-    SmartDashboard.putBoolean("Coral sensed", sensed);
+    // SmartDashboard.putBoolean("Coral sened", customSensor.getAsBoolean());
   }
 }

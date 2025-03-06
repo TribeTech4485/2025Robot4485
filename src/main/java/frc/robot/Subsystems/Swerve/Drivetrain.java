@@ -17,7 +17,7 @@ import frc.robot.SyncedLibraries.SystemBases.Utils.PIDConfig;
 
 /** Represents a swerve drive style drivetrain. */
 public class Drivetrain extends SwerveDriveBase {
-	// TODO: check if this is correct  vvv
+	// TODO: check if this is correct vvv
 	public static final TrapezoidProfile.Constraints driveConstraints = new TrapezoidProfile.Constraints(
 			Movement.maxBotSpeed.in(MetersPerSecond), Movement.maxBotAccel.in(MetersPerSecondPerSecond));
 
@@ -47,7 +47,8 @@ public class Drivetrain extends SwerveDriveBase {
 				// drive motors are odd, turning motors are even
 				},
 				// Swerve.Movement.BotTurn.PIDF,
-				new PIDConfig().set(Movement.BotTurn.P, Movement.BotTurn.I, Movement.BotTurn.D, 0, 0,0, Movement.maxRotationSpeed, Movement.maxRotationAccel),
+				new PIDConfig().set(Movement.BotTurn.P, Movement.BotTurn.I, Movement.BotTurn.D, 0, 0, 0,
+						Movement.maxRotationSpeed, Movement.maxRotationAccel),
 				Movement.maxBotSpeed, // TODO: check if this is correct +vvv+
 				Movement.maxBotAccel);
 	}

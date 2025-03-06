@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -16,9 +17,6 @@ import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 
 public final class Constants {
-
-  public static final boolean oldControls = false;
-
   public static class Wirings {
     public static final int swerveModule1DriveMotor = 1;
     public static final int swerveModule1TurningMotor = 2;
@@ -40,7 +38,7 @@ public final class Constants {
 
   public static class Swerve {
     public static final int driveAmps = 20;
-    public static final int turnAmps = 20;
+    public static final int turnAmps = 30;
 
     public static final double module1Offset = 0.4547673;
     public static final double module2Offset = 0.3288317;
@@ -54,14 +52,12 @@ public final class Constants {
     public static final Distance sideLength = Inches.of(29.75);
 
     public static class Movement {
-      public static final LinearVelocity maxBotSpeed = MetersPerSecond.of(12);
+      public static final LinearVelocity maxBotSpeed = MetersPerSecond.of(5);
       public static final LinearAcceleration maxBotAccel = MetersPerSecondPerSecond.of(8);
-
       public static final LinearVelocity maxWheelSpeed = MetersPerSecond.of(15);
-      public static final LinearAcceleration maxWheelAccel = MetersPerSecondPerSecond.of(10);
-
-      public static final AngularVelocity maxRotationSpeed = RotationsPerSecond.of(2);
-      public static final AngularAcceleration maxRotationAccel = RotationsPerSecondPerSecond.of(0.5);
+      public static final LinearAcceleration maxWheelAccel = MetersPerSecondPerSecond.of(12);
+      public static final AngularVelocity maxRotationSpeed = RotationsPerSecond.of(1);
+      public static final AngularAcceleration maxRotationAccel = RotationsPerSecondPerSecond.of(2);
 
       // public static final double driveGearRatio = 1 / (10 * Math.PI * 15 / 50);
       // public static final double driveGearRatio = 1 / 6.75 * (Math.PI * 4 * 0.254);
@@ -72,8 +68,8 @@ public final class Constants {
         public static final double I = 0;
         public static final double D = 0;
         public static final double S = 0;
-        public static final double V = 2;
-        public static final double A = 0;
+        public static final double V = 2.5;
+        public static final double A = 2.5;
         public static final double[] PIDF = { P, I, D, S, V, A };
       }
 
@@ -111,8 +107,8 @@ public final class Constants {
     public static final double A = 0.02;
     public static final double[] PIDF = { P, I, D, S, V, G, A };
 
-    public static final LinearVelocity maxVelocity = MetersPerSecond.of(2); // 3
-    public static final LinearAcceleration maxAcceleration = MetersPerSecondPerSecond.of(1); // 2
+    public static final LinearVelocity maxVelocity = MetersPerSecond.of(3); // 3
+    public static final LinearAcceleration maxAcceleration = MetersPerSecondPerSecond.of(1.5); // 2
   }
 
   public static class AlgaeClaw {
@@ -120,7 +116,7 @@ public final class Constants {
   }
 
   public static class AlgaeArm {
-    public static final int amps = 20; // 30
+    public static final int amps = 30;
     // 2350 for 90 degrees to radians
     public static final double positionMultiplier = Math.PI / 2 / 23.5;
     public static final Angle positionBoundsMin = Degrees.of(-80);
@@ -135,8 +131,8 @@ public final class Constants {
     public static final double A = 0.001;
     public static final double[] PIDF = { P, I, D, S, V, G, A };
 
-    public static final AngularVelocity maxVelocity = RadiansPerSecond.of(1.5); // 4
-    public static final AngularAcceleration maxAcceleration = RadiansPerSecondPerSecond.of(1); // 3
+    public static final AngularVelocity maxVelocity = RadiansPerSecond.of(8);
+    public static final AngularAcceleration maxAcceleration = RadiansPerSecondPerSecond.of(8);
   }
 
   public static class CoralManipulator {
@@ -146,4 +142,6 @@ public final class Constants {
   public static class Climber {
     public static final int currentLimit = 40;
   }
+
+  public static final boolean oldControls = false;
 }

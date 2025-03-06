@@ -22,7 +22,7 @@ public class AlgaeClaw extends ManipulatorBase {
   }
 
   public void outtake() {
-    setPower(-0.5);
+    setPower(-1);
   }
 
   @Override

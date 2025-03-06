@@ -61,11 +61,11 @@ public class Elevator extends PositionManipulatorBase {
   }
 
   public void positionAlgaeLow() {
-    moveToPosition(Feet.of(3.25));
+    moveToPosition(Feet.of(2.8));
   }
 
   public void positionAlgaeHigh() {
-    moveToPosition(Feet.of(4.5));
+    moveToPosition(Feet.of(4));
   }
 
   // Coral
