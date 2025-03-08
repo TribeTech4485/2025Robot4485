@@ -54,8 +54,10 @@ public final class Constants {
     public static class Movement {
       public static final LinearVelocity maxBotSpeed = MetersPerSecond.of(5);
       public static final LinearAcceleration maxBotAccel = MetersPerSecondPerSecond.of(8);
+
       public static final LinearVelocity maxWheelSpeed = MetersPerSecond.of(15);
       public static final LinearAcceleration maxWheelAccel = MetersPerSecondPerSecond.of(12);
+
       public static final AngularVelocity maxRotationSpeed = RotationsPerSecond.of(1);
       public static final AngularAcceleration maxRotationAccel = RotationsPerSecondPerSecond.of(2);
 
@@ -89,6 +91,16 @@ public final class Constants {
         // public static final double A = 0;
         // public static final double[] PIDF = { P, I, D, S, V, A };
       }
+
+      public static class Holonomic {
+        public static final double xP = 1;
+        public static final double xI = 0;
+        public static final double xD = 0;
+
+        public static final double yP = 1;
+        public static final double yI = 0;
+        public static final double yD = 0;
+      }
     }
   }
 
@@ -103,7 +115,7 @@ public final class Constants {
     public static final double D = 0;
     public static final double S = 0;
     public static final double V = 10.5;
-    public static final double G = 0.3;
+    public static final double G = 0.35; // .3
     public static final double A = 0.02;
     public static final double[] PIDF = { P, I, D, S, V, G, A };
 

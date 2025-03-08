@@ -6,8 +6,13 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
-
+import java.util.List;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -15,30 +20,44 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Commands.MoveToDistanceApriltag;
 import frc.robot.Commands.TeleDrive;
 import frc.robot.Subsystems.CoralManipulator;
 import frc.robot.Subsystems.Elevator;
+import frc.robot.Subsystems.PhotonVision;
 import frc.robot.Subsystems.AlgaeArm;
 import frc.robot.Subsystems.AlgaeClaw;
 import frc.robot.Subsystems.Controllers2025;
-import frc.robot.Subsystems.PhotonVision;
 import frc.robot.Subsystems.Swerve.Drivetrain;
+import frc.robot.Subsystems.Swerve.HoloDrive;
 import frc.robot.SyncedLibraries.SystemBases.ControllerBase;
 import frc.robot.SyncedLibraries.SystemBases.Estopable;
+import frc.robot.SyncedLibraries.SystemBases.PathPlanning.HolonomicDriveBase;
+import frc.robot.SyncedLibraries.SystemBases.PathPlanning.TrajectoryMoveCommand;
+import frc.robot.SyncedLibraries.SystemBases.Utils.BackgroundTrajectoryGenerator;
 
 public class RobotContainer {
   Controllers2025 controllers = new Controllers2025();
   ControllerBase drivCont = controllers.Zero;
   ControllerBase opCont = controllers.One;
+
   Drivetrain drivetrain = new Drivetrain();
   // PhotonVision photon = new PhotonVision();
+  PowerDistribution pdh = new PowerDistribution(20, ModuleType.kRev);
   AlgaeClaw algaeClaw = new AlgaeClaw();
   Elevator elevator = new Elevator();
   AlgaeArm algaeArm = new AlgaeArm(elevator);
   CoralManipulator coralManipulator = new CoralManipulator();
   TeleDrive teleDrive = new TeleDrive(drivetrain, controllers, elevator, algaeArm, algaeClaw, coralManipulator);
+  HolonomicDriveBase holoDrive = new HoloDrive(drivetrain);
+  BackgroundTrajectoryGenerator generator = new BackgroundTrajectoryGenerator(
+      new Pose2d(),
+      new Pose2d(0, 0, new Rotation2d(Math.PI)),
+      List.of(
+          new Translation2d(0, 0),
+          new Translation2d(1, 1),
+          new Translation2d(2, 0)),
+      drivetrain, 0.25);
 
   // MoveToDistanceApriltag moveToDistanceApriltag = new
   // MoveToDistanceApriltag(drivetrain, photon, 1, 0, 0);
@@ -49,9 +68,10 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    CommandScheduler.getInstance().getActiveButtonLoop().clear();
+    // CommandScheduler.getInstance().getActiveButtonLoop().clear();
     // driverController.A.onTrue(moveToDistanceApriltag);
     teleDrive.setNormalTriggerBinds();
+
     if (drivCont.isXbox) {
       drivCont.A.onTrue(new InstantCommand(() -> {
         elevator.retract();
@@ -102,9 +122,6 @@ public class RobotContainer {
         algaeArm.retract();
       }));
     } else {
-
-      Trigger bumpers = opCont.RightBumper.or(opCont.LeftBumper);
-      Trigger triggers = opCont.RightTrigger.or(opCont.LeftTrigger);
       // algae mode, no trigger
       opCont.PovUp.and(opCont.RightBumper.negate())
           .onTrue(new InstantCommand(elevator::positionTop))
@@ -121,6 +138,7 @@ public class RobotContainer {
       opCont.LeftBumper.and(opCont.RightBumper.negate())
           .onTrue(new InstantCommand(() -> elevator.moveToPosition(Inches.of(21))))
           .onTrue(new InstantCommand(algaeArm::positionOut));
+
       opCont.A.and(opCont.RightBumper.negate())
           .onTrue(new InstantCommand(algaeClaw::outtake));
       opCont.Y.and(opCont.RightBumper.negate())
@@ -154,13 +172,27 @@ public class RobotContainer {
               new InstantCommand(elevator::retract)))
           .onTrue(new InstantCommand(algaeArm::retract));
 
-      drivCont.buttons[12]
-          .onTrue(new InstantCommand(elevator::retract))
-          .onTrue(new InstantCommand(algaeArm::retract));
+      if (drivCont.isJoystick) {
+        drivCont.buttons[12]
+            .onTrue(new InstantCommand(elevator::retract))
+            .onTrue(new InstantCommand(algaeArm::retract));
 
-      drivCont.buttons[10] // Right one
-          .onTrue(new InstantCommand(() -> elevator._setPosition(Constants.Elevator.positionBoundsMin)));
+        drivCont.buttons[10] // Right one
+            .onTrue(new InstantCommand(() -> elevator._setPosition(Constants.Elevator.positionBoundsMin)));
+
+        drivCont.buttons[11]
+            .whileTrue(new TrajectoryMoveCommand(generator, holoDrive, true));
+      } else {
+        drivCont.A
+            .onTrue(new InstantCommand(elevator::retract))
+            .onTrue(new InstantCommand(algaeArm::retract));
+        drivCont.B
+            .onTrue(new InstantCommand(algaeArm::retract));
+        drivCont.X
+            .whileTrue(new TrajectoryMoveCommand(generator, holoDrive, true));
+      }
       opCont.Options.onTrue(new InstantCommand(() -> algaeArm.getEncoder(0).setPosition(0)));
+      opCont.Start.onTrue(new InstantCommand(() -> elevator._setPosition(Constants.Elevator.positionBoundsMin)));
     }
   }
 

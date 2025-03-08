@@ -27,12 +27,11 @@ public class Robot extends TimedRobot {
    * POV: change rotation center
    */
 
-  public RobotContainer m_robotContainer;
+  public static RobotContainer container;
 
   @Override
   public void robotInit() {
-    m_robotContainer = new RobotContainer();
-
+    container = new RobotContainer();
   }
 
   @Override
@@ -58,7 +57,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = container.getAutonomousCommand();
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();

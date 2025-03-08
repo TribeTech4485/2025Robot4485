@@ -42,11 +42,11 @@ public class Elevator extends PositionManipulatorBase {
 
     customSensor = getMotor(0).getForwardLimitSwitch()::isPressed;
     lowLimit = new Trigger(customSensor);
-    lowLimit.onTrue(new InstantCommand(() -> _setPosition(minPosition)));
+    // lowLimit.onTrue(new InstantCommand(() -> _setPosition(minPosition)));
   }
 
   public void retract() {
-    moveToPosition(minPosition);
+    moveToPosition(minPosition.plus(Inches.of(1)));
   }
 
   /** If falling, send it */
@@ -134,5 +134,6 @@ public class Elevator extends PositionManipulatorBase {
         ((ManipulatorFFDistanceCommand) moveCommand).getController().getGoal().position);
     SmartDashboard.putNumber("Elevator current position", getPosition().in(Meters));
     SmartDashboard.putNumber("Line Voltage", getMotor(0).getBusVoltage());
+    SmartDashboard.putBoolean("Elevator low limit", lowLimit.getAsBoolean());
   }
 }

@@ -11,6 +11,6 @@ import frc.robot.SyncedLibraries.SystemBases.PhotonVisionBase;
 /** Add your docs here. */
 public class PhotonVision extends PhotonVisionBase {
   public PhotonVision() {
-    super(new PhotonCamera("mainCamera"));
+    super(new PhotonCamera("apriltagCamera"));
   }
 }
