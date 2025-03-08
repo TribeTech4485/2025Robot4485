@@ -52,12 +52,12 @@ public class RobotContainer {
   HolonomicDriveBase holoDrive = new HoloDrive(drivetrain);
   BackgroundTrajectoryGenerator generator = new BackgroundTrajectoryGenerator(
       new Pose2d(),
-      new Pose2d(0, 0, new Rotation2d(Math.PI)),
+      new Pose2d(),
       List.of(
-          new Translation2d(0, 0),
-          new Translation2d(1, 1),
-          new Translation2d(2, 0)),
-      drivetrain, 0.25);
+          new Translation2d(Feet.of(0), Feet.of(3)),
+          new Translation2d(Feet.of(3), Feet.of(0)),
+          new Translation2d(Feet.of(-2), Feet.of(0))),
+      drivetrain, 0.15);
 
   // MoveToDistanceApriltag moveToDistanceApriltag = new
   // MoveToDistanceApriltag(drivetrain, photon, 1, 0, 0);

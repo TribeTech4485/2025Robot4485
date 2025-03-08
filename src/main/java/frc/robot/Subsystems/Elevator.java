@@ -40,7 +40,7 @@ public class Elevator extends PositionManipulatorBase {
     persistMotorConfig();
     _setPosition(minPosition);
 
-    customSensor = getMotor(0).getForwardLimitSwitch()::isPressed;
+    customSensor = getMotor(0).getReverseLimitSwitch()::isPressed;
     lowLimit = new Trigger(customSensor);
     // lowLimit.onTrue(new InstantCommand(() -> _setPosition(minPosition)));
   }
