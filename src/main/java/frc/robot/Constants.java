@@ -53,10 +53,10 @@ public final class Constants {
 
     public static class Movement {
       public static final LinearVelocity maxBotSpeed = MetersPerSecond.of(5);
-      public static final LinearAcceleration maxBotAccel = MetersPerSecondPerSecond.of(8);
+      public static final LinearAcceleration maxBotAccel = MetersPerSecondPerSecond.of(10);
 
       public static final LinearVelocity maxWheelSpeed = MetersPerSecond.of(15);
-      public static final LinearAcceleration maxWheelAccel = MetersPerSecondPerSecond.of(12);
+      public static final LinearAcceleration maxWheelAccel = MetersPerSecondPerSecond.of(15);
 
       public static final AngularVelocity maxRotationSpeed = RotationsPerSecond.of(1);
       public static final AngularAcceleration maxRotationAccel = RotationsPerSecondPerSecond.of(2);
@@ -120,11 +120,12 @@ public final class Constants {
     public static final double[] PIDF = { P, I, D, S, V, G, A };
 
     public static final LinearVelocity maxVelocity = MetersPerSecond.of(3); // 3
-    public static final LinearAcceleration maxAcceleration = MetersPerSecondPerSecond.of(1.5); // 2
+    public static final LinearAcceleration maxAcceleration = MetersPerSecondPerSecond.of(1.25); // 2
   }
 
   public static class AlgaeClaw {
-    public static final int currentLimit = 20;
+    public static final int currentInLimit = 15;
+    public static final int currentOutLimit = 30;
   }
 
   public static class AlgaeArm {
@@ -136,7 +137,7 @@ public final class Constants {
 
     public static final double P = 2;
     public static final double I = 0;
-    public static final double D = 0;
+    public static final double D = 0.1;
     public static final double S = 0.15;
     public static final double V = 2;
     public static final double G = 0.2;
@@ -148,7 +149,7 @@ public final class Constants {
   }
 
   public static class CoralManipulator {
-    public static final int currentLimit = 10;
+    public static final int currentLimit = 20;
   }
 
   public static class Climber {

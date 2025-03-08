@@ -42,11 +42,11 @@ public class Elevator extends PositionManipulatorBase {
 
     customSensor = getMotor(0).getReverseLimitSwitch()::isPressed;
     lowLimit = new Trigger(customSensor);
-    // lowLimit.onTrue(new InstantCommand(() -> _setPosition(minPosition)));
+    lowLimit.onTrue(new InstantCommand(() -> _setPosition(minPosition)));
   }
 
   public void retract() {
-    moveToPosition(minPosition.plus(Inches.of(1)));
+    moveToPosition(minPosition.plus(Inches.of(1.5)));
   }
 
   /** If falling, send it */
@@ -55,9 +55,17 @@ public class Elevator extends PositionManipulatorBase {
     retract();
   }
 
+  public void positionSource() {
+    moveToPosition(Feet.of(1.25));
+  }
+
   // Algae
   public void positionAlgaeGround() {
-    moveToPosition(Feet.of(2));
+    moveToPosition(Feet.of(1.75));
+  }
+
+  public void positionProccessor() {
+    moveToPosition(Inches.of(21));
   }
 
   public void positionAlgaeLow() {
@@ -78,14 +86,14 @@ public class Elevator extends PositionManipulatorBase {
   }
 
   public void positionL3() {
-    moveToPosition(Inches.of(48));
+    moveToPosition(Inches.of(44));
   }
 
   public void positionL4() {
-    positionTop();
+    moveToPosition(Inches.of(65));
   }
 
-  public void positionTop() {
+  public void positionBarge() {
     moveToPosition(maxPosition);
   }
 
@@ -123,6 +131,10 @@ public class Elevator extends PositionManipulatorBase {
 
   public void moveToPosition(double meters) {
     moveToPosition(Meters.of(meters));
+  }
+
+  public void holdPosition() {
+    moveToPosition(getPosition());
   }
 
   @Override

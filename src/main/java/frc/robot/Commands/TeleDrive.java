@@ -47,93 +47,30 @@ public class TeleDrive extends TeleDriveCommandBase {
     armPositionMiddle = (Constants.AlgaeArm.positionBoundsMax.plus(Constants.AlgaeArm.positionBoundsMin)).div(2);
     armPositionRadius = armPositionMiddle.minus(Constants.AlgaeArm.positionBoundsMin);
 
-    this.controllers[1].RightTrigger
-        .onFalse(new InstantCommand(() -> elevator.moveToPosition(elevator.getPosition())))
-        .onFalse(new InstantCommand(() -> algaeArm.moveToPosition(algaeArm.getAngle())));
+    usePOV = false;
 
-    this.controllers[1].LeftTrigger
-        .onTrue(new InstantCommand(() -> elevator.stopCommand()))
-        .onTrue(new InstantCommand(() -> algaeArm.stopCommand()))
+    if (false) {
+      this.controllers[1].RightTrigger
+          .onFalse(new InstantCommand(() -> elevator.moveToPosition(elevator.getPosition())))
+          .onFalse(new InstantCommand(() -> algaeArm.moveToPosition(algaeArm.getAngle())));
+
+      this.controllers[1].LeftTrigger
+          .onTrue(new InstantCommand(() -> elevator.stopCommand()))
+          .onTrue(new InstantCommand(() -> algaeArm.stopCommand()))
+          .onFalse(new InstantCommand(() -> elevator.moveToPosition(elevator.getPosition())))
+          .onFalse(new InstantCommand(() -> algaeArm.moveToPosition(algaeArm.getAngle())));
+    }
+
+    this.controllers[1].LeftTrigger.and(this.controllers[1].LeftBumper)
         .onFalse(new InstantCommand(() -> elevator.moveToPosition(elevator.getPosition())))
         .onFalse(new InstantCommand(() -> algaeArm.moveToPosition(algaeArm.getAngle())));
   }
 
   @Override
   public void execute() {
-    oldExecute();
-  }
-
-  private void newExecute() {
     super.execute();
 
-    // Right trigger = move to position
-    if (controllers[1].RightTrigger.getAsBoolean()) {
-      if (controllers[1].RightJoyMoved.getAsBoolean()) {
-        elevator.moveToPosition(elevatorPositionMiddle.plus(elevatorPositionRadius.times(-controllers[1].getRightY())));
-        SmartDashboard.putNumber("AAAAA",
-            elevatorPositionMiddle.plus(elevatorPositionRadius.times(-controllers[1].getRightY())).in(Meters));
-      } else {
-        elevator.moveToPosition(elevator.getPosition());
-      }
-
-      if (controllers[1].LeftJoyMoved.getAsBoolean()) {
-        Angle rotation = Radians.of(-Math.atan2(controllers[1].getLeftY(), Math.abs(controllers[1].getLeftX())));
-        // if (rotation.getDegrees() > 90 || rotation.getDegrees() < -90) {
-        // rotation = rotation.unaryMinus();
-        // }
-        algaeArm.moveToPosition(rotation);
-      } else {
-        algaeArm.moveToPosition(algaeArm.getAngle());
-      }
-    }
-
-    // Left trigger = power control
-    if (controllers[1].LeftTrigger.getAsBoolean()) {
-      if (controllers[1].getRightY() > 0) {
-        elevator.setPower(-controllers[1].getRightY(), false);
-        if (elevator.getPosition()
-            .compareTo(elevatorPositionMiddle.plus(elevatorPositionRadius.times(powerControlMaxSafeMoveEle))) > 0) {
-        } else {
-          // elevator.setPower(-powerControlReversePowerEle);
-        }
-      } else if (controllers[1].getRightY() < 0) {
-        elevator.setPower(-controllers[1].getRightY(), false);
-        if (elevator.getPosition()
-            .compareTo(elevatorPositionMiddle.minus(elevatorPositionRadius.times(powerControlMaxSafeMoveEle))) < 0) {
-        } else {
-          // elevator.setPower(powerControlReversePowerEle);
-        }
-      } else {
-        elevator.setPower(0);
-      }
-
-      if (controllers[1].getLeftY() > 0) {
-        // if (algaeArm.getAngle()
-        // .compareTo(armPositionMiddle.plus(armPositionRadius.times(powerControlMaxSafeMoveArm)))
-        // > 0) {
-        algaeArm.setPower(-controllers[1].getLeftY(), false);
-        // } else {
-        // algaeArm.setPower(-powerControlReversePowerArm);
-        // }
-      } else if (controllers[1].getLeftY() < 0) {
-        // if (algaeArm.getAngle()
-        // .compareTo(armPositionMiddle.minus(armPositionRadius.times(powerControlMaxSafeMoveArm)))
-        // < 0) {
-        algaeArm.setPower(-controllers[1].getLeftY(), false);
-        // } else {
-        // algaeArm.setPower(powerControlReversePowerArm);
-        // }
-      } else {
-        algaeArm.setPower(0, false);
-      }
-    }
-  }
-
-  // the broken one
-  private void oldExecute() {
-    super.execute();
-
-    if (true) {
+    if (false) {
       // Right trigger = move to position
       if (controllers[1].RightTrigger.getAsBoolean()) {
         if (controllers[1].RightJoyMoved.getAsBoolean()) {
@@ -157,31 +94,23 @@ public class TeleDrive extends TeleDriveCommandBase {
 
         algaeArm.setPower(-controllers[1].getLeftY(), false);
       }
-    } else {
-      // Right stick pressed = move to position
-      if (controllers[1].RightStickPress.getAsBoolean()) {
-        if (controllers[1].RightJoyMoved.getAsBoolean()) {
-          elevator.moveToPosition(
-              elevatorPositionMiddle.plus(elevatorPositionRadius.times(-controllers[1].getRightY())));
-        } else {
-          elevator.moveToPosition(elevator.getPosition());
-        }
+    }
 
-        if (controllers[1].LeftJoyMoved.getAsBoolean()) {
-          Angle rotation = Radians.of(-Math.atan2(controllers[1].getLeftY(), Math.abs(controllers[1].getLeftX())));
-          algaeArm.moveToPosition(rotation);
-        } else {
-          algaeArm.moveToPosition(algaeArm.getAngle());
-        }
+    // Right trigger = move to position
+    if (controllers[1].LeftTrigger.and(controllers[1].LeftBumper).getAsBoolean()) {
+      if (controllers[1].RightJoyMoved.getAsBoolean()) {
+        elevator.moveToPosition(
+            elevatorPositionMiddle.plus(elevatorPositionRadius.times(-controllers[1].getRightY())));
+      } else {
+        elevator.moveToPosition(elevator.getPosition());
       }
 
-      // Left stick pressed = power control
-      if (controllers[1].LeftStickPress.getAsBoolean()) {
-        elevator.setPower(-controllers[1].getRightY(), false);
-
-        algaeArm.setPower(-controllers[1].getLeftY(), false);
+      if (controllers[1].LeftJoyMoved.getAsBoolean()) {
+        Angle rotation = Radians.of(-Math.atan2(controllers[1].getLeftY(), Math.abs(controllers[1].getLeftX())));
+        algaeArm.moveToPosition(rotation);
+      } else {
+        algaeArm.moveToPosition(algaeArm.getAngle());
       }
-
     }
   }
 }
