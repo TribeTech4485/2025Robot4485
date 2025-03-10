@@ -42,7 +42,7 @@ public class Elevator extends PositionManipulatorBase {
 
     customSensor = getMotor(0).getReverseLimitSwitch()::isPressed;
     lowLimit = new Trigger(customSensor);
-    lowLimit.onTrue(new InstantCommand(() -> _setPosition(minPosition)));
+    lowLimit.onTrue(new InstantCommand(() -> _setPosition(minPosition.plus(Inches.of(0.5)))));
   }
 
   public void retract() {
@@ -135,6 +135,11 @@ public class Elevator extends PositionManipulatorBase {
 
   public void holdPosition() {
     moveToPosition(getPosition());
+  }
+
+  public double getPosPercent() {
+    return getPosition().minus(minPosition).div(maxPosition.minus(minPosition)).baseUnitMagnitude();
+
   }
 
   @Override

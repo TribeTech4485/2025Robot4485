@@ -17,7 +17,6 @@ import frc.robot.SyncedLibraries.SystemBases.Utils.PIDConfig;
 
 /** Represents a swerve drive style drivetrain. */
 public class Drivetrain extends SwerveDriveBase {
-	// TODO: check if this is correct vvv
 	public static final TrapezoidProfile.Constraints driveConstraints = new TrapezoidProfile.Constraints(
 			Movement.maxBotSpeed.in(MetersPerSecond), Movement.maxBotAccel.in(MetersPerSecondPerSecond));
 

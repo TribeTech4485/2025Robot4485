@@ -37,7 +37,7 @@ public final class Constants {
   }
 
   public static class Swerve {
-    public static final int driveAmps = 20;
+    public static final int driveAmps = 30;
     public static final int turnAmps = 30;
 
     public static final double module1Offset = 0.4547673;
@@ -129,7 +129,7 @@ public final class Constants {
   }
 
   public static class AlgaeArm {
-    public static final int amps = 30;
+    public static final int amps = 35;
     // 2350 for 90 degrees to radians
     public static final double positionMultiplier = Math.PI / 2 / 23.5;
     public static final Angle positionBoundsMin = Degrees.of(-80);
@@ -144,7 +144,7 @@ public final class Constants {
     public static final double A = 0.001;
     public static final double[] PIDF = { P, I, D, S, V, G, A };
 
-    public static final AngularVelocity maxVelocity = RadiansPerSecond.of(8);
+    public static final AngularVelocity maxVelocity = RadiansPerSecond.of(9);
     public static final AngularAcceleration maxAcceleration = RadiansPerSecondPerSecond.of(8);
   }
 

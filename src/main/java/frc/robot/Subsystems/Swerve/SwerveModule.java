@@ -33,6 +33,6 @@ public class SwerveModule extends SwerveModuleBase {
   public SwerveModule(SparkMax driveMotor, SparkMax turningMotor, double turningOffset, String name) {
     super(driveMotor, turningMotor, turningOffset, name,
         driveConfig, turningConfig, drivePIDF, turnPID);
-    breakerMaxAmps = 30;
+    breakerMaxAmps = 40;
   }
 }
