@@ -72,7 +72,8 @@ public class RobotContainer {
   private void configureBindings() {
     // CommandScheduler.getInstance().getActiveButtonLoop().clear();
     // driverController.A.onTrue(moveToDistanceApriltag);
-    teleDrive.setNormalTriggerBinds();
+
+    teleDrive.setNormalTriggerBinds(); // MOST DRIVER CONTROLLS ARE HERE
 
     if (drivCont.isXbox) {
       drivCont.A.onTrue(new InstantCommand(() -> {
@@ -87,205 +88,129 @@ public class RobotContainer {
     }
 
     drivCont.ESTOPCondition.onTrue(new InstantCommand(Estopable::KILLIT));
-    boolean oldControls = false;
-    if (oldControls) {
-      Trigger Shift = opCont.RightBumper;
-      // algae mode, no trigger
-      opCont.PovUp.and(Shift.negate())
-          .onTrue(new InstantCommand(elevator::positionBarge))
-          .onTrue(new InstantCommand(() -> algaeArm.moveToPosition(45)));
-      opCont.PovRight.and(Shift.negate())
-          .onTrue(new InstantCommand(elevator::positionAlgaeHigh))
-          .onTrue(new InstantCommand(algaeArm::positionOut));
-      opCont.PovLeft.and(Shift.negate())
-          .onTrue(new InstantCommand(elevator::positionAlgaeLow))
-          .onTrue(new InstantCommand(algaeArm::positionOut));
-      opCont.PovDown.and(Shift.negate())
-          .onTrue(new InstantCommand(elevator::positionAlgaeGround))
-          .onTrue(new InstantCommand(algaeArm::positionGroundIntake));
-      opCont.LeftBumper.and(Shift.negate())
-          .onTrue(new InstantCommand(() -> elevator.moveToPosition(Inches.of(21))))
-          .onTrue(new InstantCommand(algaeArm::positionOut));
+    /*
+     * RT alae out
+     * RB alae in
+     * LT shift
+     * PResets same
+     * A coral intake
+     * B coral outtake
+     */
+    /** Shift == coral mode */
+    Trigger Shift = opCont.LeftTrigger;
+    Trigger notShift = Shift.negate();
+    opCont.RightTrigger
+        .onTrue(new InstantCommand(algaeClaw::outtake))
+        .onFalse(new InstantCommand(algaeClaw::stop));
+    opCont.RightBumper
+        .onTrue(new InstantCommand(algaeClaw::intake));
 
-      opCont.A.and(Shift.negate())
-          .onTrue(new InstantCommand(algaeClaw::intake));
-      opCont.B.and(Shift.negate())
-          .onTrue(new InstantCommand(algaeClaw::outtake));
-      opCont.X.and(Shift.negate())
-          .onTrue(new InstantCommand(algaeClaw::stop));
+    // coral mode, with trigger
+    opCont.PovUp.and(Shift)
+        .onTrue(new InstantCommand(elevator::positionL4))
+        .onTrue(new InstantCommand(algaeArm::retract));
+    opCont.PovRight.and(Shift)
+        .onTrue(new InstantCommand(elevator::positionL3))
+        .onTrue(new InstantCommand(algaeArm::retract));
+    opCont.PovLeft.and(Shift)
+        .onTrue(new InstantCommand(elevator::positionL2))
+        .onTrue(new InstantCommand(algaeArm::retract));
+    opCont.PovDown.and(Shift)
+        .onTrue(new InstantCommand(elevator::positionL1))
+        .onTrue(new InstantCommand(algaeArm::retract));
 
-      // coral mode, with trigger
-      opCont.PovUp.and(Shift)
-          .onTrue(new InstantCommand(elevator::positionL4))
+    opCont.LeftStickPress.and(Shift)
+        .onTrue(new SequentialCommandGroup(
+            new WaitCommand(0.1),
+            new InstantCommand(elevator::retract)))
+        .onTrue(new InstantCommand(algaeArm::retract));
+
+    // algae mode, no trigger
+    opCont.PovUp.and(notShift)
+        .onTrue(new InstantCommand(elevator::positionBarge))
+        .onTrue(new InstantCommand(algaeArm::positionBarge));
+    opCont.PovRight.and(notShift)
+        .onTrue(new InstantCommand(elevator::positionAlgaeHigh))
+        .onTrue(new InstantCommand(algaeArm::positionOut));
+    opCont.PovLeft.and(notShift)
+        .onTrue(new InstantCommand(elevator::positionAlgaeLow))
+        .onTrue(new InstantCommand(algaeArm::positionOut));
+    opCont.PovDown.and(notShift)
+        .onTrue(new InstantCommand(elevator::positionAlgaeGround))
+        .onTrue(new InstantCommand(algaeArm::positionGroundIntake));
+
+    opCont.LeftStickPress.and(notShift)
+        .onTrue(new SequentialCommandGroup(
+            new WaitCommand(0.1),
+            new InstantCommand(elevator::retract)))
+        .onTrue(new InstantCommand(algaeArm::retract));
+
+    opCont.LeftBumper.and(notShift)
+        .onTrue(new InstantCommand(elevator::positionProccessor))
+        .onTrue(new InstantCommand(algaeArm::positionOut));
+
+    // opCont.A
+    // .onTrue(coralManipulator.comIntake());
+    opCont.A
+        .onTrue(new InstantCommand(() -> coralManipulator.setPower(-0.5)))
+        .onFalse(new InstantCommand(() -> coralManipulator.stop()));
+    opCont.B
+        .onTrue(coralManipulator.comOuttake());
+
+    opCont.Options // THE ONE LABELED OPTIONS
+        .onTrue(new InstantCommand(() -> algaeArm._setAngle(Radian.of(0))));
+    opCont.LeftBumper.and(opCont.Options) // THE ONE LABELED SHARE
+        .and(Shift)
+        .onTrue(new SequentialCommandGroup(
+            new InstantCommand(() -> elevator.setPower(-0.1, true)),
+            new WaitUntilCommand(elevator.getCustomSensor()),
+            new InstantCommand(elevator::stop),
+            new InstantCommand(elevator::holdPosition)));
+
+    opCont.Options.onTrue(new InstantCommand(() -> algaeArm.getEncoder(0).setPosition(0)));
+
+    opCont.LeftBumper.and(Shift); // Manual smart control
+
+    if (drivCont.isJoystick) {
+      drivCont.buttons[12]
+          .onTrue(new InstantCommand(elevator::retract))
           .onTrue(new InstantCommand(algaeArm::retract));
-      opCont.PovRight.and(Shift)
-          .onTrue(new InstantCommand(elevator::positionL3))
-          .onTrue(new InstantCommand(algaeArm::retract));
-      opCont.PovLeft.and(Shift)
-          .onTrue(new InstantCommand(elevator::positionL2))
-          .onTrue(new InstantCommand(algaeArm::retract));
-      opCont.PovDown.and(Shift)
-          .onTrue(new InstantCommand(elevator::positionL1))
-          .onTrue(new InstantCommand(algaeArm::retract));
-      opCont.B.and(Shift)
-          .onTrue(new InstantCommand(coralManipulator::outtake));
-      opCont.A.and(Shift)
-          .onTrue(new InstantCommand(coralManipulator::intake));
-      opCont.X.and(Shift)
-          .onTrue(new InstantCommand(coralManipulator::stop));
-      // drivCont.setRumble(RumbleType.kBothRumble, 1);
 
-      opCont.LeftStickPress
-          .onTrue(new SequentialCommandGroup(
-              new WaitCommand(0.1),
-              new InstantCommand(elevator::retract)))
-          .onTrue(new InstantCommand(algaeArm::retract));
+      drivCont.buttons[10] // Right one
+          .onTrue(new InstantCommand(() -> elevator
+              ._setPosition(Constants.Elevator.positionBoundsMin)));
 
-      if (drivCont.isJoystick) {
-        drivCont.buttons[12]
-            .onTrue(new InstantCommand(elevator::retract))
-            .onTrue(new InstantCommand(algaeArm::retract));
-
-        drivCont.buttons[10] // Right one
-            .onTrue(new InstantCommand(() -> elevator
-                ._setPosition(Constants.Elevator.positionBoundsMin)));
-
-        drivCont.buttons[11]
-            .whileTrue(new TrajectoryMoveCommand(generator, holoDrive, true));
-      } else {
-        drivCont.A
-            .onTrue(new InstantCommand(elevator::retract))
-            .onTrue(new InstantCommand(algaeArm::retract));
-        drivCont.B
-            .onTrue(new InstantCommand(algaeArm::retract));
-        drivCont.X
-            .whileTrue(new TrajectoryMoveCommand(generator, holoDrive, true));
-      }
-      opCont.Options.onTrue(new InstantCommand(() -> algaeArm.getEncoder(0).setPosition(0)));
-      opCont.Start.onTrue(new InstantCommand(
-          () -> elevator._setPosition(Constants.Elevator.positionBoundsMin)));
+      drivCont.buttons[11]
+          .whileTrue(new TrajectoryMoveCommand(generator, holoDrive, true));
     } else {
-      /*
-       * RT alae out
-       * RB alae in
-       * LT shift
-       * PResets same
-       * A coral intake
-       * B coral outtake
-       */
-      /** Shift == coral mode */
-      Trigger Shift = opCont.LeftTrigger;
-      Trigger notShift = Shift.negate();
-      opCont.RightTrigger
-          .onTrue(new InstantCommand(algaeClaw::outtake))
-          .onFalse(new InstantCommand(algaeClaw::stop));
-      opCont.RightBumper
-          .onTrue(new InstantCommand(algaeClaw::intake));
-
-      // coral mode, with trigger
-      opCont.PovUp.and(Shift)
-          .onTrue(new InstantCommand(elevator::positionL4))
+      // driver xbox
+      drivCont.A
+          .onTrue(new InstantCommand(elevator::retract))
           .onTrue(new InstantCommand(algaeArm::retract));
-      opCont.PovRight.and(Shift)
-          .onTrue(new InstantCommand(elevator::positionL3))
+      drivCont.B
           .onTrue(new InstantCommand(algaeArm::retract));
-      opCont.PovLeft.and(Shift)
-          .onTrue(new InstantCommand(elevator::positionL2))
-          .onTrue(new InstantCommand(algaeArm::retract));
-      opCont.PovDown.and(Shift)
-          .onTrue(new InstantCommand(elevator::positionL1))
-          .onTrue(new InstantCommand(algaeArm::retract));
+      drivCont.X
+          .whileTrue(new TrajectoryMoveCommand(generator, holoDrive, true));
 
-      opCont.LeftStickPress.and(Shift)
-          .onTrue(new SequentialCommandGroup(
-              new WaitCommand(0.1),
-              new InstantCommand(elevator::retract)))
-          .onTrue(new InstantCommand(algaeArm::retract));
-
-      // algae mode, no trigger
-      opCont.PovUp.and(notShift)
-          .onTrue(new InstantCommand(elevator::positionBarge))
-          .onTrue(new InstantCommand(algaeArm::positionBarge));
-      opCont.PovRight.and(notShift)
-          .onTrue(new InstantCommand(elevator::positionAlgaeHigh))
-          .onTrue(new InstantCommand(algaeArm::positionOut));
-      opCont.PovLeft.and(notShift)
-          .onTrue(new InstantCommand(elevator::positionAlgaeLow))
-          .onTrue(new InstantCommand(algaeArm::positionOut));
-      opCont.PovDown.and(notShift)
-          .onTrue(new InstantCommand(elevator::positionAlgaeGround))
-          .onTrue(new InstantCommand(algaeArm::positionGroundIntake));
-
-      opCont.LeftStickPress.and(notShift)
-          .onTrue(new SequentialCommandGroup(
-              new WaitCommand(0.1),
-              new InstantCommand(elevator::retract)))
-          .onTrue(new InstantCommand(algaeArm::retract));
-
-      opCont.LeftBumper.and(notShift)
-          .onTrue(new InstantCommand(elevator::positionProccessor))
-          .onTrue(new InstantCommand(algaeArm::positionOut));
-
-      // opCont.A
-      // .onTrue(coralManipulator.comIntake());
-      opCont.A
-          .onTrue(new InstantCommand(() -> coralManipulator.setPower(-0.5)))
-          .onFalse(new InstantCommand(() -> coralManipulator.stop()));
-      opCont.B
-          .onTrue(coralManipulator.comOuttake());
-
-      opCont.Options // THE ONE LABELED OPTIONS
-          .onTrue(new InstantCommand(() -> algaeArm._setAngle(Radian.of(0))));
-      opCont.LeftBumper.and(opCont.Options) // THE ONE LABELED SHARE
-          .and(Shift)
-          .onTrue(new SequentialCommandGroup(
-              new InstantCommand(() -> elevator.setPower(-0.1, true)),
-              new WaitUntilCommand(elevator.getCustomSensor()),
-              new InstantCommand(elevator::stop),
-              new InstantCommand(elevator::holdPosition)));
-
-      opCont.LeftBumper.and(Shift); // Manual smart control
-
-      if (drivCont.isJoystick) {
-        drivCont.buttons[12]
-            .onTrue(new InstantCommand(elevator::retract))
-            .onTrue(new InstantCommand(algaeArm::retract));
-
-        drivCont.buttons[10] // Right one
-            .onTrue(new InstantCommand(() -> elevator
-                ._setPosition(Constants.Elevator.positionBoundsMin)));
-
-        drivCont.buttons[11]
-            .whileTrue(new TrajectoryMoveCommand(generator, holoDrive, true));
-      } else {
-        drivCont.A
-            .onTrue(new InstantCommand(elevator::retract))
-            .onTrue(new InstantCommand(algaeArm::retract));
-        drivCont.B
-            .onTrue(new InstantCommand(algaeArm::retract));
-        drivCont.X
-            .whileTrue(new TrajectoryMoveCommand(generator, holoDrive, true));
-
-        drivCont.PovUp
-            .whileTrue(new RepeatCommand(
-                new SequentialCommandGroup(
-                    new InstantCommand(
-                        () -> elevator.moveToPosition(
-                            elevator.getPosition()
-                                .plus(Inches.of(1)))),
-                    new WaitCommand(0.1))));
-        drivCont.PovDown
-            .onTrue(new RepeatCommand(
-                new SequentialCommandGroup(
-                    new InstantCommand(
-                        () -> elevator.moveToPosition(
-                            elevator.getPosition()
-                                .minus(Inches.of(
-                                    1)))),
-                    new WaitCommand(0.1))));
-      }
-      opCont.Options.onTrue(new InstantCommand(() -> algaeArm.getEncoder(0).setPosition(0)));
+      drivCont.PovUp
+          .whileTrue(new RepeatCommand(
+              new SequentialCommandGroup(
+                  new InstantCommand(
+                      () -> elevator.moveToPosition(
+                          elevator.getPosition()
+                              .plus(Inches.of(1)))),
+                  new WaitCommand(0.1))));
+      drivCont.PovDown
+          .onTrue(new RepeatCommand(
+              new SequentialCommandGroup(
+                  new InstantCommand(
+                      () -> elevator.moveToPosition(
+                          elevator.getPosition()
+                              .minus(Inches.of(
+                                  1)))),
+                  new WaitCommand(0.1))));
     }
+
   }
 
   public Command getAutonomousCommand() {
