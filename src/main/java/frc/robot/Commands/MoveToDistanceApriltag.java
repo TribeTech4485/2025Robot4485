@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.Commands;
 
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -25,7 +21,8 @@ public class MoveToDistanceApriltag extends Command {
   PIDController yController = new PIDController(0.1, 0.0, 0.0);
   PIDController thetaController = new PIDController(0.1, 0.0, 0.0);
 
-  public MoveToDistanceApriltag(Drivetrain drivetrain, PhotonVisionBase photonVision, double distanceX, double distanceY, double angle) {
+  public MoveToDistanceApriltag(Drivetrain drivetrain, PhotonVisionBase photonVision, double distanceX,
+      double distanceY, double angle) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain, photonVision);
     driveBase = drivetrain;
@@ -45,7 +42,7 @@ public class MoveToDistanceApriltag extends Command {
     xController.setSetpoint(desiredX);
     yController.setSetpoint(desiredY);
     thetaController.setSetpoint(desiredTheta);
-    
+
     xController.setTolerance(0.1);
     yController.setTolerance(0.1);
     thetaController.setTolerance(0.1);
@@ -63,7 +60,7 @@ public class MoveToDistanceApriltag extends Command {
     double x = translation.getX();
     double y = translation.getY();
     double theta = transform.getRotation().getAngle();
-    
+
     double xOutput = xController.calculate(x);
     double yOutput = yController.calculate(y);
     double thetaOutput = thetaController.calculate(theta);
