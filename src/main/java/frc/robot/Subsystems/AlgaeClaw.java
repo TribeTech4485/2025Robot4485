@@ -11,6 +11,7 @@ import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
 public class AlgaeClaw extends ManipulatorBase {
 
   public AlgaeClaw() {
+    breakerMaxAmps = 30;
     addMotors(new SparkMax(Constants.Wirings.algaeClawMotor, SparkMax.MotorType.kBrushless));
     resetMotors();
     setBrakeMode(true);

@@ -52,14 +52,14 @@ public final class Constants {
     public static final Distance sideLength = Inches.of(29.75);
 
     public static class Movement {
-      public static final LinearVelocity maxBotSpeed = MetersPerSecond.of(5);
+      public static final LinearVelocity maxBotSpeed = MetersPerSecond.of(3);
       public static final LinearAcceleration maxBotAccel = MetersPerSecondPerSecond.of(10);
 
       public static final LinearVelocity maxWheelSpeed = MetersPerSecond.of(15);
-      public static final LinearAcceleration maxWheelAccel = MetersPerSecondPerSecond.of(15);
+      public static final LinearAcceleration maxWheelAccel = MetersPerSecondPerSecond.of(20);
 
       public static final AngularVelocity maxRotationSpeed = RotationsPerSecond.of(1);
-      public static final AngularAcceleration maxRotationAccel = RotationsPerSecondPerSecond.of(2);
+      public static final AngularAcceleration maxRotationAccel = RotationsPerSecondPerSecond.of(2.5);
 
       // public static final double driveGearRatio = 1 / (10 * Math.PI * 15 / 50);
       // public static final double driveGearRatio = 1 / 6.75 * (Math.PI * 4 * 0.254);
@@ -133,7 +133,7 @@ public final class Constants {
     // 2350 for 90 degrees to radians
     public static final double positionMultiplier = Math.PI / 2 / 23.5;
     public static final Angle positionBoundsMin = Degrees.of(-80);
-    public static final Angle positionBoundsMax = Degrees.of(70);
+    public static final Angle positionBoundsMax = Degrees.of(85);
 
     public static final double P = 2;
     public static final double I = 0;
@@ -144,8 +144,8 @@ public final class Constants {
     public static final double A = 0.001;
     public static final double[] PIDF = { P, I, D, S, V, G, A };
 
-    public static final AngularVelocity maxVelocity = RadiansPerSecond.of(9);
-    public static final AngularAcceleration maxAcceleration = RadiansPerSecondPerSecond.of(8);
+    public static final AngularVelocity maxVelocity = RadiansPerSecond.of(6);
+    public static final AngularAcceleration maxAcceleration = RadiansPerSecondPerSecond.of(5);
   }
 
   public static class CoralManipulator {

@@ -3,6 +3,9 @@ package frc.robot.Subsystems;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radian;
+import static edu.wpi.first.units.Units.Radians;
+
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
@@ -18,6 +21,7 @@ import frc.robot.SyncedLibraries.SystemBases.Utils.PIDConfig;
 
 public class AlgaeArm extends AngleManipulatorBase {
   final Elevator elevator;
+  
 
   public AlgaeArm(Elevator elevator) {
     super(
@@ -25,6 +29,7 @@ public class AlgaeArm extends AngleManipulatorBase {
             Constants.AlgaeArm.V, Constants.AlgaeArm.A, Constants.AlgaeArm.G, Constants.AlgaeArm.maxVelocity,
             Constants.AlgaeArm.maxAcceleration),
         ManipulatorFFAngleCommand.FeedForwardType.Arm);
+    breakerMaxAmps = 40;
     addMotors(new SparkMax(Constants.Wirings.algaeArmMotor, SparkMax.MotorType.kBrushless));
     resetMotors();
     setBrakeMode(true);
@@ -35,6 +40,11 @@ public class AlgaeArm extends AngleManipulatorBase {
     setAngleBounds(Constants.AlgaeArm.positionBoundsMin, Constants.AlgaeArm.positionBoundsMax);
     // home().schedule();
     getMoveCommand().setEndOnTarget(false);
+
+    // if not homed, set angle to top position
+    if (Math.abs(getAngle().in(Radians)) <= 0.0001) {
+      _setAngle(Degrees.of(90));
+    }
     customSensor = getMotor(0).getForwardLimitSwitch()::isPressed;
     this.elevator = elevator;
   }

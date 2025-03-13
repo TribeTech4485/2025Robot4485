@@ -26,6 +26,7 @@ public class Elevator extends PositionManipulatorBase {
         Constants.Elevator.S, Constants.Elevator.V, Constants.Elevator.A, Constants.Elevator.G,
         Constants.Elevator.maxVelocity, Constants.Elevator.maxAcceleration),
         ManipulatorFFDistanceCommand.FeedForwardType.Elevator);
+        breakerMaxAmps = 40;
     addMotors(new SparkMax(Constants.Wirings.elevatorMotor1, SparkMax.MotorType.kBrushless),
         new SparkMax(Constants.Wirings.elevatorMotor2, SparkMax.MotorType.kBrushless));
     resetMotors();
@@ -42,11 +43,11 @@ public class Elevator extends PositionManipulatorBase {
 
     customSensor = getMotor(0).getReverseLimitSwitch()::isPressed;
     lowLimit = new Trigger(customSensor);
-    lowLimit.onTrue(new InstantCommand(() -> _setPosition(minPosition.plus(Inches.of(0.5)))));
+    lowLimit.onTrue(new InstantCommand(() -> _setPosition(minPosition.plus(Inches.of(0)))));
   }
 
   public void retract() {
-    moveToPosition(minPosition.plus(Inches.of(1.5)));
+    moveToPosition(minPosition.plus(Inches.of(0)));
   }
 
   /** If falling, send it */
@@ -82,7 +83,7 @@ public class Elevator extends PositionManipulatorBase {
   }
 
   public void positionL2() {
-    moveToPosition(Inches.of(24 + 8));
+    moveToPosition(Inches.of(31));
   }
 
   public void positionL3() {
@@ -90,7 +91,7 @@ public class Elevator extends PositionManipulatorBase {
   }
 
   public void positionL4() {
-    moveToPosition(Inches.of(65));
+    moveToPosition(Inches.of(64.5));
   }
 
   public void positionBarge() {

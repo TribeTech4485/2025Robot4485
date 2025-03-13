@@ -229,11 +229,8 @@ public class RobotContainer {
 
       // opCont.A
       // .onTrue(coralManipulator.comIntake());
-      opCont.A
-          .onTrue(new InstantCommand(() -> coralManipulator.setPower(-0.5)))
-          .onFalse(new InstantCommand(() -> coralManipulator.stop()));
-      opCont.B
-          .onTrue(coralManipulator.comOuttake());
+      opCont.A.onTrue(coralManipulator.comIntake());
+      opCont.B.onTrue(coralManipulator.comOuttake());
 
       opCont.Options // THE ONE LABELED OPTIONS
           .onTrue(new InstantCommand(() -> algaeArm._setAngle(Radian.of(0))));

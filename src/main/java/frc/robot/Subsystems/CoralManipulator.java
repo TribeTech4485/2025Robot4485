@@ -3,8 +3,10 @@ package frc.robot.Subsystems;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj.I2C.Port;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -17,6 +19,7 @@ public class CoralManipulator extends ManipulatorBase {
   int counter = 0;
 
   public CoralManipulator() {
+    breakerMaxAmps = 30;
     addMotors(new SparkMax(Constants.Wirings.coralManipulatorMotor, SparkMax.MotorType.kBrushless));
     setBrakeMode(true);
     setCurrentLimit(Constants.CoralManipulator.currentLimit);
@@ -45,13 +48,17 @@ public class CoralManipulator extends ManipulatorBase {
 
   public Command comIntake() {
     return new SequentialCommandGroup(
-        new InstantCommand(() -> intake()),
+        new InstantCommand(() -> setPower(-0.25)),
+        new PrintCommand("Started"),
         new WaitUntilCommand(customSensor),
+        new PrintCommand("Seen"),
+        new InstantCommand(() -> setPower(-0.125)),
         new WaitUntilCommand(() -> !customSensor.getAsBoolean()),
-        new InstantCommand(() -> setPower(-0.5)),
-        new WaitCommand(0.1),
+        new PrintCommand("Unseen"),
+        new InstantCommand(() -> setPower(0.075)),
+        new WaitUntilCommand(customSensor),
         new InstantCommand(() -> stop()))
-        .withTimeout(5).andThen(
+        .withTimeout(10).andThen(
             new InstantCommand(() -> stop()));
   }
 
@@ -75,7 +82,7 @@ public class CoralManipulator extends ManipulatorBase {
       sensed = colorSensor.getProximity() > 150;
     }
 
-    // SmartDashboard.putNumber("Coral sensor distance", sensor.getProximity());
-    // SmartDashboard.putBoolean("Coral sened", customSensor.getAsBoolean());
+    SmartDashboard.putNumber("Coral sensor distance", colorSensor.getProximity());
+    SmartDashboard.putBoolean("Coral sened", customSensor.getAsBoolean());
   }
 }

@@ -19,29 +19,37 @@ public class LEDS extends LedBase {
   AddressableLEDBufferView topDownView;
   AddressableLEDBufferView blank2View;
 
-  static int length = 297;
-  int baseLength = 147;
-  int blank1Length = 13;
-  int blank2Length = 17;
-  int topUpLength = (length - baseLength - blank1Length - blank2Length) / 2;
-  int topDownLength = topUpLength;
+  static final int length = 297 - 147; // 297
+  final int baseLength = 1; // 147
+  final int blank1Length = 1; // 13
+  final int blank2Length = 1; // 25
+  final int topUpLength = (length - baseLength - blank1Length - blank2Length) / 2;
+  final int topDownLength = topUpLength;
 
-  int blank1Start = baseLength + 1;
-  int topUpStart = blank1Start + blank1Length + 1;
-  int topDownStart = topUpStart + topUpLength + 1;
-  int blank2Start = topDownStart + topDownLength + 1;
+  final int blank1Start = baseLength + 0;
+  final int topUpStart = blank1Start + blank1Length + 0;
+  final int topDownStart = topUpStart + topUpLength + 0;
+  final int blank2Start = topDownStart + topDownLength + 0;
 
   public LEDS(Elevator ele) {
     super(1, length);
 
-    robotBaseView = buffer.createView(0, baseLength);
-    blank1View = buffer.createView(blank1Start, blank1Length);
-    topUpView = buffer.createView(topUpStart, topUpLength);
-    topDownView = buffer.createView(topDownStart, topDownLength);
-    blank2View = buffer.createView(blank2Start, blank2Length);
+    // robotBaseView = buffer.createView(0, baseLength);
+    // blank1View = buffer.createView(blank1Start, blank1Length);
+    // topUpView = buffer.createView(topUpStart, topUpLength);
+    // topDownView = buffer.createView(topDownStart, topDownLength).reversed();
+    // blank2View = buffer.createView(blank2Start, blank2Length);
+    topUpView = buffer.createView(5, 65);
+    topDownView = buffer.createView(65, 125).reversed();
+
+    System.out.println("RobotBAse start " + 0 + " long " + baseLength);
+    System.out.println("Blank1 start " + blank1Start + " long " + blank1Length);
+    System.out.println("TopUp start " + topUpStart + " long " + topUpLength);
+    System.out.println("TopDown start " + topDownStart + " long " + topDownLength);
+    System.out.println("Blank2 start " + blank2Start + " long " + blank2Length);
 
     double baseBrightness = 33;
-    double heightBrightness = 66;
+    double heightBrightness = 25;
     LEDPattern elevatorBasePattern = LEDPattern.rainbow(255, 255)
         .scrollAtAbsoluteSpeed(FeetPerSecond.of(-5), spacing);
 
@@ -49,33 +57,37 @@ public class LEDS extends LedBase {
         .blend(LEDPattern.solid(Color.kWhite));
 
     // bottom to to elevator height
-    LEDPattern elevatorHightMasked = elevatorBasePattern.mask(LEDPattern.progressMaskLayer(() -> ele.getPosPercent()))
+    LEDPattern elevatorHightMasked = elevatorBasePattern.mask(LEDPattern.progressMaskLayer(() -> 1 - ele.getPosPercent()))
         .atBrightness(Percent.of(heightBrightness));
     // top to elevator height
     LEDPattern elevatorBaseReverseMasked = elevatorBasePattern
         .mask(LEDPattern.progressMaskLayer(() -> 1 - ele.getPosPercent()))
         .breathe(Seconds.of(3))
-        .blend(softAllianceTone)
+        // .blend(softAllianceTone)
         .atBrightness(Percent.of(baseBrightness));
 
-    elevatorPatt = elevatorHightMasked.overlayOn(elevatorBaseReverseMasked);
-
-    robotBasePattern = LEDPattern.rainbow(255, 255)
-        .scrollAtAbsoluteSpeed(FeetPerSecond.of(3), spacing)
-        .atBrightness(Percent.of(75));
+    // elevatorPatt = elevatorHightMasked.overlayOn(elevatorBaseReverseMasked);
+    elevatorPatt = elevatorHightMasked;
+    robotBasePattern =
+        // LEDPattern.rainbow(255, 255)
+        LEDPattern.solid(getAllianceColor())
+            // .scrollAtAbsoluteSpeed(FeetPerSecond.of(3), spacing)
+            .atBrightness(Percent.of(75))
+            .breathe(Seconds.of(2));
     LEDPattern robotEnabledOnFieldMask = LEDPattern.progressMaskLayer(
         () -> (DriverStation.isEnabled() && DriverStation.isFMSAttached()) ? 1 : 0)
         .atBrightness(Percent.of(100));
-    robotBasePattern = robotBasePattern.mask(robotEnabledOnFieldMask);
+    // robotBasePattern = robotBasePattern.mask(robotEnabledOnFieldMask);
   }
 
   @Override
   protected void applyPatterns() {
+    // elevatorPatt.applyTo(buffer);
     elevatorPatt.applyTo(topUpView);
     elevatorPatt.applyTo(topDownView);
-    robotBasePattern.applyTo(robotBaseView);
-    LEDPattern.kOff.applyTo(blank1View);
-    LEDPattern.kOff.applyTo(blank2View);
+    // robotBasePattern.applyTo(robotBaseView);
+    // robotBasePattern.applyTo(blank1View);
+    // LEDPattern.kOff.applyTo(blank2View);
   }
 
   /**
