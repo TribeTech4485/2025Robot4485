@@ -82,7 +82,7 @@ public class AlgaeArm extends AngleManipulatorBase {
   }
 
   public void retract() {
-    moveToPosition(70);
+    moveToPosition(80);
   }
 
   public void positionGroundIntake() {

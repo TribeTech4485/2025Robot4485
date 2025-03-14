@@ -20,9 +20,9 @@ public class LEDS extends LedBase {
   AddressableLEDBufferView blank2View;
 
   static final int length = 297; // 297
-  static final int baseLength = 147; // 147
-  static final int blank1Length = 13; // 13
-  static final int blank2Length = 25; // 25
+  static final int baseLength = 145; // 147
+  static final int blank1Length = 4; // 13
+  static final int blank2Length = 27; // 25
   static final int topUpLength = (length - baseLength - blank1Length - blank2Length) / 2;
   static final int topDownLength = topUpLength;
 
@@ -35,10 +35,10 @@ public class LEDS extends LedBase {
     super(1, length);
 
     robotBaseView = buffer.createView(0, baseLength);
-    blank1View = buffer.createView(blank1Start, blank1Length);
-    topUpView = buffer.createView(topUpStart, topUpLength);
-    topDownView = buffer.createView(topDownStart, topDownLength).reversed();
-    blank2View = buffer.createView(blank2Start, blank2Length);
+    blank1View = buffer.createView(blank1Start, blank1Start + blank1Length);
+    topUpView = buffer.createView(topUpStart, topUpStart + topUpLength);
+    topDownView = buffer.createView(topDownStart, topDownStart + topDownLength).reversed();
+    blank2View = buffer.createView(blank2Start, blank2Start + blank2Length);
     // topUpView = buffer.createView(5, 65);
     // topDownView = buffer.createView(65, 125).reversed();
 
@@ -51,13 +51,14 @@ public class LEDS extends LedBase {
     double baseBrightness = 33;
     double heightBrightness = 25;
     LEDPattern elevatorBasePattern = LEDPattern.rainbow(255, 255)
-        .scrollAtAbsoluteSpeed(FeetPerSecond.of(-5), spacing);
+        .scrollAtAbsoluteSpeed(FeetPerSecond.of(-3), spacing);
 
     LEDPattern softAllianceTone = LEDPattern.solid(getAllianceColor())
         .blend(LEDPattern.solid(Color.kWhite));
 
     // bottom to to elevator height
-    LEDPattern elevatorHightMasked = elevatorBasePattern.mask(LEDPattern.progressMaskLayer(() -> 1 - ele.getPosPercent()))
+    LEDPattern elevatorHightMasked = elevatorBasePattern
+        .mask(LEDPattern.progressMaskLayer(() -> 1 - ele.getPosPercent()))
         .atBrightness(Percent.of(heightBrightness));
     // top to elevator height
     LEDPattern elevatorBaseReverseMasked = elevatorBasePattern
@@ -73,10 +74,9 @@ public class LEDS extends LedBase {
         LEDPattern.solid(getAllianceColor())
             // .scrollAtAbsoluteSpeed(FeetPerSecond.of(3), spacing)
             .atBrightness(Percent.of(75))
-            .breathe(Seconds.of(2));
+            .breathe(Seconds.of(1.5));
     LEDPattern robotEnabledOnFieldMask = LEDPattern.progressMaskLayer(
-        () -> (DriverStation.isEnabled() && DriverStation.isFMSAttached()) ? 1 : 0)
-        .atBrightness(Percent.of(100));
+        () -> (DriverStation.isEnabled()) ? 0 : 1);
     // robotBasePattern = robotBasePattern.mask(robotEnabledOnFieldMask);
   }
 
@@ -85,9 +85,9 @@ public class LEDS extends LedBase {
     // elevatorPatt.applyTo(buffer);
     elevatorPatt.applyTo(topUpView);
     elevatorPatt.applyTo(topDownView);
-    // robotBasePattern.applyTo(robotBaseView);
-    // robotBasePattern.applyTo(blank1View);
-    // LEDPattern.kOff.applyTo(blank2View);
+    robotBasePattern.applyTo(robotBaseView);
+    robotBasePattern.applyTo(blank1View);
+    robotBasePattern.applyTo(blank2View);
   }
 
   /**

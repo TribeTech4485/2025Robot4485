@@ -79,10 +79,15 @@ public class CoralManipulator extends ManipulatorBase {
     super.periodic();
     if (counter++ == 20) {
       counter = 0;
-      sensed = colorSensor.getProximity() > 150;
+      sensed = colorSensor.getProximity() > 250;
     }
 
     SmartDashboard.putNumber("Coral sensor distance", colorSensor.getProximity());
     SmartDashboard.putBoolean("Coral sened", customSensor.getAsBoolean());
+  }
+
+  @Override
+  public void stopCommand() {
+    stop();
   }
 }
