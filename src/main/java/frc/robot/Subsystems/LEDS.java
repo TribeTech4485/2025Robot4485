@@ -19,28 +19,28 @@ public class LEDS extends LedBase {
   AddressableLEDBufferView topDownView;
   AddressableLEDBufferView blank2View;
 
-  static final int length = 297 - 147; // 297
-  final int baseLength = 1; // 147
-  final int blank1Length = 1; // 13
-  final int blank2Length = 1; // 25
-  final int topUpLength = (length - baseLength - blank1Length - blank2Length) / 2;
-  final int topDownLength = topUpLength;
+  static final int length = 297; // 297
+  static final int baseLength = 147; // 147
+  static final int blank1Length = 13; // 13
+  static final int blank2Length = 25; // 25
+  static final int topUpLength = (length - baseLength - blank1Length - blank2Length) / 2;
+  static final int topDownLength = topUpLength;
 
-  final int blank1Start = baseLength + 0;
-  final int topUpStart = blank1Start + blank1Length + 0;
-  final int topDownStart = topUpStart + topUpLength + 0;
-  final int blank2Start = topDownStart + topDownLength + 0;
+  static final int blank1Start = baseLength + 0;
+  static final int topUpStart = blank1Start + blank1Length + 0;
+  static final int topDownStart = topUpStart + topUpLength + 0;
+  static final int blank2Start = topDownStart + topDownLength + 0;
 
   public LEDS(Elevator ele) {
     super(1, length);
 
-    // robotBaseView = buffer.createView(0, baseLength);
-    // blank1View = buffer.createView(blank1Start, blank1Length);
-    // topUpView = buffer.createView(topUpStart, topUpLength);
-    // topDownView = buffer.createView(topDownStart, topDownLength).reversed();
-    // blank2View = buffer.createView(blank2Start, blank2Length);
-    topUpView = buffer.createView(5, 65);
-    topDownView = buffer.createView(65, 125).reversed();
+    robotBaseView = buffer.createView(0, baseLength);
+    blank1View = buffer.createView(blank1Start, blank1Length);
+    topUpView = buffer.createView(topUpStart, topUpLength);
+    topDownView = buffer.createView(topDownStart, topDownLength).reversed();
+    blank2View = buffer.createView(blank2Start, blank2Length);
+    // topUpView = buffer.createView(5, 65);
+    // topDownView = buffer.createView(65, 125).reversed();
 
     System.out.println("RobotBAse start " + 0 + " long " + baseLength);
     System.out.println("Blank1 start " + blank1Start + " long " + blank1Length);
