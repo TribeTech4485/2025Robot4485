@@ -3,12 +3,15 @@ package frc.robot.Subsystems;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Seconds;
+
 import static edu.wpi.first.units.Units.Radian;
 import static edu.wpi.first.units.Units.Radians;
 
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -21,7 +24,6 @@ import frc.robot.SyncedLibraries.SystemBases.Utils.PIDConfig;
 
 public class AlgaeArm extends AngleManipulatorBase {
   final Elevator elevator;
-  
 
   public AlgaeArm(Elevator elevator) {
     super(
@@ -33,6 +35,7 @@ public class AlgaeArm extends AngleManipulatorBase {
     addMotors(new SparkMax(Constants.Wirings.algaeArmMotor, SparkMax.MotorType.kBrushless));
     resetMotors();
     setBrakeMode(true);
+    setBreakerMaxAmps(40);
     setCurrentLimit(Constants.AlgaeArm.amps);
     setPositionMultiplier(Constants.AlgaeArm.positionMultiplier);
     invertSpecificMotors(false, 0);
@@ -79,7 +82,7 @@ public class AlgaeArm extends AngleManipulatorBase {
   }
 
   public void retract() {
-    moveToPosition(75);
+    moveToPosition(70);
   }
 
   public void positionGroundIntake() {
@@ -104,18 +107,15 @@ public class AlgaeArm extends AngleManipulatorBase {
   }
 
   public void elevatorCheck() {
-    Distance elevatorPosition = elevator.getPosition();
-    // TODO: find the correct values for elevator check
-    if (elevatorPosition.compareTo(Feet.of(0.5)) < 0
-        && getAngle().compareTo(Degrees.of(0)) < 0) {
-      // if elevator is below 0.5ft and arm is below level
+    Time lookAheadTime = Seconds.of(0.5);
+    Distance elevatorPosition = elevator.getPosition().plus(elevator.getVelocity().times(lookAheadTime));
+    if (elevatorPosition.compareTo(Feet.of(2)) < 0
+        && getAngle().compareTo(Degrees.of(-50)) < 0) {
       retract();
     }
 
-    if (elevatorPosition.compareTo(Meters.of(1.5)) > 0
-        && getAngle().compareTo(Degrees.of(50)) > 0) {
-      // if elevator is above 1.5m and arm is above 50 degrees
-      moveToPosition(Degrees.of(45));
+    if (getAngle().compareTo(maxPosition) > 0) {
+      retract();
     }
   }
 
