@@ -21,15 +21,15 @@ public class LEDS extends LedBase {
 
   static final int length = 297; // 297
   static final int baseLength = 145; // 147
-  static final int blank1Length = 4; // 13
-  static final int blank2Length = 27; // 25
+  static final int blank1Length = 2; // 13
+  static final int blank2Length = 25; // 25
   static final int topUpLength = (length - baseLength - blank1Length - blank2Length) / 2;
   static final int topDownLength = topUpLength;
 
-  static final int blank1Start = baseLength + 0;
-  static final int topUpStart = blank1Start + blank1Length + 0;
-  static final int topDownStart = topUpStart + topUpLength + 0;
-  static final int blank2Start = topDownStart + topDownLength + 0;
+  static final int blank1Start = baseLength;
+  static final int topUpStart = blank1Start + blank1Length;
+  static final int topDownStart = topUpStart + topUpLength;
+  static final int blank2Start = topDownStart + topDownLength;
 
   public LEDS(Elevator ele) {
     super(1, length);
