@@ -50,5 +50,6 @@ public class Drivetrain extends SwerveDriveBase {
 						Movement.maxRotationSpeed, Movement.maxRotationAccel),
 				Movement.maxBotSpeed, // TODO: check if this is correct +vvv+
 				Movement.maxBotAccel);
+				m_gyro.setAngleAdjustment(0);
 	}
 }

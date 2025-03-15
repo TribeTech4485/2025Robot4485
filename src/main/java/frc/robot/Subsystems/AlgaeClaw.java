@@ -25,7 +25,7 @@ public class AlgaeClaw extends ManipulatorBase {
 
   public void outtake() {
     setCurrentLimit(Constants.AlgaeClaw.currentOutLimit);
-    setPower(-1);
+    setPower(-0.5);
   }
 
   @Override

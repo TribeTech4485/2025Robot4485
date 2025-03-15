@@ -48,8 +48,8 @@ public class LEDS extends LedBase {
     System.out.println("TopDown start " + topDownStart + " long " + topDownLength);
     System.out.println("Blank2 start " + blank2Start + " long " + blank2Length);
 
-    double baseBrightness = 33;
-    double heightBrightness = 25;
+    double baseBrightness = 25;
+    double heightBrightness = 33;
     LEDPattern elevatorBasePattern = LEDPattern.rainbow(255, 255)
         .scrollAtAbsoluteSpeed(FeetPerSecond.of(-3), spacing);
 
@@ -61,12 +61,13 @@ public class LEDS extends LedBase {
         .mask(LEDPattern.progressMaskLayer(() -> 1 - ele.getPosPercent()))
         .atBrightness(Percent.of(heightBrightness));
     // top to elevator height
-    LEDPattern elevatorBaseReverseMasked = elevatorBasePattern
-        .mask(LEDPattern.progressMaskLayer(() -> 1 - ele.getPosPercent()))
+    LEDPattern elevatorBaseReverseMasked = LEDPattern.solid(getAllianceColor())
+        .mask(LEDPattern.progressMaskLayer(() -> ele.getPosPercent()))
         .breathe(Seconds.of(3))
         // .blend(softAllianceTone)
         .atBrightness(Percent.of(baseBrightness));
 
+        //LEDPattern.solid(getAllianceColor()).atBrightness(Percent.of(15))
     // elevatorPatt = elevatorHightMasked.overlayOn(elevatorBaseReverseMasked);
     elevatorPatt = elevatorHightMasked;
     robotBasePattern =

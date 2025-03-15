@@ -94,7 +94,7 @@ public class AlgaeArm extends AngleManipulatorBase {
   }
 
   public void positionBarge() {
-    moveToPosition(45);
+    moveToPosition(30);
   }
 
   @Override

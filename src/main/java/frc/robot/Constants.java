@@ -53,10 +53,10 @@ public final class Constants {
 
     public static class Movement {
       public static final LinearVelocity maxBotSpeed = MetersPerSecond.of(3);
-      public static final LinearAcceleration maxBotAccel = MetersPerSecondPerSecond.of(10);
+      public static final LinearAcceleration maxBotAccel = MetersPerSecondPerSecond.of(15);
 
       public static final LinearVelocity maxWheelSpeed = MetersPerSecond.of(15);
-      public static final LinearAcceleration maxWheelAccel = MetersPerSecondPerSecond.of(20);
+      public static final LinearAcceleration maxWheelAccel = MetersPerSecondPerSecond.of(25);
 
       public static final AngularVelocity maxRotationSpeed = RotationsPerSecond.of(1);
       public static final AngularAcceleration maxRotationAccel = RotationsPerSecondPerSecond.of(2.5);
@@ -105,7 +105,7 @@ public final class Constants {
   }
 
   public static class Elevator {
-    public static final int amps = 35;
+    public static final int amps = 40;
     public static final double positionMultiplier = 0.013335;
     public static final Distance positionBoundsMin = Inches.of(16);
     public static final Distance positionBoundsMax = Inches.of(78); // 79

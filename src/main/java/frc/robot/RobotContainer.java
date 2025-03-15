@@ -6,7 +6,9 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radian;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import java.util.List;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -18,7 +20,9 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -150,10 +154,10 @@ public class RobotContainer {
         .onTrue(new InstantCommand(elevator::positionProccessor))
         .onTrue(new InstantCommand(algaeArm::positionOut));
 
-      // opCont.A
-      // .onTrue(coralManipulator.comIntake());
-      opCont.A.onTrue(coralManipulator.comIntake());
-      opCont.B.onTrue(coralManipulator.comOuttake());
+    // opCont.A
+    // .onTrue(coralManipulator.comIntake());
+    opCont.A.onTrue(coralManipulator.comIntake());
+    opCont.B.onTrue(coralManipulator.comOuttake());
 
     opCont.Options // THE ONE LABELED OPTIONS
         .onTrue(new InstantCommand(() -> algaeArm._setAngle(Radian.of(0))));
@@ -212,6 +216,16 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    // return Commands.print("No autonomous command configured");
+    return new ParallelCommandGroup(
+        new SequentialCommandGroup(
+            new InstantCommand(elevator::retract),
+            new InstantCommand(algaeArm::retract),
+            new RunCommand(() -> drivetrain.inputDrivingX_Y(
+                MetersPerSecond.of(-1.5), MetersPerSecond.of(0), RadiansPerSecond.of(0)))
+                .withTimeout(2),
+            new RunCommand(drivetrain::stop),
+            new WaitCommand(1)),
+        coralManipulator.comIntake());
   }
 }
