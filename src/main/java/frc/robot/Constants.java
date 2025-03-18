@@ -37,7 +37,7 @@ public final class Constants {
   }
 
   public static class Swerve {
-    public static final int driveAmps = 30;
+    public static final int driveAmps = 35;
     public static final int turnAmps = 30;
 
     public static final double module1Offset = 0.4547673;
@@ -52,12 +52,15 @@ public final class Constants {
     public static final Distance sideLength = Inches.of(29.75);
 
     public static class Movement {
+      // bot speeds
       public static final LinearVelocity maxBotSpeed = MetersPerSecond.of(3);
-      public static final LinearAcceleration maxBotAccel = MetersPerSecondPerSecond.of(15);
+      public static final LinearAcceleration maxBotAccel = MetersPerSecondPerSecond.of(18);
 
+      // wheel speeds
       public static final LinearVelocity maxWheelSpeed = MetersPerSecond.of(15);
-      public static final LinearAcceleration maxWheelAccel = MetersPerSecondPerSecond.of(25);
+      public static final LinearAcceleration maxWheelAccel = MetersPerSecondPerSecond.of(30);
 
+      // bot turn
       public static final AngularVelocity maxRotationSpeed = RotationsPerSecond.of(1);
       public static final AngularAcceleration maxRotationAccel = RotationsPerSecondPerSecond.of(2.5);
 
@@ -110,22 +113,22 @@ public final class Constants {
     public static final Distance positionBoundsMin = Inches.of(16);
     public static final Distance positionBoundsMax = Inches.of(78); // 79
 
-    public static final double P = 6;
+    public static final double P = 6.5;
     public static final double I = 0;
     public static final double D = 0;
     public static final double S = 0;
-    public static final double V = 10.5;
-    public static final double G = 0.35; // .3
-    public static final double A = 0.02;
+    public static final double V = 9.5;
+    public static final double G = 0.4; // .3
+    public static final double A = 0.019;
     public static final double[] PIDF = { P, I, D, S, V, G, A };
 
-    public static final LinearVelocity maxVelocity = MetersPerSecond.of(3); // 3
-    public static final LinearAcceleration maxAcceleration = MetersPerSecondPerSecond.of(1.25); // 2
+    public static final LinearVelocity maxVelocity = MetersPerSecond.of(6); // 3
+    public static final LinearAcceleration maxAcceleration = MetersPerSecondPerSecond.of(2.5); // 2
   }
 
   public static class AlgaeClaw {
     public static final int currentInLimit = 15;
-    public static final int currentOutLimit = 30;
+    // public static final int currentOutLimit = 30;
   }
 
   public static class AlgaeArm {
@@ -144,8 +147,8 @@ public final class Constants {
     public static final double A = 0.001;
     public static final double[] PIDF = { P, I, D, S, V, G, A };
 
-    public static final AngularVelocity maxVelocity = RadiansPerSecond.of(6);
-    public static final AngularAcceleration maxAcceleration = RadiansPerSecondPerSecond.of(5);
+    public static final AngularVelocity maxVelocity = RadiansPerSecond.of(8);
+    public static final AngularAcceleration maxAcceleration = RadiansPerSecondPerSecond.of(6);
   }
 
   public static class CoralManipulator {

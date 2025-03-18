@@ -222,7 +222,7 @@ public class RobotContainer {
             new InstantCommand(elevator::retract),
             new InstantCommand(algaeArm::retract),
             new RunCommand(() -> drivetrain.inputDrivingX_Y(
-                MetersPerSecond.of(-1.5), MetersPerSecond.of(0), RadiansPerSecond.of(0)))
+                MetersPerSecond.of(-1.25), MetersPerSecond.of(0), RadiansPerSecond.of(0)))
                 .withTimeout(2),
             new RunCommand(drivetrain::stop),
             new WaitCommand(1)),

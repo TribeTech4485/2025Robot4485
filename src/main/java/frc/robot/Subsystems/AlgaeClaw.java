@@ -19,13 +19,13 @@ public class AlgaeClaw extends ManipulatorBase {
   }
 
   public void intake() {
-    setCurrentLimit(Constants.AlgaeClaw.currentInLimit);
+    // setCurrentLimit(Constants.AlgaeClaw.currentInLimit);
     setPower(1);
   }
 
   public void outtake() {
-    setCurrentLimit(Constants.AlgaeClaw.currentOutLimit);
-    setPower(-0.5);
+    // setCurrentLimit(Constants.AlgaeClaw.currentOutLimit);
+    setPower(-0.5); // -0.5
   }
 
   @Override

@@ -45,6 +45,10 @@ public class TeleDrive extends TeleDriveCommandBase {
     armPositionMiddle = (Constants.AlgaeArm.positionBoundsMax.plus(Constants.AlgaeArm.positionBoundsMin)).div(2);
     armPositionRadius = armPositionMiddle.minus(Constants.AlgaeArm.positionBoundsMin);
 
+    
+    swerveTrain.setFieldRelative(false);
+    driveMode = DriveModes.ROTATION_SPEED;
+    
     usePOV = false;
 
     this.controllers[1].LeftTrigger.and(this.controllers[1].LeftBumper)

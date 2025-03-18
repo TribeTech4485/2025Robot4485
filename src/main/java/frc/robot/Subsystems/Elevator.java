@@ -3,6 +3,8 @@ package frc.robot.Subsystems;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -35,6 +37,7 @@ public class Elevator extends PositionManipulatorBase {
     setBreakerMaxAmps(40);
     setCurrentLimit(Constants.Elevator.amps);
     setPositionMultiplier(Constants.Elevator.positionMultiplier);
+    setSpeedMultiplier(Constants.Elevator.positionMultiplier/50);
     setPositionBounds(Constants.Elevator.positionBoundsMin,
         Constants.Elevator.positionBoundsMax);
     // home().schedule();
@@ -67,7 +70,7 @@ public class Elevator extends PositionManipulatorBase {
   }
 
   public void positionProccessor() {
-    moveToPosition(Inches.of(21));
+    moveToPosition(Inches.of(23));
   }
 
   public void positionAlgaeLow() {
@@ -147,6 +150,7 @@ public class Elevator extends PositionManipulatorBase {
   @Override
   public void periodic() {
     super.periodic();
+    SmartDashboard.putNumber("ElePow", getAbsPower());
     SmartDashboard.putNumber("Elevator target position",
         ((ManipulatorFFDistanceCommand) moveCommand).getController().getSetpoint().position);
     SmartDashboard.putNumber("Elevator Setpoint",
@@ -154,5 +158,9 @@ public class Elevator extends PositionManipulatorBase {
     SmartDashboard.putNumber("Elevator current position", getPosition().in(Meters));
     SmartDashboard.putNumber("Line Voltage", getMotor(0).getBusVoltage());
     SmartDashboard.putBoolean("Elevator low limit", lowLimit.getAsBoolean());
+
+    SmartDashboard.putNumber("Elevator target speed",
+        ((ManipulatorFFDistanceCommand) moveCommand).getController().getSetpoint().velocity);
+    SmartDashboard.putNumber("Elevator current speed", getVelocity().in(MetersPerSecond));
   }
 }

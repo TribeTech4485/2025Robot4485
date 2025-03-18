@@ -109,7 +109,7 @@ public class LEDS extends LedBase {
       }
     } else {
       if (DriverStation.getRawAllianceStation().ordinal() == 1
-          && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+          && DriverStation.getAlliance().get() == DriverStation.Alliance.Red && false) {
         if (Math.random() > 0.5) {
           return Color.kBlue;
         } else {
