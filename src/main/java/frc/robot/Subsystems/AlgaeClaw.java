@@ -1,6 +1,8 @@
 package frc.robot.Subsystems;
 
 import com.revrobotics.spark.SparkMax;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -9,6 +11,8 @@ import frc.robot.Constants;
 import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
 
 public class AlgaeClaw extends ManipulatorBase {
+  final double _shootSpeed = -0.5;
+  double shootSpeed = _shootSpeed;
 
   public AlgaeClaw() {
     breakerMaxAmps = 30;
@@ -16,6 +20,7 @@ public class AlgaeClaw extends ManipulatorBase {
     resetMotors();
     setBrakeMode(true);
     setCurrentLimit(Constants.AlgaeClaw.currentInLimit);
+    SmartDashboard.putNumber("AlgaeClaw shoot speed", shootSpeed);
   }
 
   public void intake() {
@@ -24,8 +29,8 @@ public class AlgaeClaw extends ManipulatorBase {
   }
 
   public void outtake() {
-    // setCurrentLimit(Constants.AlgaeClaw.currentOutLimit);
-    setPower(-0.5); // -0.5
+    // setCurrentLimit(Constants.AlgaeClaw.currentInLimit);
+    setPower(shootSpeed);
   }
 
   @Override
@@ -47,5 +52,6 @@ public class AlgaeClaw extends ManipulatorBase {
   @Override
   public void periodic() {
     super.periodic();
+    shootSpeed = SmartDashboard.getNumber("AlgaeClaw shoot speed", _shootSpeed);
   }
 }

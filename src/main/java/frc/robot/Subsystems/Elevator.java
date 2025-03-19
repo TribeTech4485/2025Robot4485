@@ -28,13 +28,12 @@ public class Elevator extends PositionManipulatorBase {
         Constants.Elevator.S, Constants.Elevator.V, Constants.Elevator.A, Constants.Elevator.G,
         Constants.Elevator.maxVelocity, Constants.Elevator.maxAcceleration),
         ManipulatorFFDistanceCommand.FeedForwardType.Elevator);
-    breakerMaxAmps = 40;
+    setBreakerMaxAmps(40);
     addMotors(new SparkMax(Constants.Wirings.elevatorMotor1, SparkMax.MotorType.kBrushless),
         new SparkMax(Constants.Wirings.elevatorMotor2, SparkMax.MotorType.kBrushless));
     resetMotors();
     invertSpecificMotors(true, 1);
     setBrakeMode(true);
-    setBreakerMaxAmps(40);
     setCurrentLimit(Constants.Elevator.amps);
     setPositionMultiplier(Constants.Elevator.positionMultiplier);
     setSpeedMultiplier(Constants.Elevator.positionMultiplier/50);
@@ -42,12 +41,14 @@ public class Elevator extends PositionManipulatorBase {
         Constants.Elevator.positionBoundsMax);
     // home().schedule();
     persistMotorConfig();
-    _setPosition(minPosition);
 
     customSensor = () -> getMotor(0).getReverseLimitSwitch().isPressed()
         || getMotor(1).getReverseLimitSwitch().isPressed();
     lowLimit = new Trigger(customSensor);
-    lowLimit.onTrue(new InstantCommand(() -> _setPosition(minPosition.plus(Inches.of(0)))));
+    lowLimit.onTrue(new InstantCommand(() -> _setPosition(minPosition)));
+    if (customSensor.getAsBoolean()) {
+      _setPosition(minPosition);
+    }
   }
 
   public void retract() {
@@ -56,7 +57,7 @@ public class Elevator extends PositionManipulatorBase {
 
   /** If falling, send it */
   public void RETRACT() {
-    setCurrentLimit(40);
+    setCurrentLimit(-1);
     retract();
   }
 

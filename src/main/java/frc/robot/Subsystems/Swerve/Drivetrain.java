@@ -48,8 +48,8 @@ public class Drivetrain extends SwerveDriveBase {
 				// Swerve.Movement.BotTurn.PIDF,
 				new PIDConfig().set(Movement.BotTurn.P, Movement.BotTurn.I, Movement.BotTurn.D, 0, 0, 0,
 						Movement.maxRotationSpeed, Movement.maxRotationAccel),
-				Movement.maxBotSpeed, // TODO: check if this is correct +vvv+
+				Movement.maxBotSpeed,
 				Movement.maxBotAccel);
-				m_gyro.setAngleAdjustment(0);
+		m_gyro.setAngleAdjustment(0);
 	}
 }

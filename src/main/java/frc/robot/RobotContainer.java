@@ -11,14 +11,14 @@ import static edu.wpi.first.units.Units.Radian;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import java.util.List;
+
+import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
@@ -35,11 +35,8 @@ import frc.robot.Subsystems.AlgaeArm;
 import frc.robot.Subsystems.AlgaeClaw;
 import frc.robot.Subsystems.Controllers2025;
 import frc.robot.Subsystems.Swerve.Drivetrain;
-import frc.robot.Subsystems.Swerve.HoloDrive;
 import frc.robot.SyncedLibraries.SystemBases.ControllerBase;
 import frc.robot.SyncedLibraries.SystemBases.Estopable;
-import frc.robot.SyncedLibraries.SystemBases.PathPlanning.HolonomicDriveBase;
-import frc.robot.SyncedLibraries.SystemBases.PathPlanning.TrajectoryMoveCommand;
 import frc.robot.SyncedLibraries.SystemBases.Utils.BackgroundTrajectoryGenerator;
 
 public class RobotContainer {
@@ -55,7 +52,7 @@ public class RobotContainer {
   AlgaeArm algaeArm = new AlgaeArm(elevator);
   CoralManipulator coralManipulator = new CoralManipulator();
   TeleDrive teleDrive = new TeleDrive(drivetrain, controllers, elevator, algaeArm, algaeClaw, coralManipulator);
-  HolonomicDriveBase holoDrive = new HoloDrive(drivetrain);
+  HolonomicDriveController holoDrive = new HolonomicDriveController(null, null, null);
   BackgroundTrajectoryGenerator generator = new BackgroundTrajectoryGenerator(
       new Pose2d(),
       new Pose2d(),
@@ -182,17 +179,36 @@ public class RobotContainer {
           .onTrue(new InstantCommand(() -> elevator
               ._setPosition(Constants.Elevator.positionBoundsMin)));
 
-      drivCont.buttons[11]
-          .whileTrue(new TrajectoryMoveCommand(generator, holoDrive, true));
+      // drivCont.buttons[11]
+      // .whileTrue(new TrajectoryMoveCommand(generator, holoDrive, true));
     } else {
       // driver xbox
       drivCont.A
           .onTrue(new InstantCommand(elevator::retract))
           .onTrue(new InstantCommand(algaeArm::retract));
+
+      // falling button
+      final double emergencyMult = 2;
+      drivCont.Y
+          .onTrue(new InstantCommand(elevator::retract))
+          .onTrue(new InstantCommand(algaeArm::retract))
+          .onTrue(new InstantCommand(() -> elevator.setCurrentLimit(-1)))
+          .onTrue(new InstantCommand(
+              () -> elevator.getPIDConfig().maxLinearAcceleration = elevator
+                  .getPIDConfig().maxLinearAcceleration
+                  .times(emergencyMult)))
+          .onTrue(new InstantCommand(
+              () -> elevator.getPIDConfig().maxLinearVelocity = elevator.getPIDConfig().maxLinearVelocity
+                  .times(emergencyMult)))
+          .onFalse(new InstantCommand(
+              () -> elevator.getPIDConfig().maxLinearAcceleration = Constants.Elevator.maxAcceleration))
+          .onFalse(new InstantCommand(
+              () -> elevator.getPIDConfig().maxLinearVelocity = Constants.Elevator.maxVelocity))
+          .onFalse(new InstantCommand(() -> elevator.setCurrentLimit(Constants.Elevator.amps)));
       drivCont.B
           .onTrue(new InstantCommand(algaeArm::retract));
-      drivCont.X
-          .whileTrue(new TrajectoryMoveCommand(generator, holoDrive, true));
+      // drivCont.X
+      // .whileTrue(new TrajectoryMoveCommand(generator, holoDrive, true));
 
       drivCont.PovUp
           .whileTrue(new RepeatCommand(
@@ -212,7 +228,6 @@ public class RobotContainer {
                                   1)))),
                   new WaitCommand(0.1))));
     }
-
   }
 
   public Command getAutonomousCommand() {
