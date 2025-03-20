@@ -96,11 +96,11 @@ public final class Constants {
       }
 
       public static class Holonomic {
-        public static final double xP = 1;
+        public static final double xP = 0.02;
         public static final double xI = 0;
         public static final double xD = 0;
 
-        public static final double yP = 1;
+        public static final double yP = 0.02;
         public static final double yI = 0;
         public static final double yD = 0;
       }
@@ -113,16 +113,16 @@ public final class Constants {
     public static final Distance positionBoundsMin = Inches.of(16);
     public static final Distance positionBoundsMax = Inches.of(78); // 79
 
-    public static final double P = 6.5;
+    public static final double P = 10;
     public static final double I = 0;
     public static final double D = 0;
     public static final double S = 0;
-    public static final double V = 9.5;
+    public static final double V = 11;
     public static final double G = 0.4; // .3
     public static final double A = 0.019;
     public static final double[] PIDF = { P, I, D, S, V, G, A };
 
-    public static final LinearVelocity maxVelocity = MetersPerSecond.of(6); // 3
+    public static final LinearVelocity maxVelocity = MetersPerSecond.of(5); // 3
     public static final LinearAcceleration maxAcceleration = MetersPerSecondPerSecond.of(2.5); // 2
   }
 

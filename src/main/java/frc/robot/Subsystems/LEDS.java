@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
+import frc.robot.Robot;
 import frc.robot.SyncedLibraries.SystemBases.LedBase;
 
 public class LEDS extends LedBase {
@@ -48,47 +49,48 @@ public class LEDS extends LedBase {
     System.out.println("TopDown start " + topDownStart + " long " + topDownLength);
     System.out.println("Blank2 start " + blank2Start + " long " + blank2Length);
 
-    double baseBrightness = 25;
+    // double baseBrightness = 25;
     double heightBrightness = 33;
     LEDPattern elevatorBasePattern = LEDPattern.rainbow(255, 255)
-        .scrollAtAbsoluteSpeed(FeetPerSecond.of(-3), spacing);
+        .scrollAtAbsoluteSpeed(FeetPerSecond.of(3), spacing);
 
-    LEDPattern softAllianceTone = LEDPattern.solid(getAllianceColor())
-        .blend(LEDPattern.solid(Color.kWhite));
+    // LEDPattern softAllianceTone = LEDPattern.solid(getAllianceColor())
+    // .blend(LEDPattern.solid(Color.kWhite));
 
     // bottom to to elevator height
     LEDPattern elevatorHightMasked = elevatorBasePattern
         .mask(LEDPattern.progressMaskLayer(() -> 1 - ele.getPosPercent()))
         .atBrightness(Percent.of(heightBrightness));
     // top to elevator height
-    LEDPattern elevatorBaseReverseMasked = LEDPattern.solid(getAllianceColor())
-        .mask(LEDPattern.progressMaskLayer(() -> ele.getPosPercent()))
-        .breathe(Seconds.of(3))
-        // .blend(softAllianceTone)
-        .atBrightness(Percent.of(baseBrightness));
+    // LEDPattern elevatorBaseReverseMasked = LEDPattern.solid(getAllianceColor())
+    // .mask(LEDPattern.progressMaskLayer(() -> ele.getPosPercent()))
+    // .breathe(Seconds.of(3))
+    // .atBrightness(Percent.of(baseBrightness));
 
-        //LEDPattern.solid(getAllianceColor()).atBrightness(Percent.of(15))
     // elevatorPatt = elevatorHightMasked.overlayOn(elevatorBaseReverseMasked);
     elevatorPatt = elevatorHightMasked;
-    robotBasePattern =
-        // LEDPattern.rainbow(255, 255)
-        LEDPattern.solid(getAllianceColor())
-            // .scrollAtAbsoluteSpeed(FeetPerSecond.of(3), spacing)
-            .atBrightness(Percent.of(75))
-            .breathe(Seconds.of(1.5));
-    LEDPattern robotEnabledOnFieldMask = LEDPattern.progressMaskLayer(
-        () -> (DriverStation.isEnabled()) ? 0 : 1);
+    // LEDPattern robotEnabledOnFieldMask = LEDPattern.progressMaskLayer(
+    // () -> (DriverStation.isEnabled()) ? 0 : 1);
     // robotBasePattern = robotBasePattern.mask(robotEnabledOnFieldMask);
+
+    redoBasePattern();
+    // reload the colors on init
+    Robot.onInits.add(this::redoBasePattern);
   }
 
   @Override
   protected void applyPatterns() {
-    // elevatorPatt.applyTo(buffer);
     elevatorPatt.applyTo(topUpView);
     elevatorPatt.applyTo(topDownView);
     robotBasePattern.applyTo(robotBaseView);
     robotBasePattern.applyTo(blank1View);
     robotBasePattern.applyTo(blank2View);
+  }
+
+  private void redoBasePattern() {
+    robotBasePattern = LEDPattern.solid(getAllianceColor())
+        .atBrightness(Percent.of(75))
+        .breathe(Seconds.of(1.5));
   }
 
   /**
@@ -97,35 +99,14 @@ public class LEDS extends LedBase {
    * @return The color of the alliance, fails to blue if no data is available.
    */
   private Color getAllianceColor() {
-    if (DriverStation.isFMSAttached()) {
-      try {
-        if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
-          return Color.kBlue;
-        } else {
-          return Color.kRed;
-        }
-      } catch (Exception e) {
+    try {
+      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
         return Color.kBlue;
-      }
-    } else {
-      if (DriverStation.getRawAllianceStation().ordinal() == 1
-          && DriverStation.getAlliance().get() == DriverStation.Alliance.Red && false) {
-        if (Math.random() > 0.5) {
-          return Color.kBlue;
-        } else {
-          return Color.kRed;
-        }
       } else {
-        try {
-          if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
-            return Color.kBlue;
-          } else {
-            return Color.kRed;
-          }
-        } catch (Exception e) {
-          return Color.kBlue;
-        }
+        return Color.kRed;
       }
+    } catch (Exception e) {
+      return Color.kBlue;
     }
   }
 }

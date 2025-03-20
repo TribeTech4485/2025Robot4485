@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,6 +19,7 @@ import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private Command testCommand;
+  public static ArrayList<Runnable> onInits = new ArrayList<>();
 
   /*
    * Wanted controls:
@@ -53,6 +57,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledExit() {
+    for (Runnable toRun : onInits) {
+      toRun.run();
+    }
   }
 
   @Override
