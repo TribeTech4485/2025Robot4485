@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Robot;
 import frc.robot.SyncedLibraries.SystemBases.LedBase;
 
@@ -40,17 +41,16 @@ public class LEDS extends LedBase {
     topUpView = buffer.createView(topUpStart, topUpStart + topUpLength);
     topDownView = buffer.createView(topDownStart, topDownStart + topDownLength).reversed();
     blank2View = buffer.createView(blank2Start, blank2Start + blank2Length);
-    // topUpView = buffer.createView(5, 65);
-    // topDownView = buffer.createView(65, 125).reversed();
 
-    System.out.println("RobotBAse start " + 0 + " long " + baseLength);
-    System.out.println("Blank1 start " + blank1Start + " long " + blank1Length);
-    System.out.println("TopUp start " + topUpStart + " long " + topUpLength);
-    System.out.println("TopDown start " + topDownStart + " long " + topDownLength);
-    System.out.println("Blank2 start " + blank2Start + " long " + blank2Length);
+    // System.out.println("RobotBAse start " + 0 + " long " + baseLength);
+    // System.out.println("Blank1 start " + blank1Start + " long " + blank1Length);
+    // System.out.println("TopUp start " + topUpStart + " long " + topUpLength);
+    // System.out.println("TopDown start " + topDownStart + " long " +
+    // topDownLength);
+    // System.out.println("Blank2 start " + blank2Start + " long " + blank2Length);
 
     // double baseBrightness = 25;
-    double heightBrightness = 33;
+    double heightBrightness = 100 / 3;
     LEDPattern elevatorBasePattern = LEDPattern.rainbow(255, 255)
         .scrollAtAbsoluteSpeed(FeetPerSecond.of(3), spacing);
 
@@ -75,7 +75,14 @@ public class LEDS extends LedBase {
 
     redoBasePattern();
     // reload the colors on init
-    Robot.onInits.add(this::redoBasePattern);
+    Robot.onInits.add(new InstantCommand(this::redoBasePattern));
+  }
+
+  private void redoBasePattern() {
+    System.out.println("Redoing base pattern");
+    robotBasePattern = LEDPattern.solid(getAllianceColor())
+        .atBrightness(Percent.of(75))
+        .breathe(Seconds.of(1.5));
   }
 
   @Override
@@ -85,12 +92,6 @@ public class LEDS extends LedBase {
     robotBasePattern.applyTo(robotBaseView);
     robotBasePattern.applyTo(blank1View);
     robotBasePattern.applyTo(blank2View);
-  }
-
-  private void redoBasePattern() {
-    robotBasePattern = LEDPattern.solid(getAllianceColor())
-        .atBrightness(Percent.of(75))
-        .breathe(Seconds.of(1.5));
   }
 
   /**
