@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
@@ -24,15 +23,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Commands.MoveToDistanceApriltag;
 import frc.robot.Commands.TeleDrive;
 import frc.robot.Subsystems.CoralManipulator;
 import frc.robot.Subsystems.Elevator;
@@ -44,7 +40,6 @@ import frc.robot.Subsystems.Controllers2025;
 import frc.robot.Subsystems.Swerve.Drivetrain;
 import frc.robot.SyncedLibraries.SystemBases.ControllerBase;
 import frc.robot.SyncedLibraries.SystemBases.Estopable;
-import frc.robot.SyncedLibraries.SystemBases.PathPlanning.TrajectoryMoveCommand;
 import frc.robot.SyncedLibraries.SystemBases.Utils.BackgroundTrajectoryGenerator;
 
 // 58 inches forward

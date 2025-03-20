@@ -4,14 +4,9 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 
 import java.util.List;
-
-import org.photonvision.targeting.PhotonTrackedTarget;
-
 import edu.wpi.first.math.controller.HolonomicDriveController;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,6 +25,7 @@ public class MoveToDistanceApriltag extends Command {
   boolean fieldRelative;
   TrajectoryMoveCommand moveCommand;
   HolonomicDriveController holoDrive;
+  final double distanceMultilier = 1.0;
 
   public MoveToDistanceApriltag(Drivetrain drivetrain, HolonomicDriveController holoController,
       PhotonVisionBase photonVision, double distanceX,
@@ -48,7 +44,8 @@ public class MoveToDistanceApriltag extends Command {
   @Override
   public void initialize() {
     Translation3d target = photon.mainTarget.bestCameraToTarget.getTranslation();
-    Translation2d targetTranslation = new Translation2d(target.getX(), target.getY());
+    Translation2d targetTranslation = new Translation2d(target.getX() * distanceMultilier,
+        target.getY() * distanceMultilier);
     BackgroundTrajectoryGenerator generator = new BackgroundTrajectoryGenerator(
         new Pose2d(), new Pose2d(
             targetTranslation, new Rotation2d()),
