@@ -117,13 +117,13 @@ public final class Constants {
     public static final double I = 0;
     public static final double D = 0;
     public static final double S = 0;
-    public static final double V = 11;
+    public static final double V = 9;
     public static final double G = 0.4; // .3
     public static final double A = 0.019;
     public static final double[] PIDF = { P, I, D, S, V, G, A };
 
-    public static final LinearVelocity maxVelocity = MetersPerSecond.of(5); // 3
-    public static final LinearAcceleration maxAcceleration = MetersPerSecondPerSecond.of(2.5); // 2
+    public static final LinearVelocity maxVelocity = MetersPerSecond.of(4); // 6
+    public static final LinearAcceleration maxAcceleration = MetersPerSecondPerSecond.of(1.5); // 2.5
   }
 
   public static class AlgaeClaw {

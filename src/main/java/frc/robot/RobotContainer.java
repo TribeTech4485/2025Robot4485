@@ -266,7 +266,7 @@ public class RobotContainer {
       // .whileTrue();
       // drivCont.X
       // .whileTrue(new TrajectoryMoveCommand(generator, holoDrive, true));
-
+        if (false) {
       drivCont.PovUp
           .whileTrue(new RepeatCommand(
               new SequentialCommandGroup(
@@ -284,6 +284,7 @@ public class RobotContainer {
                               .minus(Inches.of(
                                   1)))),
                   new WaitCommand(0.1))));
+        }
     }
   }
 

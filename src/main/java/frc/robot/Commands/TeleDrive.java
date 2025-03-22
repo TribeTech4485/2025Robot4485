@@ -49,7 +49,7 @@ public class TeleDrive extends TeleDriveCommandBase {
     swerveTrain.setFieldRelative(false);
     driveMode = DriveModes.ROTATION_SPEED;
     
-    usePOV = false;
+    usePOV = true;
 
     this.controllers[1].LeftTrigger.and(this.controllers[1].LeftBumper)
         .onFalse(new InstantCommand(() -> elevator.moveToPosition(elevator.getPosition())))
