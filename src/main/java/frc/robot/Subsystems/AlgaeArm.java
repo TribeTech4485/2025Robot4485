@@ -43,10 +43,11 @@ public class AlgaeArm extends AngleManipulatorBase {
 
     // if not homed, set angle to top position
     if (Math.abs(getAngle().in(Radians)) <= 0.0001) {
-      _setAngle(Degrees.of(90));
+      _setAngle(Degrees.of(85));
     }
     customSensor = getMotor(0).getForwardLimitSwitch()::isPressed;
     this.elevator = elevator;
+    persistMotorConfig();
   }
 
   @Override
@@ -79,7 +80,7 @@ public class AlgaeArm extends AngleManipulatorBase {
   }
 
   public void retract() {
-    moveToPosition(80);
+    moveToPosition(70);
   }
 
   public void positionGroundIntake() {

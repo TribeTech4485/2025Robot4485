@@ -71,15 +71,15 @@ public class Elevator extends PositionManipulatorBase {
   }
 
   public void positionProccessor() {
-    moveToPosition(Inches.of(23));
+    moveToPosition(Inches.of(20));
   }
 
   public void positionAlgaeLow() {
-    moveToPosition(Feet.of(2.8));
+    moveToPosition(Inches.of(31));
   }
 
   public void positionAlgaeHigh() {
-    moveToPosition(Feet.of(4));
+    moveToPosition(Inches.of(43));
   }
 
   // Coral
@@ -88,15 +88,15 @@ public class Elevator extends PositionManipulatorBase {
   }
 
   public void positionL2() {
-    moveToPosition(Inches.of(31));
+    moveToPosition(Inches.of(30));
   }
 
   public void positionL3() {
-    moveToPosition(Inches.of(44));
+    moveToPosition(Inches.of(43));
   }
 
   public void positionL4() {
-    moveToPosition(Inches.of(64.5));
+    moveToPosition(Inches.of(63));
   }
 
   public void positionBarge() {

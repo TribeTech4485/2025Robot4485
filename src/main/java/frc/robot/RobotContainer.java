@@ -86,7 +86,9 @@ public class RobotContainer {
     configureBindings();
 
     autoChooser.setDefaultOption("Coral Place",
-        new SequentialCommandGroup(
+        new SequentialCommandGroup(new RunCommand(() -> drivetrain.inputDrivingX_Y(
+            MetersPerSecond.of(-0.05), MetersPerSecond.of(0), RadiansPerSecond.of(0)))
+            .withTimeout(0.1),
             new InstantCommand(() -> algaeArm.moveToPosition(40)),
             new WaitCommand(0.5),
             new InstantCommand(elevator::positionL4),
@@ -151,8 +153,11 @@ public class RobotContainer {
     /** Shift == coral mode */
     Trigger Shift = opCont.LeftTrigger;
     Trigger notShift = Shift.negate();
-    opCont.RightTrigger
+    opCont.RightTrigger.and(notShift)
         .onTrue(new InstantCommand(algaeClaw::outtake))
+        .onFalse(new InstantCommand(algaeClaw::stop));
+    opCont.RightTrigger.and(Shift)
+        .onTrue(new InstantCommand(algaeClaw::plop))
         .onFalse(new InstantCommand(algaeClaw::stop));
     opCont.RightBumper
         .onTrue(new InstantCommand(algaeClaw::intake));
@@ -266,25 +271,25 @@ public class RobotContainer {
       // .whileTrue();
       // drivCont.X
       // .whileTrue(new TrajectoryMoveCommand(generator, holoDrive, true));
-        if (false) {
-      drivCont.PovUp
-          .whileTrue(new RepeatCommand(
-              new SequentialCommandGroup(
-                  new InstantCommand(
-                      () -> elevator.moveToPosition(
-                          elevator.getPosition()
-                              .plus(Inches.of(1)))),
-                  new WaitCommand(0.1))));
-      drivCont.PovDown
-          .onTrue(new RepeatCommand(
-              new SequentialCommandGroup(
-                  new InstantCommand(
-                      () -> elevator.moveToPosition(
-                          elevator.getPosition()
-                              .minus(Inches.of(
-                                  1)))),
-                  new WaitCommand(0.1))));
-        }
+      if (false) {
+        drivCont.PovUp
+            .whileTrue(new RepeatCommand(
+                new SequentialCommandGroup(
+                    new InstantCommand(
+                        () -> elevator.moveToPosition(
+                            elevator.getPosition()
+                                .plus(Inches.of(1)))),
+                    new WaitCommand(0.1))));
+        drivCont.PovDown
+            .onTrue(new RepeatCommand(
+                new SequentialCommandGroup(
+                    new InstantCommand(
+                        () -> elevator.moveToPosition(
+                            elevator.getPosition()
+                                .minus(Inches.of(
+                                    1)))),
+                    new WaitCommand(0.1))));
+      }
     }
   }
 

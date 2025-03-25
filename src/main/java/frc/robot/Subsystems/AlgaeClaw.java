@@ -33,6 +33,10 @@ public class AlgaeClaw extends ManipulatorBase {
     setPower(shootSpeed);
   }
 
+  public void plop() {
+    setPower(-0.05);
+  }
+
   @Override
   public Command test() {
     return new SequentialCommandGroup(
@@ -52,6 +56,7 @@ public class AlgaeClaw extends ManipulatorBase {
   @Override
   public void periodic() {
     super.periodic();
-    shootSpeed = SmartDashboard.getNumber("AlgaeClaw shoot speed", _shootSpeed);
+    shootSpeed = _shootSpeed;
+    // shootSpeed = -SmartDashboard.getNumber("AlgaeClaw shoot speed", -_shootSpeed);
   }
 }

@@ -136,7 +136,7 @@ public final class Constants {
     // 2350 for 90 degrees to radians
     public static final double positionMultiplier = Math.PI / 2 / 23.5;
     public static final Angle positionBoundsMin = Degrees.of(-80);
-    public static final Angle positionBoundsMax = Degrees.of(85);
+    public static final Angle positionBoundsMax = Degrees.of(84);
 
     public static final double P = 2;
     public static final double I = 0;
