@@ -5,13 +5,17 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 
 public class CoralManipulator extends ManipulatorBase {
   ColorSensorV3 colorSensor;
@@ -25,6 +29,10 @@ public class CoralManipulator extends ManipulatorBase {
     setCurrentLimit(Constants.CoralManipulator.currentLimit);
     colorSensor = new ColorSensorV3(Port.kMXP);
     customSensor = () -> sensed;
+
+    // on init, if there is a coral, re-seat it
+    // Robot.onInits.add(new ConditionalCommand(comIntake(),
+    // new InstantCommand(), customSensor));
   }
 
   @Override
@@ -64,7 +72,12 @@ public class CoralManipulator extends ManipulatorBase {
 
   public Command comOuttake() {
     return new SequentialCommandGroup(new InstantCommand(() -> outtake()),
-        new WaitCommand(2),
+        new ParallelRaceGroup( // either 2 seconds, or 0.5 seconds after coral leaving
+            new WaitCommand(2),
+            new SequentialCommandGroup(
+                new WaitUntilCommand(customSensor),
+                new WaitUntilCommand(() -> !customSensor.getAsBoolean()),
+                new WaitCommand(0.75))),
         new InstantCommand(() -> stop()));
   }
 

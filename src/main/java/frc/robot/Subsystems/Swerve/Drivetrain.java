@@ -6,6 +6,8 @@ package frc.robot.Subsystems.Swerve;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import com.revrobotics.spark.SparkMax;
@@ -51,5 +53,15 @@ public class Drivetrain extends SwerveDriveBase {
 				Movement.maxBotSpeed,
 				Movement.maxBotAccel);
 		m_gyro.setAngleAdjustment(0);
+	}
+
+	@Override
+	public void periodic() {
+		super.periodic();
+		try {
+			SmartDashboard.putString("Current command", getCurrentCommand().toString());
+		} catch (Exception e) {
+			SmartDashboard.putString("Current command", "null");
+		}
 	}
 }

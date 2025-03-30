@@ -1,11 +1,13 @@
 package frc.robot.Subsystems;
 
 import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Percent;
 import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
+import edu.wpi.first.wpilibj.LEDPattern.GradientType;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Robot;
@@ -14,6 +16,10 @@ import frc.robot.SyncedLibraries.SystemBases.LedBase;
 public class LEDS extends LedBase {
   LEDPattern elevatorPatt;
   LEDPattern robotBasePattern;
+  LEDPattern robotBaseDisabledPattern;
+  LEDPattern whitePattern;
+
+  Elevator ele;
 
   AddressableLEDBufferView robotBaseView;
   AddressableLEDBufferView blank1View;
@@ -36,10 +42,12 @@ public class LEDS extends LedBase {
   public LEDS(Elevator ele) {
     super(1, length);
 
+    this.ele = ele;
+
     robotBaseView = buffer.createView(0, baseLength);
     blank1View = buffer.createView(blank1Start, blank1Start + blank1Length);
-    topUpView = buffer.createView(topUpStart, topUpStart + topUpLength);
-    topDownView = buffer.createView(topDownStart, topDownStart + topDownLength).reversed();
+    topUpView = buffer.createView(topUpStart, topUpStart + topUpLength).reversed();
+    topDownView = buffer.createView(topDownStart, topDownStart + topDownLength);
     blank2View = buffer.createView(blank2Start, blank2Start + blank2Length);
 
     // System.out.println("RobotBAse start " + 0 + " long " + baseLength);
@@ -52,7 +60,7 @@ public class LEDS extends LedBase {
     // double baseBrightness = 25;
     double heightBrightness = 100 / 3;
     LEDPattern elevatorBasePattern = LEDPattern.rainbow(255, 255)
-        .scrollAtAbsoluteSpeed(FeetPerSecond.of(3), spacing);
+        .scrollAtAbsoluteSpeed(FeetPerSecond.of(-4), spacing);
 
     // LEDPattern softAllianceTone = LEDPattern.solid(getAllianceColor())
     // .blend(LEDPattern.solid(Color.kWhite));
@@ -73,13 +81,21 @@ public class LEDS extends LedBase {
     // () -> (DriverStation.isEnabled()) ? 0 : 1);
     // robotBasePattern = robotBasePattern.mask(robotEnabledOnFieldMask);
 
+    robotBaseDisabledPattern = LEDPattern.gradient(GradientType.kContinuous, Color.kGreen, new Color(0, 20, 0))
+        .scrollAtAbsoluteSpeed(FeetPerSecond.of(10), spacing)
+        .atBrightness(Percent.of(75));
+    // .breathe(Seconds.of(2.5));
+    // .blend(LEDPattern.solid(Color.kGreen).atBrightness(Percent.of(25)));
+
+    whitePattern = LEDPattern.gradient(GradientType.kContinuous, Color.kWhite, Color.kGray)
+        .atBrightness(Percent.of(75)).scrollAtAbsoluteSpeed(FeetPerSecond.of(-2), spacing);
+
     redoBasePattern();
     // reload the colors on init
     Robot.onInits.add(new InstantCommand(this::redoBasePattern));
   }
 
   private void redoBasePattern() {
-    System.out.println("Redoing base pattern");
     robotBasePattern = LEDPattern.solid(getAllianceColor())
         .atBrightness(Percent.of(75))
         .breathe(Seconds.of(1.5));
@@ -87,27 +103,31 @@ public class LEDS extends LedBase {
 
   @Override
   protected void applyPatterns() {
-    elevatorPatt.applyTo(topUpView);
-    elevatorPatt.applyTo(topDownView);
-    robotBasePattern.applyTo(robotBaseView);
-    robotBasePattern.applyTo(blank1View);
-    robotBasePattern.applyTo(blank2View);
-  }
-
-  /**
-   * If not set, returns random color.
-   * 
-   * @return The color of the alliance, fails to blue if no data is available.
-   */
-  private Color getAllianceColor() {
-    try {
-      if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
-        return Color.kBlue;
+    if (ele.getPosPercent() > 0.75 && ele.getVelocity().abs(MetersPerSecond) < 0.25) {
+      // If the elevator is at the top, set all LEDs to white
+      whitePattern.applyTo(topUpView);
+      whitePattern.applyTo(topDownView);
+      LEDPattern.kOff.applyTo(robotBaseView);
+      LEDPattern.kOff.applyTo(blank1View);
+      LEDPattern.kOff.applyTo(blank2View);
+    } else {
+      elevatorPatt.applyTo(topUpView);
+      elevatorPatt.applyTo(topDownView);
+      if (!DriverStation.isDisabled()) {
+        robotBasePattern.applyTo(robotBaseView);
+        robotBasePattern.applyTo(blank1View);
+        robotBasePattern.applyTo(blank2View);
       } else {
-        return Color.kRed;
+        robotBaseDisabledPattern.applyTo(robotBaseView);
+        if (DriverStation.isDSAttached()) {
+          LEDPattern.kOff.applyTo(blank1View);
+          LEDPattern.kOff.applyTo(blank2View);
+        } else {
+          // no ds add white to the blank spots
+          whitePattern.applyTo(blank1View);
+          whitePattern.applyTo(blank2View);
+        }
       }
-    } catch (Exception e) {
-      return Color.kBlue;
     }
   }
 }

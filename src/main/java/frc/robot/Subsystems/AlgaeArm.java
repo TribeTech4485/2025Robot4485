@@ -11,10 +11,12 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.SyncedLibraries.SystemBases.AngleManipulatorBase;
 import frc.robot.SyncedLibraries.SystemBases.Utils.ManipulatorFFAngleCommand;
 import frc.robot.SyncedLibraries.SystemBases.Utils.PIDConfig;
@@ -35,6 +37,7 @@ public class AlgaeArm extends AngleManipulatorBase {
     setBreakerMaxAmps(40);
     setCurrentLimit(Constants.AlgaeArm.amps);
     setPositionMultiplier(Constants.AlgaeArm.positionMultiplier);
+    setSpeedMultiplier(Constants.AlgaeArm.positionMultiplier / 50);
     invertSpecificMotors(false, 0);
     // 0 is straight out, positive is up
     setAngleBounds(Constants.AlgaeArm.positionBoundsMin, Constants.AlgaeArm.positionBoundsMax);
@@ -43,11 +46,15 @@ public class AlgaeArm extends AngleManipulatorBase {
 
     // if not homed, set angle to top position
     if (Math.abs(getAngle().in(Radians)) <= 0.0001) {
-      _setAngle(Degrees.of(85));
+      _setAngle(Constants.AlgaeArm.bootupAngle);
     }
     customSensor = getMotor(0).getForwardLimitSwitch()::isPressed;
     this.elevator = elevator;
     persistMotorConfig();
+    Robot.onInits.add(
+        new ConditionalCommand(new InstantCommand(this::holdPosition),
+            new InstantCommand(),
+            () -> !getMoveCommand().isScheduled()));
   }
 
   @Override
@@ -93,6 +100,10 @@ public class AlgaeArm extends AngleManipulatorBase {
 
   public void positionBarge() {
     moveToPosition(30);
+  }
+
+  public void holdPosition() {
+    moveToPosition(getAngle().plus(getCurrentSpeed().times(Seconds.of(0.1))));
   }
 
   @Override

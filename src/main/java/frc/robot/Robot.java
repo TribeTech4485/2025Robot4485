@@ -18,6 +18,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private Command testCommand;
   public static ArrayList<Command> onInits = new ArrayList<>();
+  public static ArrayList<Command> onDisables = new ArrayList<>();
 
   /*
    * Wanted controls:
@@ -46,6 +47,9 @@ public class Robot extends TimedRobot {
     if (DriverStation.isEStopped()) {
       Estopable.dontAllowFullEstop();
       Estopable.KILLIT();
+    }
+    for (Command toRun : onDisables) {
+      toRun.schedule();
     }
   }
 

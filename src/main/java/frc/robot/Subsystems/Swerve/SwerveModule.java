@@ -23,7 +23,8 @@ public class SwerveModule extends SwerveModuleBase {
   private static final PIDConfig turnPID = new PIDConfig().set(Movement.Turn.P, Movement.Turn.I, Movement.Turn.D);
   private static final SparkBaseConfig driveConfig = new SparkMaxConfig()
       .smartCurrentLimit(Constants.Swerve.driveAmps).inverted(true)
-      .apply(new EncoderConfig().velocityConversionFactor(Movement.driveGearRatio));
+      .apply(new EncoderConfig().velocityConversionFactor(Movement.driveGearRatio)
+          .positionConversionFactor(Movement.driveGearRatio * 50));
   private static final SparkBaseConfig turningConfig = new SparkMaxConfig()
       .smartCurrentLimit(Constants.Swerve.turnAmps)
       .idleMode(IdleMode.kBrake)

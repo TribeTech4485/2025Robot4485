@@ -54,7 +54,7 @@ public final class Constants {
     public static class Movement {
       // bot speeds
       public static final LinearVelocity maxBotSpeed = MetersPerSecond.of(3);
-      public static final LinearAcceleration maxBotAccel = MetersPerSecondPerSecond.of(18);
+      public static final LinearAcceleration maxBotAccel = MetersPerSecondPerSecond.of(15);
 
       // wheel speeds
       public static final LinearVelocity maxWheelSpeed = MetersPerSecond.of(15);
@@ -62,19 +62,19 @@ public final class Constants {
 
       // bot turn
       public static final AngularVelocity maxRotationSpeed = RotationsPerSecond.of(1);
-      public static final AngularAcceleration maxRotationAccel = RotationsPerSecondPerSecond.of(2.5);
+      public static final AngularAcceleration maxRotationAccel = RotationsPerSecondPerSecond.of(1.5);
 
       // public static final double driveGearRatio = 1 / (10 * Math.PI * 15 / 50);
       // public static final double driveGearRatio = 1 / 6.75 * (Math.PI * 4 * 0.254);
-      public static final double driveGearRatio = 1.8 / 2150;
+      public static final double driveGearRatio = 1.8 / 2150 / 1.8 * 2;
 
       public static class Drive {
-        public static final double P = 0.5;
+        public static final double P = 0.5; // 0.5
         public static final double I = 0;
         public static final double D = 0;
-        public static final double S = 0;
-        public static final double V = 2.5;
-        public static final double A = 2.5;
+        public static final double S = -0.15;
+        public static final double V = 2.18;
+        public static final double A = 4; // 2.5
         public static final double[] PIDF = { P, I, D, S, V, A };
       }
 
@@ -86,9 +86,9 @@ public final class Constants {
       }
 
       public static class BotTurn {
-        public static final double P = 4; // 4
+        public static final double P = 0; // 4 // TODO: re-add turning
         public static final double I = 0;
-        public static final double D = 0.1; // 0.1
+        public static final double D = 0.025; // 0.1 // 0.025
         // public static final double S = 0;
         // public static final double V = 0;
         // public static final double A = 0;
@@ -96,13 +96,19 @@ public final class Constants {
       }
 
       public static class Holonomic {
-        public static final double xP = 0.02;
+        public static final double xP = 0.2;
         public static final double xI = 0;
-        public static final double xD = 0;
+        public static final double xD = xP / 50 / 2;
 
-        public static final double yP = 0.02;
+        public static final double yP = 0.2;
         public static final double yI = 0;
-        public static final double yD = 0;
+        public static final double yD = yP / 50 / 2;
+      }
+
+      public static class MovePID {
+        public static final double P = 5;
+        public static final double I = 0;
+        public static final double D = 0.5;
       }
     }
   }
@@ -110,7 +116,7 @@ public final class Constants {
   public static class Elevator {
     public static final int amps = 40;
     public static final double positionMultiplier = 0.013335;
-    public static final Distance positionBoundsMin = Inches.of(16);
+    public static final Distance positionBoundsMin = Inches.of(16); // TODO: If coral stuck 35 inches
     public static final Distance positionBoundsMax = Inches.of(78); // 79
 
     public static final double P = 10;
@@ -122,12 +128,12 @@ public final class Constants {
     public static final double A = 0.019;
     public static final double[] PIDF = { P, I, D, S, V, G, A };
 
-    public static final LinearVelocity maxVelocity = MetersPerSecond.of(4); // 6
-    public static final LinearAcceleration maxAcceleration = MetersPerSecondPerSecond.of(1.5); // 2.5
+    public static final LinearVelocity maxVelocity = MetersPerSecond.of(4.5); // 6
+    public static final LinearAcceleration maxAcceleration = MetersPerSecondPerSecond.of(1.35); // 2.5
   }
 
   public static class AlgaeClaw {
-    public static final int currentInLimit = 15;
+    public static final int currentInLimit = 10;
     // public static final int currentOutLimit = 30;
   }
 
@@ -136,19 +142,20 @@ public final class Constants {
     // 2350 for 90 degrees to radians
     public static final double positionMultiplier = Math.PI / 2 / 23.5;
     public static final Angle positionBoundsMin = Degrees.of(-80);
-    public static final Angle positionBoundsMax = Degrees.of(84);
+    public static final Angle positionBoundsMax = Degrees.of(83);
+    public static final Angle bootupAngle = Degrees.of(87);
 
-    public static final double P = 2;
+    public static final double P = 5;
     public static final double I = 0;
-    public static final double D = 0.1;
+    public static final double D = 01;
     public static final double S = 0.15;
-    public static final double V = 2;
-    public static final double G = 0.2;
-    public static final double A = 0.001;
+    public static final double V = 1.8;
+    public static final double G = 0.25;
+    public static final double A = 0.001 / positionMultiplier;
     public static final double[] PIDF = { P, I, D, S, V, G, A };
 
-    public static final AngularVelocity maxVelocity = RadiansPerSecond.of(8);
-    public static final AngularAcceleration maxAcceleration = RadiansPerSecondPerSecond.of(6);
+    public static final AngularVelocity maxVelocity = RadiansPerSecond.of(20); // just acceleration limits
+    public static final AngularAcceleration maxAcceleration = RadiansPerSecondPerSecond.of(5);
   }
 
   public static class CoralManipulator {

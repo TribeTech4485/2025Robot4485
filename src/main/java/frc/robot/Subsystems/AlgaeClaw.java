@@ -57,6 +57,12 @@ public class AlgaeClaw extends ManipulatorBase {
   public void periodic() {
     super.periodic();
     shootSpeed = _shootSpeed;
-    // shootSpeed = -SmartDashboard.getNumber("AlgaeClaw shoot speed", -_shootSpeed);
+    // shootSpeed = -SmartDashboard.getNumber("AlgaeClaw shoot speed",
+    // -_shootSpeed);
+  }
+
+  @Override
+  public void stopCommand() {
+
   }
 }

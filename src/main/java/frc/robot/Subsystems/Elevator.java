@@ -4,16 +4,19 @@ import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.SyncedLibraries.ManipulatorBaseSysID;
 import frc.robot.SyncedLibraries.SystemBases.PositionManipulatorBase;
 import frc.robot.SyncedLibraries.SystemBases.Utils.ManipulatorFFDistanceCommand;
@@ -36,7 +39,7 @@ public class Elevator extends PositionManipulatorBase {
     setBrakeMode(true);
     setCurrentLimit(Constants.Elevator.amps);
     setPositionMultiplier(Constants.Elevator.positionMultiplier);
-    setSpeedMultiplier(Constants.Elevator.positionMultiplier/50);
+    setSpeedMultiplier(Constants.Elevator.positionMultiplier / 50);
     setPositionBounds(Constants.Elevator.positionBoundsMin,
         Constants.Elevator.positionBoundsMax);
     // home().schedule();
@@ -49,6 +52,11 @@ public class Elevator extends PositionManipulatorBase {
     if (customSensor.getAsBoolean()) {
       _setPosition(minPosition);
     }
+
+    Robot.onInits.add(
+        new ConditionalCommand(new InstantCommand(this::holdPosition),
+            new InstantCommand(),
+            () -> !getMoveCommand().isScheduled()));
   }
 
   public void retract() {
@@ -140,7 +148,7 @@ public class Elevator extends PositionManipulatorBase {
   }
 
   public void holdPosition() {
-    moveToPosition(getPosition());
+    moveToPosition(getPosition().plus(getVelocity().times(Seconds.of(0.1))));
   }
 
   public double getPosPercent() {
@@ -151,7 +159,7 @@ public class Elevator extends PositionManipulatorBase {
   @Override
   public void periodic() {
     super.periodic();
-    SmartDashboard.putNumber("ElePow", getAbsPower());
+    SmartDashboard.putNumber("ElePow", getAbsVoltage());
     SmartDashboard.putNumber("Elevator target position",
         ((ManipulatorFFDistanceCommand) moveCommand).getController().getSetpoint().position);
     SmartDashboard.putNumber("Elevator Setpoint",
@@ -163,5 +171,7 @@ public class Elevator extends PositionManipulatorBase {
     SmartDashboard.putNumber("Elevator target speed",
         ((ManipulatorFFDistanceCommand) moveCommand).getController().getSetpoint().velocity);
     SmartDashboard.putNumber("Elevator current speed", getVelocity().in(MetersPerSecond));
+
+    SmartDashboard.putNumber("Elevator height percent", getPosPercent());
   }
 }
