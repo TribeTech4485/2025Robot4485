@@ -1,10 +1,8 @@
 package frc.robot.Commands;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
@@ -16,8 +14,6 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.Subsystems.AlgaeArm;
 import frc.robot.Subsystems.AlgaeClaw;
 import frc.robot.Subsystems.CoralManipulator;
@@ -134,7 +130,7 @@ public class Autos {
         .finallyDo(() -> System.out.println("Finished centering?"));
   }
 
-  private static ParallelRaceGroup stopDrive(SwerveDriveBase drivetrain) {
+  public static ParallelRaceGroup stopDrive(SwerveDriveBase drivetrain) {
     return new RunCommand(drivetrain::stop).withTimeout(1);
   }
 }

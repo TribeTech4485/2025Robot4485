@@ -4,41 +4,26 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Feet;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Radian;
-import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
-import java.util.List;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.Autos;
-import frc.robot.Commands.DumbAprilMove;
-import frc.robot.Commands.MoveToDistanceApriltag;
-import frc.robot.Commands.MoveToDistanceCommand;
 import frc.robot.Commands.TeleDrive;
 import frc.robot.Subsystems.CoralManipulator;
 import frc.robot.Subsystems.Elevator;
@@ -50,8 +35,6 @@ import frc.robot.Subsystems.Controllers2025;
 import frc.robot.Subsystems.Swerve.Drivetrain;
 import frc.robot.SyncedLibraries.SystemBases.ControllerBase;
 import frc.robot.SyncedLibraries.SystemBases.Estopable;
-import frc.robot.SyncedLibraries.SystemBases.PathPlanning.TrajectoryMoveCommand;
-import frc.robot.SyncedLibraries.SystemBases.Utils.BackgroundTrajectoryGenerator;
 
 // 58 inches forward
 
@@ -77,46 +60,29 @@ public class RobotContainer {
           Constants.Swerve.Movement.Holonomic.yI, Constants.Swerve.Movement.Holonomic.yD),
       drivetrain.getTurnController());
 
-  // BackgroundTrajectoryGenerator generator = new BackgroundTrajectoryGenerator(
-  // new Pose2d(),
-  // new Pose2d(Inches.of(140), Inches.of(0), Rotation2d.fromDegrees(0)),
-  // List.of(new Translation2d(0.1, 0)),
-  // MetersPerSecond.of(0.75), MetersPerSecondPerSecond.of(5));
-  // BackgroundTrajectoryGenerator generator2 = new BackgroundTrajectoryGenerator(
-  // new Pose2d(),
-  // new Pose2d(Inches.of(-40), Inches.of(0), Rotation2d.fromDegrees(0)),
-  // List.of(new Translation2d(-20, 0)),
-  // MetersPerSecond.of(1), MetersPerSecondPerSecond.of(5));
-
-  // BackgroundTrajectoryGenerator move1meterTrajectory = new
-  // BackgroundTrajectoryGenerator(
-  // new Pose2d(),
-  // new Pose2d(Meters.of(1), Inches.of(0), Rotation2d.fromDegrees(0)),
-  // List.of(new Translation2d(0.1, 0)),
-  // MetersPerSecond.of(0.5), MetersPerSecondPerSecond.of(1));
-
-  // BackgroundTrajectoryGenerator move1footTrajectory = new
-  // BackgroundTrajectoryGenerator(
-  // new Pose2d(),
-  // new Pose2d(Feet.of(5), Inches.of(0), Rotation2d.fromDegrees(0)),
-  // List.of(new Translation2d(0.1, 0)),
-  // MetersPerSecond.of(0.5), MetersPerSecondPerSecond.of(1));
-
   SendableChooser<Command> autoChooser = new SendableChooser<>();
-
-  // MoveToDistanceApriltag moveToDistanceApriltag = new
-  // MoveToDistanceApriltag(drivetrain, photon, 1, 0, 0);
 
   public RobotContainer() {
     DriverStation.silenceJoystickConnectionWarning(true);
     configureBindings();
 
     System.out.print("Creating autos... ");
-    autoChooser.addOption("Old Coral Place", Autos.coralPlace(drivetrain, elevator, algaeArm, coralManipulator));
     autoChooser.addOption("Drive out", Autos.driveOut(drivetrain, elevator, algaeArm));
-    autoChooser.addOption("NOOO Center Coral and Algae",
-        Autos.centerCoralAndAlgae(drivetrain, elevator, algaeArm, coralManipulator));
-    autoChooser.setDefaultOption("April place",
+    LinearVelocity speed = MetersPerSecond.of(1.5);
+    autoChooser.addOption("Left auto",
+        new SequentialCommandGroup(
+            new RunCommand(() -> drivetrain.inputDrivingX_Y(
+                speed.div(-2), speed.div(-2 / Math.sqrt(3)), RadiansPerSecond.zero())).withTimeout(1),
+            Autos.stopDrive(drivetrain).withTimeout(0.25),
+            Autos.aprilAuto(drivetrain, photon, teleDrive, elevator, algaeArm, coralManipulator, algaeClaw)));
+    autoChooser.addOption("Right (proccessor) auto",
+        new SequentialCommandGroup(
+            new RunCommand(() -> drivetrain.inputDrivingX_Y(
+                speed.div(-2), speed.div(2 / Math.sqrt(3)), RadiansPerSecond.zero())).withTimeout(1),
+            Autos.stopDrive(drivetrain).withTimeout(0.25),
+            Autos.aprilAuto(drivetrain, photon, teleDrive, elevator, algaeArm, coralManipulator, algaeClaw)));
+
+    autoChooser.setDefaultOption("Center auto",
         Autos.aprilAuto(drivetrain, photon, teleDrive, elevator, algaeArm, coralManipulator, algaeClaw));
 
     SmartDashboard.putData("Auto chooser", autoChooser);
@@ -211,8 +177,6 @@ public class RobotContainer {
           .onTrue(new InstantCommand(() -> elevator
               ._setPosition(Constants.Elevator.positionBoundsMin)));
 
-      // drivCont.buttons[11]
-      // .whileTrue(new TrajectoryMoveCommand(generator, holoDrive, true));
     } else {
       // driver xbox
       drivCont.A
@@ -238,54 +202,7 @@ public class RobotContainer {
               () -> elevator.getPIDConfig().maxLinearVelocity = Constants.Elevator.maxVelocity))
           .onFalse(new InstantCommand(() -> elevator.setCurrentLimit(Constants.Elevator.amps)));
       drivCont.B.onTrue(new InstantCommand(algaeArm::retract));
-      // drivCont.X
-      // .onTrue(new PrintCommand("Trajectory!!!"))
-      // .whileTrue(new MoveToDistanceApriltag(drivetrain, holoDrive, photon, 0.1, 0,
-      // 0));
-      // .whileTrue();
-      // drivCont.X
-      // .whileTrue(new TrajectoryMoveCommand(move1meterTrajectory, holoDrive,
-      // drivetrain, true));
-
-      // drivCont.Start.onTrue(new InstantCommand(drivetrain::resetDriveEncoders));
       drivCont.Start.onTrue(new InstantCommand(() -> Estopable.KILLIT(false)));
-
-      // drivCont.PovLeft
-      // .whileTrue(new MoveToDistanceApriltag(drivetrain, holoDrive, photon,
-      // Inches.of(-30), Inches.of(-12), Degrees.of(0)));
-      // drivCont.PovRight
-      // .whileTrue(new MoveToDistanceApriltag(drivetrain, holoDrive, photon,
-      // Inches.of(-30), Inches.of(12), Degrees.of(0)));
-      // drivCont.PovUp
-      // .whileTrue(new MoveToDistanceApriltag(drivetrain, holoDrive, photon,
-      // Meters.of(-0.75), Inches.of(0), Degrees.of(180)));
-      // drivCont.PovDown
-      // .whileTrue(new TrajectoryMoveCommand(move1footTrajectory, holoDrive,
-      // drivetrain, true));
-
-      // drivCont.PovUp
-      // .whileTrue(new MoveToDistanceCommand(drivetrain, Meters.of(2),
-      // Meters.of(0), Radians.of(0),
-      // MetersPerSecond.of(1), MetersPerSecondPerSecond.of(2.5)));
-
-      // drivCont.PovLeft
-      // .whileTrue(new MoveToDistanceCommand(drivetrain, Meters.of(0),
-      // Meters.of(-2), Radians.of(0),
-      // MetersPerSecond.of(1), MetersPerSecondPerSecond.of(2.5)));
-
-      // drivCont.PovRight.debounce(0.2)
-      // .onTrue(new InstantCommand(teleDrive::disable))
-      // .onFalse(new InstantCommand(teleDrive::enable))
-      // .onTrue(new DumbAprilMove(drivetrain, photon,
-      // Feet.of(3), Feet.of(0), Radians.zero()));
-      // drivCont.PovRight
-      // .whileTrue(new MoveToDistanceCommand(drivetrain, Meters.of(2),
-      // Meters.of(2), Radians.of(0),
-      // MetersPerSecond.of(0.5), MetersPerSecondPerSecond.of(2.5)));
-
-      // drivCont.PovDown
-      // .whileTrue(Autos.aprilAuto(drivetrain, photon, teleDrive, elevator, algaeArm,
-      // coralManipulator));
     }
   }
 
