@@ -3,9 +3,12 @@ package frc.robot.Commands;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -14,12 +17,15 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants.Swerve.Movement.MovePID;
 import frc.robot.Subsystems.AlgaeArm;
 import frc.robot.Subsystems.AlgaeClaw;
 import frc.robot.Subsystems.CoralManipulator;
 import frc.robot.Subsystems.Elevator;
 import frc.robot.SyncedLibraries.SystemBases.PhotonVisionBase;
+import frc.robot.SyncedLibraries.SystemBases.PathPlanning.DistanceMoveCommand;
 import frc.robot.SyncedLibraries.SystemBases.Swerve.SwerveDriveBase;
+import frc.robot.SyncedLibraries.SystemBases.Utils.PIDConfig;
 
 public class Autos {
   // OLD
@@ -71,7 +77,10 @@ public class Autos {
   }
 
   public static Command aprilAuto(SwerveDriveBase drivetrain, PhotonVisionBase photon, TeleDrive teleDrive,
-      Elevator elevator, AlgaeArm algaeArm, CoralManipulator coralManipulator, AlgaeClaw algaeClaw) {
+      Elevator elevator, AlgaeArm algaeArm, CoralManipulator coralManipulator, AlgaeClaw algaeClaw,
+      Runnable algaeRunnable) {
+    final LinearVelocity maxSpeed = MetersPerSecond.of(1);
+    final LinearAcceleration maxAccel = MetersPerSecondPerSecond.of(3);
     return new SequentialCommandGroup(
         new ParallelCommandGroup(
             new PrintCommand("Starting April auto"),
@@ -91,22 +100,31 @@ public class Autos {
         new InstantCommand(elevator::positionBarge),
         new WaitCommand(0.35),
         new InstantCommand(elevator::positionL4),
-        new RunCommand(() -> drivetrain.inputDrivingX_Y(0.3, 0, 0)).withTimeout(1),
-        new InstantCommand(elevator::positionAlgaeLow),
+        new RunCommand(() -> drivetrain.inputDrivingX_Y(0.35, 0, 0)).withTimeout(0.9),
+        // new DistanceMoveCommand(drivetrain, Feet.of(1), Feet.of(0),
+        // new PIDConfig().set(MovePID.P, MovePID.I, MovePID.D, 0.0, 0.0, 0.0, maxSpeed,
+        // maxAccel),
+        // new PIDConfig().set(MovePID.P, MovePID.I, MovePID.D, 0.0, 0.0, 0.0, maxSpeed,
+        // maxAccel),
+        // new PIDConfig().set(4, 0, 0.05)),
+        new InstantCommand(algaeRunnable),
         stopDrive(drivetrain),
         new PrintCommand("Finished April auto"),
         new InstantCommand(algaeArm::positionOut),
-        new DumbAprilMove(drivetrain, photon, Feet.of(3), Inches.of(-10), Radians.zero())
+        new DumbAprilMove(drivetrain, photon, Feet.of(3.1), Inches.of(-8), Radians.zero())
             .withTimeout(3),
         new InstantCommand(algaeClaw::intake),
-        new RunCommand(() -> drivetrain.inputDrivingX_Y(-0.5, 0, 0)).withTimeout(0.5),
-        new RunCommand(() -> drivetrain.inputDrivingX_Y(0.5, 0, 0)).withTimeout(0.5),
-        new InstantCommand(elevator::retract),
-        new InstantCommand(algaeArm::retract),
+        // new RunCommand(() -> drivetrain.inputDrivingX_Y(-0.5, 0,
+        // 0)).withTimeout(0.5),
+        // stopDrive(drivetrain).withTimeout(0.5),
+        // new RunCommand(() -> drivetrain.inputDrivingX_Y(0.5, 0, 0)).withTimeout(0.5),
+        // new InstantCommand(elevator::retract),
+        // new InstantCommand(algaeArm::retract),
         // stopDrive(drivetrain),
         // new InstantCommand(() ->
         // algaeArm.moveToPosition(Constants.AlgaeArm.positionBoundsMax.minus(Degrees.of(1)))),
-        new RunCommand(() -> drivetrain.inputDrivingX_Y(-0.4, 0, 0)).withTimeout(1),
+        // new RunCommand(() -> drivetrain.inputDrivingX_Y(-0.4, 0, 0)).withTimeout(1),
+        new InstantCommand(() -> elevator.adjustBy(Inches.of(7))),
         stopDrive(drivetrain))
         .finallyDo(() -> {
           // teleDrive.enable();
@@ -116,15 +134,15 @@ public class Autos {
   /** Goes up to apriltag, hits the wall to become parallel, then backs up */
   private static Command centerOnAprilTag(SwerveDriveBase drivetrain, PhotonVisionBase photon) {
     return new SequentialCommandGroup(
-        new DumbAprilMove(drivetrain, photon, Feet.of(2.5), Inches.of(-5), Radians.zero()),
+        new DumbAprilMove(drivetrain, photon, Feet.of(2.5), Inches.of(-3), Radians.zero()),
         stopDrive(drivetrain).withTimeout(0.125),
         new PrintCommand("Moved infront"),
         new RunCommand(() -> drivetrain.inputDrivingX_Y(-0.5, 0, 0)).withTimeout(1),
         new PrintCommand("Wall slammed"),
-        new RunCommand(() -> drivetrain.inputDrivingX_Y(0.3, 0, 0)).withTimeout(0.5),
+        new RunCommand(() -> drivetrain.inputDrivingX_Y(0.3, 0, 0)).withTimeout(0.7),
         stopDrive(drivetrain).withTimeout(0.5),
         new PrintCommand("Stopped"),
-        new DumbAprilMove(drivetrain, photon, Feet.of(2.3), Inches.of(-5), Radians.zero())
+        new DumbAprilMove(drivetrain, photon, Feet.of(2.3), Inches.of(-3), Radians.zero())
             .withTimeout(3),
         new PrintCommand("Re-centered"))
         .finallyDo(() -> System.out.println("Finished centering?"));

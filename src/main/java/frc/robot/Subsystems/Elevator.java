@@ -151,6 +151,10 @@ public class Elevator extends PositionManipulatorBase {
     moveToPosition(getPosition().plus(getVelocity().times(Seconds.of(0.1))));
   }
 
+  public void adjustBy(Distance distance) {
+    moveToPosition(getPosition().plus(distance));
+  }
+
   public double getPosPercent() {
     return getPosition().minus(minPosition).div(maxPosition.minus(minPosition)).baseUnitMagnitude();
 
