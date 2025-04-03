@@ -29,6 +29,7 @@ public class CoralManipulator extends ManipulatorBase {
     setCurrentLimit(Constants.CoralManipulator.currentLimit);
     colorSensor = new ColorSensorV3(Port.kMXP);
     customSensor = () -> sensed;
+    persistMotorConfig();
 
     // on init, if there is a coral, re-seat it
     // Robot.onInits.add(new ConditionalCommand(comIntake(),

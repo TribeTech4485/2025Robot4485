@@ -21,6 +21,7 @@ public class AlgaeClaw extends ManipulatorBase {
     setBrakeMode(true);
     setCurrentLimit(Constants.AlgaeClaw.currentInLimit);
     SmartDashboard.putNumber("AlgaeClaw shoot speed", shootSpeed);
+    persistMotorConfig();
   }
 
   public void intake() {
