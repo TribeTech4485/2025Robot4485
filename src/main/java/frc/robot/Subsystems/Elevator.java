@@ -79,7 +79,7 @@ public class Elevator extends PositionManipulatorBase {
   }
 
   public void positionProccessor() {
-    moveToPosition(Inches.of(20));
+    moveToPosition(Inches.of(19));
   }
 
   public void positionAlgaeLow() {

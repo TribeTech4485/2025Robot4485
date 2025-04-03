@@ -27,7 +27,7 @@ public class LEDS extends LedBase {
   AddressableLEDBufferView topDownView;
   AddressableLEDBufferView blank2View;
 
-  static final int length = 297; // 297
+  static final int length = 295; // 297
   static final int baseLength = 145; // 147
   static final int blank1Length = 2; // 13
   static final int blank2Length = 25; // 25

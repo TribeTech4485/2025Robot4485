@@ -17,15 +17,12 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.Swerve.Movement.MovePID;
 import frc.robot.Subsystems.AlgaeArm;
 import frc.robot.Subsystems.AlgaeClaw;
 import frc.robot.Subsystems.CoralManipulator;
 import frc.robot.Subsystems.Elevator;
 import frc.robot.SyncedLibraries.SystemBases.PhotonVisionBase;
-import frc.robot.SyncedLibraries.SystemBases.PathPlanning.DistanceMoveCommand;
 import frc.robot.SyncedLibraries.SystemBases.Swerve.SwerveDriveBase;
-import frc.robot.SyncedLibraries.SystemBases.Utils.PIDConfig;
 
 public class Autos {
   // OLD
