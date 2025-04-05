@@ -53,7 +53,7 @@ public final class Constants {
 
     public static class Movement {
       // bot speeds
-      public static final LinearVelocity maxBotSpeed = MetersPerSecond.of(3);
+      public static final LinearVelocity maxBotSpeed = MetersPerSecond.of(3.5);
       public static final LinearAcceleration maxBotAccel = MetersPerSecondPerSecond.of(15);
 
       // wheel speeds
@@ -128,12 +128,12 @@ public final class Constants {
     public static final double A = 0.019;
     public static final double[] PIDF = { P, I, D, S, V, G, A };
 
-    public static final LinearVelocity maxVelocity = MetersPerSecond.of(4.5); // 6
-    public static final LinearAcceleration maxAcceleration = MetersPerSecondPerSecond.of(1.35); // 2.5
+    public static final LinearVelocity maxVelocity = MetersPerSecond.of(4.75);
+    public static final LinearAcceleration maxAcceleration = MetersPerSecondPerSecond.of(1.4); // 2.5
   }
 
   public static class AlgaeClaw {
-    public static final int currentInLimit = 10;
+    public static final int currentInLimit = 15;
     // public static final int currentOutLimit = 30;
   }
 

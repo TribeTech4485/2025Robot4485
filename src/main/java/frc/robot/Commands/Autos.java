@@ -52,7 +52,7 @@ public class Autos {
         new InstantCommand(algaeArm::retract),
         new InstantCommand(elevator::retract),
         new RunCommand(() -> drivetrain.inputDrivingX_Y(
-            MetersPerSecond.of(-1), MetersPerSecond.of(0), RadiansPerSecond.of(0))).withTimeout(2),
+            MetersPerSecond.of(-1.25), MetersPerSecond.of(0), RadiansPerSecond.of(0))).withTimeout(2),
         stopDrive(drivetrain));
   }
 
@@ -128,6 +128,39 @@ public class Autos {
         });
   }
 
+  public static Command aprilAutoFiltered(SwerveDriveBase drivetrain, PhotonVisionBase photon, TeleDrive teleDrive,
+      Elevator elevator, AlgaeArm algaeArm, CoralManipulator coralManipulator, AlgaeClaw algaeClaw,
+      Runnable algaeRunnable, int... ids) {
+    return new SequentialCommandGroup(
+        new ParallelCommandGroup(
+            new PrintCommand("Starting April auto"),
+            coralManipulator.comIntake(),
+            new InstantCommand(algaeArm::retract),
+            new InstantCommand(elevator::retract),
+            new InstantCommand(() -> drivetrain.setSlowMode(false)),
+            centerOnAprilTagFiltered(drivetrain, photon, ids)),
+        new InstantCommand(elevator::positionL4),
+        new PrintCommand("Move Elevator"),
+        new WaitCommand(1),
+        new RunCommand(() -> drivetrain.inputDrivingX_Y(-0.3, 0, 0)).withTimeout(0.85),
+        new ParallelCommandGroup(
+            stopDrive(drivetrain),
+            coralManipulator.comOuttake()),
+        new InstantCommand(elevator::positionBarge),
+        new WaitCommand(0.35),
+        new InstantCommand(elevator::positionL4),
+        new RunCommand(() -> drivetrain.inputDrivingX_Y(0.35, 0, 0)).withTimeout(0.9),
+        new InstantCommand(algaeRunnable),
+        stopDrive(drivetrain),
+        new PrintCommand("Finished April auto"),
+        new InstantCommand(algaeArm::positionOut),
+        new DumbAprilMoveFiltered(drivetrain, photon, Feet.of(3.1), Inches.of(-8), Radians.zero(), ids)
+            .withTimeout(3),
+        new InstantCommand(algaeClaw::intake),
+        new InstantCommand(() -> elevator.adjustBy(Inches.of(7))),
+        stopDrive(drivetrain));
+  }
+
   /** Goes up to apriltag, hits the wall to become parallel, then backs up */
   private static Command centerOnAprilTag(SwerveDriveBase drivetrain, PhotonVisionBase photon) {
     return new SequentialCommandGroup(
@@ -140,6 +173,23 @@ public class Autos {
         stopDrive(drivetrain).withTimeout(0.5),
         new PrintCommand("Stopped"),
         new DumbAprilMove(drivetrain, photon, Feet.of(2.3), Inches.of(-3), Radians.zero())
+            .withTimeout(3),
+        new PrintCommand("Re-centered"))
+        .finallyDo(() -> System.out.println("Finished centering?"));
+  }
+
+  /** Goes up to apriltag, hits the wall to become parallel, then backs up */
+  private static Command centerOnAprilTagFiltered(SwerveDriveBase drivetrain, PhotonVisionBase photon, int... ids) {
+    return new SequentialCommandGroup(
+        new DumbAprilMoveFiltered(drivetrain, photon, Feet.of(2.5), Inches.of(-4), Radians.zero(), ids),
+        stopDrive(drivetrain).withTimeout(0.125),
+        new PrintCommand("Moved infront"),
+        new RunCommand(() -> drivetrain.inputDrivingX_Y(-0.5, 0, 0)).withTimeout(1),
+        new PrintCommand("Wall slammed"),
+        new RunCommand(() -> drivetrain.inputDrivingX_Y(0.3, 0, 0)).withTimeout(0.7),
+        stopDrive(drivetrain).withTimeout(0.5),
+        new PrintCommand("Stopped"),
+        new DumbAprilMoveFiltered(drivetrain, photon, Feet.of(2.3), Inches.of(-4), Radians.zero(), ids)
             .withTimeout(3),
         new PrintCommand("Re-centered"))
         .finallyDo(() -> System.out.println("Finished centering?"));

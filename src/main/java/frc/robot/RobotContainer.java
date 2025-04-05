@@ -74,17 +74,21 @@ public class RobotContainer {
             new RunCommand(() -> drivetrain.inputDrivingX_Y(
                 speed.div(-2), speed.div(-2 / Math.sqrt(3)), RadiansPerSecond.zero())).withTimeout(0.75),
             Autos.stopDrive(drivetrain).withTimeout(0.5),
-            Autos.aprilAuto(drivetrain, photon, teleDrive, elevator, algaeArm, coralManipulator, algaeClaw,
-                elevator::positionAlgaeHigh)));
+            Autos.aprilAutoFiltered(drivetrain, photon, teleDrive, elevator, algaeArm, coralManipulator, algaeClaw,
+                elevator::positionAlgaeHigh, 11, 20)));
     autoChooser.addOption("Right (proccessor) auto",
         new SequentialCommandGroup(
             new RunCommand(() -> drivetrain.inputDrivingX_Y(
                 speed.div(-2), speed.div(2 / Math.sqrt(3)), RadiansPerSecond.zero())).withTimeout(0.75),
             Autos.stopDrive(drivetrain).withTimeout(0.5),
-            Autos.aprilAuto(drivetrain, photon, teleDrive, elevator, algaeArm, coralManipulator, algaeClaw,
-                elevator::positionAlgaeHigh)));
+            Autos.aprilAutoFiltered(drivetrain, photon, teleDrive, elevator, algaeArm, coralManipulator, algaeClaw,
+                elevator::positionAlgaeHigh, 9, 22)));
 
-    autoChooser.setDefaultOption("Center auto",
+    autoChooser.setDefaultOption("Center filtered",
+        Autos.aprilAutoFiltered(drivetrain, photon, teleDrive, elevator, algaeArm, coralManipulator, algaeClaw,
+            elevator::positionAlgaeLow, 10, 21, 7));
+
+    autoChooser.addOption("Center auto",
         Autos.aprilAuto(drivetrain, photon, teleDrive, elevator, algaeArm, coralManipulator, algaeClaw,
             elevator::positionAlgaeLow));
 
