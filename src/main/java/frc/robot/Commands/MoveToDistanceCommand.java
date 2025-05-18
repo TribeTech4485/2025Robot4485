@@ -14,8 +14,8 @@ public class MoveToDistanceCommand extends DistanceMoveCommand {
   public MoveToDistanceCommand(SwerveDriveBase drivetrain, Distance xDistance, Distance yDistance, Angle angle,
       LinearVelocity maxSpeed, LinearAcceleration maxAccel) {
     super(drivetrain, xDistance, yDistance,
-        new PIDConfig().set(MovePID.P, MovePID.I, MovePID.D, 0.0, 0.0, 0.0, maxSpeed, maxAccel),
-        new PIDConfig().set(MovePID.P, MovePID.I, MovePID.D, 0.0, 0.0, 0.0, maxSpeed, maxAccel),
+        new PIDConfig().set(MovePID.P, MovePID.I, MovePID.D, maxSpeed, maxAccel),
+        new PIDConfig().set(MovePID.P, MovePID.I, MovePID.D, maxSpeed, maxAccel),
         new PIDConfig().set(4, 0, 0.05));
   }
 }

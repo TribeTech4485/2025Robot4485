@@ -3,20 +3,14 @@ package frc.robot.Commands;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.Constants.Swerve.Movement.MovePID;
 import frc.robot.SyncedLibraries.SystemBases.PhotonVisionBase;
 import frc.robot.SyncedLibraries.SystemBases.PathPlanning.DistanceMoveCommand;
@@ -52,17 +46,13 @@ public class DumbAprilMove extends Command {
     photon.mainTarget.getSkew();
     turnController = new PIDController(turnConfig.P, turnConfig.I, turnConfig.D);
     turnController
-        // .setSetpoint((photon.mainTarget.skew - angle.in(Radians) + 0 * Math.PI) % (2
-        // * Math.PI) - Math.PI);
         .setSetpoint(Units.degreesToRadians(-photon.mainTarget.yaw) - angle.in(Radians));
-    // target = target.plus(new Transform3d(0, 0, 0, new Rotation3d(0, 0,
-    // turnController.getSetpoint())));
     System.out.println("Scanned apriltag at " + target.getMeasureX() + ", " + target.getMeasureY());
     moveCommand = new DistanceMoveCommand(driveBase,
         target.getMeasureX().minus(distanceX),
         target.getMeasureY().minus(distanceY).unaryMinus(),
-        new PIDConfig().set(MovePID.P, MovePID.I, MovePID.D, 0.0, 0.0, 0.0, maxSpeed, maxAccel),
-        new PIDConfig().set(MovePID.P, MovePID.I, MovePID.D, 0.0, 0.0, 0.0, maxSpeed, maxAccel),
+        new PIDConfig().set(MovePID.P, MovePID.I, MovePID.D, maxSpeed, maxAccel),
+        new PIDConfig().set(MovePID.P, MovePID.I, MovePID.D, maxSpeed, maxAccel),
         turnConfig);
     moveCommand.initialize();
   }

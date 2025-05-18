@@ -25,7 +25,7 @@ public class DumbAprilMoveFiltered extends Command {
   Distance distanceX;
   Distance distanceY;
   Angle angle;
-  Command moveCommand;
+  DistanceMoveCommand moveCommand;
   PIDConfig turnConfig = new PIDConfig().set(4, 0, 0.05); // p = 4
   PIDController turnController;
   final LinearVelocity maxSpeed = MetersPerSecond.of(1);
@@ -75,8 +75,8 @@ public class DumbAprilMoveFiltered extends Command {
       moveCommand = new DistanceMoveCommand(driveBase,
           target.getMeasureX().minus(distanceX),
           target.getMeasureY().minus(distanceY).unaryMinus(),
-          new PIDConfig().set(MovePID.P, MovePID.I, MovePID.D, 0.0, 0.0, 0.0, maxSpeed, maxAccel),
-          new PIDConfig().set(MovePID.P, MovePID.I, MovePID.D, 0.0, 0.0, 0.0, maxSpeed, maxAccel),
+          new PIDConfig().set(MovePID.P, MovePID.I, MovePID.D, maxSpeed, maxAccel),
+          new PIDConfig().set(MovePID.P, MovePID.I, MovePID.D, maxSpeed, maxAccel),
           turnConfig);
       moveCommand.initialize();
     } catch (Exception e) {

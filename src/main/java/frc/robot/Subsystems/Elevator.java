@@ -3,7 +3,6 @@ package frc.robot.Subsystems;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
 import com.revrobotics.spark.SparkMax;
@@ -17,20 +16,18 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Robot;
-import frc.robot.SyncedLibraries.ManipulatorBaseSysID;
 import frc.robot.SyncedLibraries.SystemBases.PositionManipulatorBase;
-import frc.robot.SyncedLibraries.SystemBases.Utils.ManipulatorFFDistanceCommand;
 import frc.robot.SyncedLibraries.SystemBases.Utils.PIDConfig;
+import frc.robot.SyncedLibraries.SystemBases.Utils.PIDConfig.FeedForwardType;
 
 public class Elevator extends PositionManipulatorBase {
-  public ManipulatorBaseSysID sysID;
   final Trigger lowLimit;
 
   public Elevator() {
     super(new PIDConfig().set(Constants.Elevator.P, Constants.Elevator.I, Constants.Elevator.D,
         Constants.Elevator.S, Constants.Elevator.V, Constants.Elevator.A, Constants.Elevator.G,
-        Constants.Elevator.maxVelocity, Constants.Elevator.maxAcceleration),
-        ManipulatorFFDistanceCommand.FeedForwardType.Elevator);
+        Constants.Elevator.maxVelocity, Constants.Elevator.maxAcceleration,
+        FeedForwardType.Elevator));
     setBreakerMaxAmps(40);
     addMotors(new SparkMax(Constants.Wirings.elevatorMotor1, SparkMax.MotorType.kBrushless),
         new SparkMax(Constants.Wirings.elevatorMotor2, SparkMax.MotorType.kBrushless));
@@ -38,11 +35,9 @@ public class Elevator extends PositionManipulatorBase {
     invertSpecificMotors(true, 1);
     setBrakeMode(true);
     setCurrentLimit(Constants.Elevator.amps);
-    setPositionMultiplier(Constants.Elevator.positionMultiplier);
-    setSpeedMultiplier(Constants.Elevator.positionMultiplier / 50);
+    setEncoderMultiplier(Constants.Elevator.positionMultiplier);
     setPositionBounds(Constants.Elevator.positionBoundsMin,
         Constants.Elevator.positionBoundsMax);
-    // home().schedule();
     persistMotorConfig();
 
     customSensor = () -> getMotor(0).getReverseLimitSwitch().isPressed()
@@ -164,17 +159,8 @@ public class Elevator extends PositionManipulatorBase {
   public void periodic() {
     super.periodic();
     SmartDashboard.putNumber("ElePow", getAbsVoltage());
-    SmartDashboard.putNumber("Elevator target position",
-        ((ManipulatorFFDistanceCommand) moveCommand).getController().getSetpoint().position);
-    SmartDashboard.putNumber("Elevator Setpoint",
-        ((ManipulatorFFDistanceCommand) moveCommand).getController().getGoal().position);
-    SmartDashboard.putNumber("Elevator current position", getPosition().in(Meters));
     SmartDashboard.putNumber("Line Voltage", getMotor(0).getBusVoltage());
     SmartDashboard.putBoolean("Elevator low limit", lowLimit.getAsBoolean());
-
-    SmartDashboard.putNumber("Elevator target speed",
-        ((ManipulatorFFDistanceCommand) moveCommand).getController().getSetpoint().velocity);
-    SmartDashboard.putNumber("Elevator current speed", getVelocity().in(MetersPerSecond));
 
     SmartDashboard.putNumber("Elevator height percent", getPosPercent());
   }

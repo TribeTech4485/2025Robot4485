@@ -1,3 +1,4 @@
+// Weird bug: Error in this class that dissapears upon viewing
 package frc.robot.Commands;
 
 import static edu.wpi.first.units.Units.Feet;

@@ -9,7 +9,6 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -18,8 +17,8 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.SyncedLibraries.SystemBases.AngleManipulatorBase;
-import frc.robot.SyncedLibraries.SystemBases.Utils.ManipulatorFFAngleCommand;
 import frc.robot.SyncedLibraries.SystemBases.Utils.PIDConfig;
+import frc.robot.SyncedLibraries.SystemBases.Utils.PIDConfig.FeedForwardType;
 
 public class AlgaeArm extends AngleManipulatorBase {
   final Elevator elevator;
@@ -28,21 +27,19 @@ public class AlgaeArm extends AngleManipulatorBase {
     super(
         new PIDConfig().set(Constants.AlgaeArm.P, Constants.AlgaeArm.I, Constants.AlgaeArm.D, Constants.AlgaeArm.S,
             Constants.AlgaeArm.V, Constants.AlgaeArm.A, Constants.AlgaeArm.G, Constants.AlgaeArm.maxVelocity,
-            Constants.AlgaeArm.maxAcceleration),
-        ManipulatorFFAngleCommand.FeedForwardType.Arm);
+            Constants.AlgaeArm.maxAcceleration, FeedForwardType.Arm));
     breakerMaxAmps = 40;
     addMotors(new SparkMax(Constants.Wirings.algaeArmMotor, SparkMax.MotorType.kBrushless));
     resetMotors();
     setBrakeMode(true);
     setBreakerMaxAmps(40);
     setCurrentLimit(Constants.AlgaeArm.amps);
-    setPositionMultiplier(Constants.AlgaeArm.positionMultiplier);
-    setSpeedMultiplier(Constants.AlgaeArm.positionMultiplier / 50);
+    setEncoderMultiplier(Constants.AlgaeArm.positionMultiplier);
     invertSpecificMotors(false, 0);
     // 0 is straight out, positive is up
     setAngleBounds(Constants.AlgaeArm.positionBoundsMin, Constants.AlgaeArm.positionBoundsMax);
     // home().schedule();
-    getMoveCommand().setEndOnTarget(false);
+    getMoveCommand().setEndOnTarget(false); // should already be done?
 
     // if not homed, set angle to top position
     if (Math.abs(getAngle().in(Radians)) <= 0.0001) {
@@ -131,8 +128,6 @@ public class AlgaeArm extends AngleManipulatorBase {
   @Override
   public void periodic() {
     super.periodic();
-    SmartDashboard.putNumber(getName() + " Setpoint Angle (deg)",
-        ((ManipulatorFFAngleCommand) getMoveCommand()).getSetpoint().in(Degrees));
     elevatorCheck();
   }
 }
